@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+/*
+ * Brand tokens (Phase 1 starting palette).
+ * The ink and blush values are sampled from the supplied logo
+ * (deep plum wordmark on a soft blush ground) so the site reads as one
+ * system with the mark from day one. Treat these as the working palette,
+ * not final brand guidelines — refine once full brand assets exist.
+ */
+:root {
+  --color-ink: #3a1e42;
+  --color-ink-soft: #5b3a63;
+  --color-blush: #f6e3e8;
+  --color-blush-soft: #fbf1f3;
+  --color-cream: #fbf8f6;
+  --color-charcoal: #2a2430;
+  --color-stone: #e7e0dd;
+  --color-stone-soft: #f2eeec;
+
+  --font-display: var(--font-cormorant);
+  --font-sans: var(--font-work-sans);
+}
+
+@theme inline {
+  --color-ink: var(--color-ink);
+  --color-ink-soft: var(--color-ink-soft);
+  --color-blush: var(--color-blush);
+  --color-blush-soft: var(--color-blush-soft);
+  --color-cream: var(--color-cream);
+  --color-charcoal: var(--color-charcoal);
+  --color-stone: var(--color-stone);
+  --color-stone-soft: var(--color-stone-soft);
+
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-charcoal);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}

@@ -1,0 +1,12 @@
+rules_version = '2';
+
+// Phase 1 foundation: deny-all by default. Media Library / gallery upload
+// paths and their public-read, admin-write rules are defined in Phase 2
+// once the storage layout (see docs/ARCHITECTURE.md) is implemented.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
