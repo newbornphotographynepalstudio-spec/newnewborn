@@ -18,26 +18,29 @@ const nextConfig: NextConfig = {
 
   async redirects() {
     return [
+      // Training is the canonical route; /training/ is authoritative.
+      // `statusCode: 301` (not `permanent: true`, which Next.js maps to
+      // 308) — this is an intentional SEO migration and must be a literal
+      // HTTP 301 for search engines to consolidate ranking onto /training/.
       {
-        // Training is the canonical route; /training/ is authoritative.
         source: "/workshop/",
         destination: "/training/",
-        permanent: true,
+        statusCode: 301,
       },
       {
         source: "/workshop",
         destination: "/training/",
-        permanent: true,
+        statusCode: 301,
       },
       {
         source: "/workshops/",
         destination: "/training/",
-        permanent: true,
+        statusCode: 301,
       },
       {
         source: "/workshops",
         destination: "/training/",
-        permanent: true,
+        statusCode: 301,
       },
     ];
   },

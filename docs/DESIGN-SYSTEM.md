@@ -201,9 +201,16 @@ One primitive, `components/ui/EditorialImage.tsx`, used for every image
 pattern (hero, thumbnail, gallery item, full-bleed, contained) via props
 rather than separate components:
 
-- `aspect`: `portrait` (4:5), `landscape` (3:2), `square`, or `auto`
-  (intrinsic size — only meaningful for a local static import, e.g. the
-  logo).
+- `aspect`: `portrait` (4:5), `landscape` (3:2), `wide` (16:9), `square`,
+  or `auto` (intrinsic size — only meaningful for a local static import,
+  e.g. the logo).
+- `mobileAspect` / `mobilePosition`: **art direction** — render a
+  different aspect ratio and/or focal point below the `lg` breakpoint than
+  above it, from the *same* unaltered source image. When given,
+  `aspect`/`position` become the desktop (`lg:`) values. This is how a
+  photo gets an intentional portrait-biased crop on mobile and a wide
+  crop on desktop without ever touching the source file — never guess one
+  crop that has to work at every width.
 - `fit`: `cover` (default) or `contain`.
 - `position`: object-position keyword (`center` default).
 - `priority`: set `true` only for the actual LCP image on a page (e.g. a
@@ -220,11 +227,26 @@ Full-resolution originals are never referenced directly in page markup —
 `src` is always expected to already be an optimized/derivative URL (see
 `docs/ARCHITECTURE.md`, Image / photography architecture).
 
-**`culture1.jpg`** is an approved homepage-adjacent asset (Nepali culture /
-heritage storytelling) but is explicitly **not** the homepage hero and is
-**not wired into any page yet** — it's reserved for a dedicated editorial
-culture/heritage section in a later phase. Don't crop the baby or
-culturally significant objects, don't filter it.
+**`culture1.jpg`** is the approved **primary homepage image** (newborn in
+traditional Nepali styling — heritage/cultural storytelling). The
+client-supplied original stays untouched at the project root; a copy used
+by the app lives at `public/photography/culture1.jpg`, referenced via the
+typed `cultureHeritageImage` export in `lib/media/approved-assets.ts`
+(source, alt text, and recommended `aspect`/`mobileAspect`/`position`/
+`mobilePosition` values for `EditorialImage`). It is **not wired into any
+page yet** — that's the homepage build in a later phase, which should use
+it with `priority` (it will very likely be the LCP image) and the
+`mobileAspect`/`mobilePosition` art-direction props so mobile isn't just a
+squeezed copy of the desktop crop. Don't crop the baby or culturally
+significant objects out of frame at any breakpoint, don't filter it.
+
+**`favicon.png`** is the approved favicon (1024×1024 PNG), implemented via
+Next.js's App Router file convention: the untouched original stays at the
+project root, and an identical copy lives at `app/icon.png` — the only
+location Next.js recognizes for this convention — which Next
+auto-generates the `<link rel="icon">` tag from with no manual metadata
+needed. The generic Next.js scaffold `app/favicon.ico` placeholder was
+removed so only the approved icon is served.
 
 ## Gallery system
 

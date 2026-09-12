@@ -1,6 +1,6 @@
 import Image, { type ImageProps } from "next/image";
 
-export type ImageAspect = "portrait" | "landscape" | "square" | "auto";
+export type ImageAspect = "portrait" | "landscape" | "wide" | "square" | "auto";
 export type ImageFit = "cover" | "contain";
 export type ImagePosition =
   | "center"
@@ -9,10 +9,21 @@ export type ImagePosition =
   | "left"
   | "right";
 
-const aspectClass: Record<Exclude<ImageAspect, "auto">, string> = {
+/** Base (mobile-first) aspect-ratio utility for each option. */
+const aspectClassBase: Record<Exclude<ImageAspect, "auto">, string> = {
   portrait: "aspect-[4/5]",
   landscape: "aspect-[3/2]",
+  wide: "aspect-[16/9]",
   square: "aspect-square",
+};
+
+/** `lg:`-prefixed variant of the same scale, for art-directed crops that
+ * change aspect ratio at the desktop breakpoint (see `mobileAspect`). */
+const aspectClassLg: Record<Exclude<ImageAspect, "auto">, string> = {
+  portrait: "lg:aspect-[4/5]",
+  landscape: "lg:aspect-[3/2]",
+  wide: "lg:aspect-[16/9]",
+  square: "lg:aspect-square",
 };
 
 const fitClass: Record<ImageFit, string> = {
@@ -20,12 +31,20 @@ const fitClass: Record<ImageFit, string> = {
   contain: "object-contain",
 };
 
-const positionClass: Record<ImagePosition, string> = {
+const positionClassBase: Record<ImagePosition, string> = {
   center: "object-center",
   top: "object-top",
   bottom: "object-bottom",
   left: "object-left",
   right: "object-right",
+};
+
+const positionClassLg: Record<ImagePosition, string> = {
+  center: "lg:object-center",
+  top: "lg:object-top",
+  bottom: "lg:object-bottom",
+  left: "lg:object-left",
+  right: "lg:object-right",
 };
 
 /**
@@ -39,6 +58,13 @@ const positionClass: Record<ImagePosition, string> = {
  *   locked box, which is how responsive, never-stretched photography works
  *   for remote (Firebase Storage) sources whose intrinsic size isn't known
  *   at build time.
+ * - **Art direction**: pass `mobileAspect`/`mobilePosition` to render a
+ *   different aspect ratio and/or focal point below the `lg` breakpoint
+ *   than above it — e.g. a tall portrait crop on mobile, wide on desktop —
+ *   from the *same* unaltered source image (never a separately-cropped
+ *   file). `aspect`/`position` become the desktop (`lg:`) values whenever
+ *   a mobile override is given. Use this instead of guessing a single
+ *   crop that has to work at every width.
  * - Full-resolution originals are never referenced here directly — `src`
  *   is expected to already be an optimized/derivative URL (see
  *   docs/DESIGN-SYSTEM.md, Image rules).
@@ -47,8 +73,10 @@ export function EditorialImage({
   src,
   alt,
   aspect = "landscape",
+  mobileAspect,
   fit = "cover",
   position = "center",
+  mobilePosition,
   priority = false,
   sizes = "(min-width: 1024px) 50vw, 100vw",
   blurDataURL,
@@ -58,8 +86,12 @@ export function EditorialImage({
   src: ImageProps["src"];
   alt: string;
   aspect?: ImageAspect;
+  /** Mobile/base aspect ratio, if it should differ from `aspect`. */
+  mobileAspect?: Exclude<ImageAspect, "auto">;
   fit?: ImageFit;
   position?: ImagePosition;
+  /** Mobile/base focal point, if it should differ from `position`. */
+  mobilePosition?: ImagePosition;
   priority?: boolean;
   sizes?: string;
   blurDataURL?: string;
@@ -83,9 +115,17 @@ export function EditorialImage({
     );
   }
 
+  const aspectClasses = mobileAspect
+    ? `${aspectClassBase[mobileAspect]} ${aspectClassLg[aspect]}`
+    : aspectClassBase[aspect];
+
+  const positionClasses = mobilePosition
+    ? `${positionClassBase[mobilePosition]} ${positionClassLg[position]}`
+    : positionClassBase[position];
+
   return (
     <div
-      className={`relative overflow-hidden ${aspectClass[aspect]} ${radiusClass} ${className}`}
+      className={`relative overflow-hidden ${aspectClasses} ${radiusClass} ${className}`}
     >
       <Image
         src={src}
@@ -95,7 +135,7 @@ export function EditorialImage({
         priority={priority}
         placeholder={hasBlur ? "blur" : "empty"}
         blurDataURL={blurDataURL}
-        className={`${fitClass[fit]} ${positionClass[position]}`}
+        className={`${fitClass[fit]} ${positionClasses}`}
       />
     </div>
   );
