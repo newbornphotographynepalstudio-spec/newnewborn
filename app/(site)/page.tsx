@@ -1,42 +1,41 @@
-import Link from "next/link";
-
-import { Container } from "@/components/ui/Container";
+import { Cluster } from "@/components/primitives/Cluster";
+import { Section } from "@/components/primitives/Section";
+import { Button } from "@/components/ui/Button";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
 
+/**
+ * Still a placeholder hero, not the final homepage (Phase 2 is design
+ * system + UI foundation only — see docs/DESIGN-SYSTEM.md). Restyled onto
+ * the new type scale, spacing and Button/Section primitives so the
+ * foundation is demonstrably working, without inventing final copy or
+ * placing any photography here yet.
+ */
 export default function HomePage() {
   return (
-    <Container className="py-20 sm:py-32">
-      <div className="max-w-2xl">
-        <p className="text-sm font-medium tracking-wide text-ink-soft uppercase">
+    <Section>
+      <div className="max-w-3xl">
+        <p className="text-eyebrow font-medium tracking-eyebrow text-taupe uppercase">
           Kathmandu Valley, Nepal
         </p>
-        <h1 className="mt-3 text-4xl text-ink sm:text-6xl">
+        <h1 className="mt-sm text-display">
           Newborn Photography Nepal, by Navin
         </h1>
-        <p className="mt-6 text-lg leading-relaxed text-charcoal/80">
+        <p className="mt-md max-w-prose text-body-lg leading-relaxed text-charcoal/80">
           A photography studio for newborn, maternity, baby, cake smash and
           family sessions — with training for photographers who want to work
           with newborns safely and beautifully.
         </p>
-        <div className="mt-10 flex flex-wrap gap-4">
-          <Link
-            href={bookASessionCta.href}
-            className="rounded-sm bg-ink px-6 py-3 text-sm text-cream transition-colors hover:bg-ink-soft"
-          >
-            {bookASessionCta.label}
-          </Link>
-          <Link
-            href={routes.portfolio}
-            className="rounded-sm border border-ink px-6 py-3 text-sm text-ink transition-colors hover:bg-blush-soft"
-          >
-            View Portfolio
-          </Link>
-        </div>
-        <p className="mt-10 inline-block rounded-sm border border-stone bg-stone-soft px-4 py-2 text-sm text-charcoal/60">
+        <Cluster gap="sm" className="mt-lg">
+          <Button href={bookASessionCta.href}>{bookASessionCta.label}</Button>
+          <Button href={routes.portfolio} variant="secondary">
+            Explore Portfolio
+          </Button>
+        </Cluster>
+        <p className="mt-2xl inline-block rounded-sm border border-taupe/30 bg-blush px-sm py-2xs text-small text-charcoal/70">
           Full homepage content, portfolio photography and pricing are being
           added.
         </p>
       </div>
-    </Container>
+    </Section>
   );
 }

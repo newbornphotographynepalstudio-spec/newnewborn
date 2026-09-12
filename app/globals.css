@@ -1,51 +1,247 @@
 @import "tailwindcss";
 
 /*
- * Brand tokens (Phase 1 starting palette).
- * The ink and blush values are sampled from the supplied logo
- * (deep plum wordmark on a soft blush ground) so the site reads as one
- * system with the mark from day one. Treat these as the working palette,
- * not final brand guidelines — refine once full brand assets exist.
+ * ============================================================================
+ * DESIGN TOKENS — single source of truth.
+ * See docs/DESIGN-SYSTEM.md for the full rationale behind every value here.
+ * Components must reference these tokens (via the Tailwind utilities v4
+ * generates from `@theme`, e.g. `bg-ivory`, `text-plum`) rather than
+ * hardcoding new hex/px/ms values. If a value you need isn't here, add it
+ * here first, then use it — don't invent a one-off.
+ * ============================================================================
  */
 :root {
-  --color-ink: #3a1e42;
-  --color-ink-soft: #5b3a63;
-  --color-blush: #f6e3e8;
-  --color-blush-soft: #fbf1f3;
-  --color-cream: #fbf8f6;
-  --color-charcoal: #2a2430;
-  --color-stone: #e7e0dd;
-  --color-stone-soft: #f2eeec;
+  /* --- Color: the 7 approved brand colors, exactly as specified. -------- */
+  --color-plum: #35104a; /* Deep Plum — the one strong accent (~5% of the UI: CTAs, key emphasis) */
+  --color-ivory: #fbf7f5; /* Warm Ivory — primary page background (~80% neutral bucket) */
+  --color-blush: #f4e6e8; /* Soft Blush — supporting tone, soft section backgrounds */
+  --color-taupe: #8c7a78; /* Warm Taupe — supporting tone, muted text/borders */
+  --color-charcoal: #292529; /* Deep Charcoal — primary body text (~80% neutral bucket) */
+  --color-rose: #b88f98; /* Dusty Rose — supporting tone, sparing highlight/accent */
+  --color-white: #ffffff; /* Soft White — CTA text on plum, elevated surfaces */
 
-  --font-display: var(--font-cormorant);
-  --font-sans: var(--font-work-sans);
+  /* --- Color: semantic aliases — components use these, not the raw names. */
+  --color-bg: var(--color-ivory);
+  --color-bg-elevated: var(--color-white);
+  --color-bg-soft: var(--color-blush);
+  --color-bg-inverse: var(--color-plum);
+  --color-text: var(--color-charcoal);
+  --color-text-muted: var(--color-taupe);
+  --color-text-inverse: var(--color-white);
+  --color-accent: var(--color-plum);
+  /* Interactive-state tints are computed from the approved colors (never a
+     new hex) via color-mix, so hover/active states stay inside the palette. */
+  --color-accent-hover: color-mix(in srgb, var(--color-plum) 85%, white);
+  --color-accent-soft: color-mix(in srgb, var(--color-plum) 8%, var(--color-ivory));
+  --color-border: color-mix(in srgb, var(--color-taupe) 35%, transparent);
+  --color-border-strong: color-mix(in srgb, var(--color-taupe) 60%, transparent);
+  --color-focus-ring: var(--color-plum);
+
+  /* --- Typography -------------------------------------------------------- */
+  --font-display: var(--font-cormorant), ui-serif, Georgia, serif;
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+
+  /* Fluid type scale: clamp(min, fluid, max) so it scales smoothly between
+     mobile and desktop instead of jumping at breakpoints. */
+  --text-display: clamp(2.75rem, 2.1rem + 3vw, 5.25rem);
+  --text-h1: clamp(2.25rem, 1.85rem + 2vw, 3.5rem);
+  --text-h2: clamp(1.75rem, 1.5rem + 1.2vw, 2.5rem);
+  --text-h3: clamp(1.375rem, 1.2rem + 0.7vw, 1.75rem);
+  --text-h4: clamp(1.125rem, 1.05rem + 0.3vw, 1.25rem);
+  --text-body-lg: clamp(1.0625rem, 1rem + 0.25vw, 1.25rem);
+  --text-body: 1rem;
+  --text-small: 0.875rem;
+  --text-caption: 0.75rem;
+  --text-eyebrow: 0.75rem;
+
+  /* Overrides Tailwind's default leading and tracking scales with the
+     exact editorial values this brand uses — so the built-in utilities
+     (leading-tight, tracking-wide, ...) already do the right thing
+     everywhere. */
+  --leading-tight: 1.1;
+  --leading-snug: 1.3;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.75;
+
+  --tracking-tight: -0.01em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.04em;
+  --tracking-eyebrow: 0.16em;
+
+  /* --- Spacing: named entries alongside (not replacing) Tailwind's numeric
+     scale — p-4/gap-2/etc. keep working; these add p-md, gap-lg, py-section-y
+     and so on for the rhythm Stack/Cluster/Section actually use. */
+  --spacing-3xs: 0.25rem;
+  --spacing-2xs: 0.5rem;
+  --spacing-xs: 0.75rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+  --spacing-2xl: 4rem;
+  --spacing-3xl: 6rem;
+
+  /* Generous, fluid section rhythm — never compressed to fit content. */
+  --spacing-section-y: clamp(4rem, 3rem + 5vw, 8rem);
+  --spacing-section-y-sm: clamp(2.5rem, 2rem + 2.5vw, 4.5rem);
+  --spacing-gutter: clamp(1.25rem, 1rem + 2vw, 3rem);
+
+  /* --- Radii: subtle/square by default — this is editorial, not dashboard.
+     Overrides Tailwind's default rounded-sm/rounded-md (which are larger). */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+
+  /* --- Shadows: used only where they genuinely add hierarchy. Overrides
+     Tailwind's default shadow-sm/shadow-md with charcoal-tinted, subtler
+     versions. */
+  --shadow-sm: 0 1px 2px color-mix(in srgb, var(--color-charcoal) 6%, transparent);
+  --shadow-md: 0 12px 32px color-mix(in srgb, var(--color-charcoal) 14%, transparent);
+
+  /* --- Motion -------------------------------------------------------------*/
+  --ease-premium: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 500ms;
+
+  /* --- Containers -----------------------------------------------------------
+     "prose" uses Tailwind's built-in max-w-prose (65ch); "default" uses the
+     built-in max-w-7xl (80rem). Only the editorial full-width variant needs
+     a token of its own. */
+  --container-wide: 96rem;
 }
 
 @theme inline {
-  --color-ink: var(--color-ink);
-  --color-ink-soft: var(--color-ink-soft);
+  --color-plum: var(--color-plum);
+  --color-ivory: var(--color-ivory);
   --color-blush: var(--color-blush);
-  --color-blush-soft: var(--color-blush-soft);
-  --color-cream: var(--color-cream);
+  --color-taupe: var(--color-taupe);
   --color-charcoal: var(--color-charcoal);
-  --color-stone: var(--color-stone);
-  --color-stone-soft: var(--color-stone-soft);
+  --color-rose: var(--color-rose);
+  --color-white: var(--color-white);
+
+  --color-bg: var(--color-bg);
+  --color-bg-elevated: var(--color-bg-elevated);
+  --color-bg-soft: var(--color-bg-soft);
+  --color-bg-inverse: var(--color-bg-inverse);
+  --color-text: var(--color-text);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-inverse: var(--color-text-inverse);
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-soft: var(--color-accent-soft);
+  --color-border: var(--color-border);
+  --color-border-strong: var(--color-border-strong);
+  --color-focus-ring: var(--color-focus-ring);
 
   --font-display: var(--font-display);
   --font-sans: var(--font-sans);
+
+  --text-display: var(--text-display);
+  --text-h1: var(--text-h1);
+  --text-h2: var(--text-h2);
+  --text-h3: var(--text-h3);
+  --text-h4: var(--text-h4);
+  --text-body-lg: var(--text-body-lg);
+  --text-body: var(--text-body);
+  --text-small: var(--text-small);
+  --text-caption: var(--text-caption);
+  --text-eyebrow: var(--text-eyebrow);
+
+  --leading-tight: var(--leading-tight);
+  --leading-snug: var(--leading-snug);
+  --leading-normal: var(--leading-normal);
+  --leading-relaxed: var(--leading-relaxed);
+
+  --tracking-tight: var(--tracking-tight);
+  --tracking-normal: var(--tracking-normal);
+  --tracking-wide: var(--tracking-wide);
+  --tracking-eyebrow: var(--tracking-eyebrow);
+
+  --spacing-3xs: var(--spacing-3xs);
+  --spacing-2xs: var(--spacing-2xs);
+  --spacing-xs: var(--spacing-xs);
+  --spacing-sm: var(--spacing-sm);
+  --spacing-md: var(--spacing-md);
+  --spacing-lg: var(--spacing-lg);
+  --spacing-xl: var(--spacing-xl);
+  --spacing-2xl: var(--spacing-2xl);
+  --spacing-3xl: var(--spacing-3xl);
+  --spacing-section-y: var(--spacing-section-y);
+  --spacing-section-y-sm: var(--spacing-section-y-sm);
+  --spacing-gutter: var(--spacing-gutter);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+
+  --container-wide: var(--container-wide);
+}
+
+/* ---------------------------------------------------------------------------
+ * Base element styles
+ * ------------------------------------------------------------------------ */
+
+* {
+  border-color: var(--color-border);
 }
 
 body {
-  background: var(--color-cream);
-  color: var(--color-charcoal);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--leading-normal);
 }
 
 h1,
 h2,
 h3,
 h4 {
-  font-family: var(--font-display), ui-serif, Georgia, serif;
+  font-family: var(--font-display);
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-tight);
+  color: var(--color-text);
+}
+
+/* Visible, on-brand focus state everywhere — never suppressed. */
+:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+::selection {
+  background: var(--color-blush);
+  color: var(--color-plum);
+}
+
+/* ---------------------------------------------------------------------------
+ * Motion: respects prefers-reduced-motion globally. Individual components
+ * (e.g. Reveal) also check this in JS before starting a scroll animation.
+ * ------------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Full-bleed helper — used by the FullBleed primitive to break photography
+ * out of the container to the viewport edge from within a centered layout.
+ * ------------------------------------------------------------------------ */
+.full-bleed {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
 }

@@ -32,52 +32,61 @@ export const routes = {
   areasBhaktapur: "/areas/bhaktapur/",
 } as const;
 
-export type PrimaryNavItem = {
+export type NavItem = {
   label: string;
   href: string;
 };
 
-/** Order matches the desktop navigation defined in the architecture spec. */
-export const primaryNav: PrimaryNavItem[] = [
-  { label: "Home", href: routes.home },
-  { label: "About", href: routes.about },
+/**
+ * The five photography services, grouped under one "Services" header
+ * dropdown rather than five flat top-level items — keeps the desktop nav
+ * from overcrowding (see docs/DESIGN-SYSTEM.md, Header section).
+ */
+export const servicesNav: NavItem[] = [
   { label: "Newborn", href: routes.newborn },
   { label: "Maternity", href: routes.maternity },
   { label: "Baby", href: routes.baby },
   { label: "Cake Smash", href: routes.cakeSmash },
   { label: "Family", href: routes.family },
+];
+
+/** Flat top-level items, after the Services group, before the CTA. */
+export const primaryNav: NavItem[] = [
   { label: "Portfolio", href: routes.portfolio },
   { label: "Packages", href: routes.packages },
   { label: "Studio", href: routes.studio },
   { label: "Training", href: routes.training },
   { label: "Blog", href: routes.blog },
-  { label: "Contact", href: routes.contact },
 ];
 
-export const bookASessionCta: PrimaryNavItem = {
+export const contactLink: NavItem = {
+  label: "Contact",
+  href: routes.contact,
+};
+
+export const bookASessionCta: NavItem = {
   label: "Book a Session",
   href: routes.bookASession,
 };
 
-export const footerServiceLinks: PrimaryNavItem[] = [
-  { label: "Newborn Photography", href: routes.newborn },
-  { label: "Maternity Photography", href: routes.maternity },
-  { label: "Baby Photography", href: routes.baby },
-  { label: "Cake Smash Photography", href: routes.cakeSmash },
-  { label: "Family Photography", href: routes.family },
-  { label: "Photography Training", href: routes.training },
+export const footerExploreLinks: NavItem[] = [
+  { label: "Portfolio", href: routes.portfolio },
+  { label: "Packages", href: routes.packages },
+  { label: "Studio", href: routes.studio },
+  { label: "Training", href: routes.training },
+  { label: "Blog", href: routes.blog },
 ];
 
-export const footerStudioLinks: PrimaryNavItem[] = [
+export const footerServiceLinks: NavItem[] = servicesNav;
+
+export const footerConnectLinks: NavItem[] = [
   { label: "About", href: routes.about },
-  { label: "Studio", href: routes.studio },
-  { label: "Safety", href: routes.safety },
-  { label: "Packages", href: routes.packages },
-  { label: "Portfolio", href: routes.portfolio },
+  { label: "Contact", href: routes.contact },
+  { label: "Book a Session", href: routes.bookASession },
   { label: "FAQ", href: routes.faq },
 ];
 
-export const footerAreaLinks: PrimaryNavItem[] = [
+export const footerAreaLinks: NavItem[] = [
   { label: "Kathmandu", href: routes.areasKathmandu },
   { label: "Lalitpur", href: routes.areasLalitpur },
   { label: "Bhaktapur", href: routes.areasBhaktapur },

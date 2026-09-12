@@ -1,69 +1,58 @@
 import Link from "next/link";
 
-import { Container } from "@/components/ui/Container";
+import { Container } from "@/components/primitives/Container";
+import { Stack } from "@/components/primitives/Stack";
+import { Logo } from "@/components/ui/Logo";
+import { SocialLinks, type SocialLink } from "@/components/layout/SocialLinks";
 import {
   footerAreaLinks,
-  footerServiceLinks,
-  footerStudioLinks,
+  footerConnectLinks,
+  footerExploreLinks,
   routes,
 } from "@/lib/navigation/routes";
+
+/** Populated once real handles exist (Website Settings, a later phase) — no
+ * social URL is invented here. */
+const socialLinks: SocialLink[] = [];
 
 export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-stone bg-cream">
-      <Container className="grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-4">
-        <div>
-          <p className="font-display text-xl text-ink">
-            Newborn Photography Nepal
-          </p>
-          <p className="mt-3 text-sm leading-relaxed text-charcoal/70">
+    <footer className="border-t border-taupe/15 bg-ivory">
+      <Container size="wide" className="grid gap-2xl py-3xl sm:grid-cols-3">
+        <Stack gap="sm" className="sm:max-w-xs">
+          <Logo />
+          <p className="text-small leading-relaxed text-taupe">
             Newborn, maternity, baby, cake smash and family photography by
             Navin, serving Kathmandu Valley, Nepal.
           </p>
-        </div>
+          <SocialLinks links={socialLinks} className="pt-2xs" />
+        </Stack>
 
-        <FooterColumn title="Services" links={footerServiceLinks} />
-        <FooterColumn title="Studio" links={footerStudioLinks} />
-
-        <div>
-          <p className="text-sm font-medium text-ink">Areas Served</p>
-          <ul className="mt-4 space-y-2">
-            {footerAreaLinks.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className="text-sm text-charcoal/70 hover:text-ink"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-            <li>
-              <Link
-                href={routes.areas}
-                className="text-sm text-charcoal/70 hover:text-ink"
-              >
-                All Areas
-              </Link>
-            </li>
-          </ul>
-        </div>
+        <FooterColumn title="Explore" links={footerExploreLinks} />
+        <FooterColumn title="Connect" links={footerConnectLinks} />
       </Container>
 
-      <div className="border-t border-stone">
-        <Container className="flex flex-col gap-2 py-6 text-xs text-charcoal/60 sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            &copy; {year} Newborn Photography Nepal by Navin. All rights
-            reserved.
-          </p>
-          <div className="flex gap-4">
-            <Link href={routes.contact} className="hover:text-ink">
-              Contact
-            </Link>
-            <Link href={routes.faq} className="hover:text-ink">
-              FAQ
+      <div className="border-t border-taupe/15">
+        <Container
+          size="wide"
+          className="flex flex-col gap-xs py-lg text-caption text-taupe sm:flex-row sm:items-center sm:justify-between"
+        >
+          <p>&copy; {year} Newborn Photography Nepal by Navin. All rights reserved.</p>
+          <div className="flex flex-wrap items-center gap-xs">
+            <span>Serving</span>
+            {footerAreaLinks.map((item, index) => (
+              <span key={item.href} className="flex items-center gap-xs">
+                <Link href={item.href} className="hover:text-plum">
+                  {item.label}
+                </Link>
+                {index < footerAreaLinks.length - 1 ? <span>&middot;</span> : null}
+              </span>
+            ))}
+            <span>&mdash;</span>
+            <Link href={routes.areas} className="hover:text-plum">
+              All areas
             </Link>
           </div>
         </Container>
@@ -81,13 +70,13 @@ function FooterColumn({
 }) {
   return (
     <div>
-      <p className="text-sm font-medium text-ink">{title}</p>
-      <ul className="mt-4 space-y-2">
+      <p className="text-caption tracking-eyebrow text-taupe uppercase">{title}</p>
+      <ul className="mt-sm space-y-2xs">
         {links.map((item) => (
           <li key={item.href}>
             <Link
               href={item.href}
-              className="text-sm text-charcoal/70 hover:text-ink"
+              className="text-small text-charcoal transition-colors duration-base hover:text-plum"
             >
               {item.label}
             </Link>

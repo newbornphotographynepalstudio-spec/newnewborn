@@ -265,41 +265,26 @@ placeholder until Navin supplies real photography.
 
 ## Brand & design direction
 
-Premium, elegant, warm, soft, emotional, trustworthy, professional,
-family-oriented, photography-led. Explicitly **not**: childish, cartoonish,
-a generic photography template, a SaaS-dashboard look, overly colorful,
-gradient-heavy, rounded-card-heavy, or overly animated.
+Superseded by **[`docs/DESIGN-SYSTEM.md`](./DESIGN-SYSTEM.md)**, written in
+Phase 2 once an approved color palette (7 fixed brand colors), type
+pairing (Cormorant Garamond + Manrope), and full layout/component system
+were specified. That document is now the source of truth for brand
+positioning, colors, typography, spacing, layout primitives, buttons,
+image/gallery rules, motion, responsive rules, and accessibility rules —
+this section is left here only as a pointer, not duplicated content that
+could drift out of sync.
 
-**Working palette** (`app/globals.css`), sampled from the supplied logo
-(deep plum wordmark on a soft blush ground) rather than invented, so the
-site and the mark read as one system from day one:
-
-| Token | Value | Use |
-|---|---|---|
-| `--color-ink` | `#3a1e42` | primary text on light, headings, buttons |
-| `--color-ink-soft` | `#5b3a63` | hover states, secondary emphasis |
-| `--color-blush` / `--color-blush-soft` | `#f6e3e8` / `#fbf1f3` | soft accent backgrounds |
-| `--color-cream` | `#fbf8f6` | page background |
-| `--color-charcoal` | `#2a2430` | body text |
-| `--color-stone` / `--color-stone-soft` | `#e7e0dd` / `#f2eeec` | borders, dividers, muted surfaces |
-
-Typography: **Cormorant Garamond** (display serif, headings) paired with
-**Work Sans** (body), both self-hosted via `next/font/google` — no external
-font requests, no layout shift. This is a starting pairing, not a locked
-brand guideline.
-
-Treat this palette/type pairing as the Phase 1 default, not a final brand
-decision — revisit once full brand guidelines (if any exist beyond the
-logo) are supplied.
-
-## What's deliberately deferred past Phase 1
+## What's deliberately deferred
 
 - Any real Firestore collection, security rule beyond deny-all, or Storage
   upload path.
 - Working Firebase Authentication (the `/admin/login/` form is a static,
-  disabled placeholder).
+  disabled placeholder built on the real form primitives).
 - Real content, pricing, testimonials, or photography anywhere on the
-  site — every page is an honest "content in progress" placeholder.
+  site — every page is an honest "content in progress" placeholder; no
+  stock photography is used anywhere.
 - JSON-LD structured data, breadcrumbs, dynamic sitemap entries.
 - Resend email and Cloudflare Turnstile integration (booking/contact forms
   aren't functional yet — there's nothing to protect or notify on).
+- The real admin UI design (Phase 2 established shared tokens only — see
+  `docs/DESIGN-SYSTEM.md`, Admin UI section).

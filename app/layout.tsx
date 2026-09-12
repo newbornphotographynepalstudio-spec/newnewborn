@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Work_Sans } from "next/font/google";
+import { Cormorant_Garamond, Manrope } from "next/font/google";
 
 import { siteConfig } from "@/lib/seo/site";
 
@@ -12,10 +12,10 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
-const workSans = Work_Sans({
+const manrope = Manrope({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-work-sans",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-manrope",
   display: "swap",
 });
 
@@ -48,7 +48,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${cormorant.variable} ${workSans.variable} antialiased`}
+        className={`${cormorant.variable} ${manrope.variable} antialiased`}
       >
         {children}
       </body>
