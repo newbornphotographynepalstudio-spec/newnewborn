@@ -59,14 +59,21 @@ export function Footer() {
       <div className="border-t border-taupe/15">
         <Container
           size="wide"
-          className="flex flex-col gap-3 py-8 text-caption text-taupe sm:flex-row sm:items-center sm:justify-between"
+          className="flex flex-col gap-3 pt-8 pb-24 text-caption text-taupe sm:flex-row sm:items-center sm:justify-between sm:pb-8"
         >
           <p>&copy; {year} Newborn Photography Nepal by Navin. All rights reserved.</p>
           <div className="flex flex-wrap items-center gap-3 sm:mr-24 lg:mr-28">
-            {/* Right margin at sm+ keeps this row clear of the fixed
-                WhatsAppButton (bottom-right, ~80-96px footprint from the
-                viewport edge) — without it, "All areas" sits directly
-                under the button at the bottom of the page. */}
+            {/* Below `sm` this row wraps onto multiple lines instead of
+                sitting in a single right-aligned line, so the fix there
+                is different: extra bottom padding on the container
+                (pb-24 vs the original pb-8) makes sure the *last* wrapped
+                line still clears the fixed WhatsAppButton's ~80px
+                footprint — the sm:mr-* trick only handles the single-line
+                layout `sm:flex-row` produces at 640px+, so it's paired
+                with `sm:pb-8` to drop the extra padding once that layout
+                (and its own horizontal fix) takes over. Found by checking
+                every breakpoint, not just the ones fixed earlier —
+                320/375/430px still overlapped after that first fix. */}
             <span>Serving</span>
             {footerAreaLinks.map((item, index) => (
               <span key={item.href} className="flex items-center gap-3">
