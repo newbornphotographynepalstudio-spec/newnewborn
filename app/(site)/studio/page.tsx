@@ -3,8 +3,17 @@ import type { Metadata } from "next";
 import { Cluster } from "@/components/primitives/Cluster";
 import { Section } from "@/components/primitives/Section";
 import { Button } from "@/components/ui/Button";
+import { EditorialImage } from "@/components/ui/EditorialImage";
 import { PageHero } from "@/components/ui/PageHero";
+import { Reveal } from "@/components/ui/Reveal";
+import { newbornGallery } from "@/lib/media/newborn-gallery";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
+
+/** A real photo from an actual session held in this studio — not a
+ * staged "studio interior" shot (none exists yet), but genuine proof
+ * this is a real, working space rather than a text-only claim. Unused
+ * elsewhere on the site outside the full portfolio grid. */
+const studioPhoto = newbornGallery.find((img) => img.id === "newborn-robe-chair")!;
 
 export const metadata: Metadata = {
   title: "Studio",
@@ -53,15 +62,28 @@ export default function StudioPage() {
       </PageHero>
 
       <Section>
-        <div className="grid grid-cols-1 gap-x-12 gap-y-8 sm:grid-cols-2">
-          {features.map((feature) => (
-            <div key={feature.title}>
-              <h2 className="text-h4 text-plum">{feature.title}</h2>
-              <p className="mt-2 text-body leading-relaxed text-charcoal/80">
-                {feature.description}
-              </p>
-            </div>
-          ))}
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
+          <div className="lg:col-span-5">
+            <Reveal>
+              <EditorialImage
+                src={studioPhoto.src}
+                alt={studioPhoto.alt}
+                aspect="portrait"
+                sizes="(min-width: 1024px) 40vw, 100vw"
+                rounded
+              />
+            </Reveal>
+          </div>
+          <div className="grid grid-cols-1 gap-x-12 gap-y-8 sm:grid-cols-2 lg:col-span-7 lg:self-center">
+            {features.map((feature) => (
+              <div key={feature.title}>
+                <h2 className="text-h4 text-plum">{feature.title}</h2>
+                <p className="mt-2 text-body leading-relaxed text-charcoal/80">
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </Section>
 

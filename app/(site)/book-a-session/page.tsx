@@ -5,9 +5,18 @@ import { Section } from "@/components/primitives/Section";
 import { Stack } from "@/components/primitives/Stack";
 import { BookingForm } from "@/components/sections/booking/BookingForm";
 import { ContactRow } from "@/components/ui/ContactRow";
+import { EditorialImage } from "@/components/ui/EditorialImage";
+import { Reveal } from "@/components/ui/Reveal";
 import { contactInfo } from "@/lib/data/contact";
+import { cakeSmashGallery } from "@/lib/media/cake-smash-gallery";
 import { SESSION_TYPES, type SessionType } from "@/lib/inquiries/types";
 import { routes } from "@/lib/navigation/routes";
+
+/** A real session photo, not used anywhere outside the full portfolio
+ * grid — the intro column here is naturally much shorter than the long
+ * form beside it, which otherwise leaves a large empty area below the
+ * WhatsApp block at wide viewports. */
+const bookingPhoto = cakeSmashGallery.find((img) => img.id === "cakesmash-balloon-portrait")!;
 
 export const metadata: Metadata = {
   title: "Book a Session",
@@ -58,6 +67,18 @@ export default async function BookASessionPage({
                   href={contactInfo.whatsappUrl}
                 />
               </Stack>
+            </div>
+
+            <div className="mt-10 max-w-xs">
+              <Reveal>
+                <EditorialImage
+                  src={bookingPhoto.src}
+                  alt={bookingPhoto.alt}
+                  aspect="portrait"
+                  sizes="(min-width: 1024px) 20vw, 60vw"
+                  rounded
+                />
+              </Reveal>
             </div>
           </div>
 

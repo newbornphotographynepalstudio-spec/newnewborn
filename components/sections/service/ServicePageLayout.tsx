@@ -109,28 +109,37 @@ export function ServicePageLayout({
 
       <Section>
         <SectionHeading eyebrow="Photography" title={`${content.name} Portfolio`} />
-        <Reveal className="mt-10">
-          {content.showcaseImage ? (
-            <EditorialImage
-              src={content.showcaseImage}
-              alt={content.showcaseAlt ?? content.name}
-              aspect="wide"
-              mobileAspect="landscape"
-              rounded
-            />
-          ) : (
-            <div className="flex aspect-[21/9] items-center justify-center border border-dashed border-taupe/40 bg-blush/40">
-              <p className="text-small tracking-eyebrow text-taupe uppercase">
-                {content.name} portfolio coming soon
-              </p>
+        {content.showcaseImage ? (
+          <>
+            <Reveal className="mt-10">
+              <EditorialImage
+                src={content.showcaseImage}
+                alt={content.showcaseAlt ?? content.name}
+                aspect="wide"
+                mobileAspect="landscape"
+                rounded
+              />
+            </Reveal>
+            <div className="mt-6">
+              <Button href={routes.portfolio} variant="text">
+                View Full Portfolio
+              </Button>
             </div>
-          )}
-        </Reveal>
-        <div className="mt-6">
-          <Button href={routes.portfolio} variant="text">
-            View Full Portfolio
-          </Button>
-        </div>
+          </>
+        ) : (
+          <Reveal className="mt-10">
+            <div className="mx-auto max-w-xl border border-taupe/25 bg-blush/40 px-8 py-10 text-center">
+              <p className="text-small leading-relaxed text-charcoal/75">
+                A dedicated {content.name.toLowerCase()} gallery is being
+                curated. In the meantime, real sessions from the studio —
+                the same space, lighting and team — are in the portfolio.
+              </p>
+              <Button href={routes.portfolio} variant="text" className="mt-4">
+                View the Portfolio
+              </Button>
+            </div>
+          </Reveal>
+        )}
       </Section>
 
       <Section tone="blush" containerSize="prose">

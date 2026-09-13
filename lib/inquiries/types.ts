@@ -36,6 +36,7 @@ export type Inquiry = {
     type: SessionType;
     package?: string;
     preferredDate?: string;
+    preferredTime?: string;
     alternativeDate?: string;
   };
   baby: {

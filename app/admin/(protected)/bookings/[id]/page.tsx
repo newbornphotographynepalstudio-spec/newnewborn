@@ -61,6 +61,7 @@ export default async function AdminBookingDetailPage({
         <Field label="Type" value={SESSION_TYPE_LABELS[inquiry.session.type]} />
         <Field label="Package" value={inquiry.session.package} />
         <Field label="Preferred Date" value={inquiry.session.preferredDate} />
+        <Field label="Preferred Time" value={inquiry.session.preferredTime} />
         <Field label="Alternative Date" value={inquiry.session.alternativeDate} />
         <Field label="Family Members" value={inquiry.familyMembers} />
       </div>

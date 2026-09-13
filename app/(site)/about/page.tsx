@@ -3,8 +3,15 @@ import type { Metadata } from "next";
 import { Cluster } from "@/components/primitives/Cluster";
 import { Section } from "@/components/primitives/Section";
 import { Button } from "@/components/ui/Button";
+import { EditorialImage } from "@/components/ui/EditorialImage";
 import { PageHero } from "@/components/ui/PageHero";
+import { Reveal } from "@/components/ui/Reveal";
+import { newbornGallery } from "@/lib/media/newborn-gallery";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
+
+/** The one newborn gallery photo not already used elsewhere outside the
+ * full portfolio grid — keeps this page from being text-only. */
+const aboutPhoto = newbornGallery.find((img) => img.id === "newborn-tutu-bed")!;
 
 export const metadata: Metadata = {
   title: "About",
@@ -28,6 +35,20 @@ export default function AboutPage() {
           </Button>
         </Cluster>
       </PageHero>
+
+      <Section compact>
+        <Reveal>
+          <EditorialImage
+            src={aboutPhoto.src}
+            alt={aboutPhoto.alt}
+            aspect="wide"
+            mobileAspect="portrait"
+            position={aboutPhoto.objectPosition}
+            sizes="100vw"
+            rounded
+          />
+        </Reveal>
+      </Section>
 
       <Section>
         <div className="mx-auto max-w-prose space-y-5">

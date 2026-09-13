@@ -93,6 +93,7 @@ export async function submitInquiry(
         type: sessionType,
         package: readOptionalString(formData, "package"),
         preferredDate: readOptionalString(formData, "preferredDate"),
+        preferredTime: readOptionalString(formData, "preferredTime"),
         alternativeDate: readOptionalString(formData, "alternativeDate"),
       },
       baby: {

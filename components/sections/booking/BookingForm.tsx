@@ -170,6 +170,10 @@ export function BookingForm({
               <Input id="preferredDate" name="preferredDate" type="date" className="mt-2" />
             </div>
             <div>
+              <Label htmlFor="preferredTime">Preferred Time (optional)</Label>
+              <Input id="preferredTime" name="preferredTime" type="time" className="mt-2" />
+            </div>
+            <div>
               <Label htmlFor="alternativeDate">Alternative Date (optional)</Label>
               <Input id="alternativeDate" name="alternativeDate" type="date" className="mt-2" />
             </div>
@@ -214,7 +218,7 @@ export function BookingForm({
         ) : null}
 
         <Button type="submit" disabled={pending} className="w-full justify-center">
-          {pending ? "Sending…" : "Send Enquiry"}
+          {pending ? "Sending…" : "Request Your Session"}
         </Button>
       </Stack>
     </form>
