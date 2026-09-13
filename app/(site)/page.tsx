@@ -22,7 +22,7 @@ import { siteConfig } from "@/lib/seo/site";
 
 const title = "Newborn Photography in Kathmandu, Nepal";
 const description =
-  "Premium newborn photography in Kathmandu, Nepal. Editorial, safety-led studio sessions for newborns, maternity, baby, cake smash and family portraits — book your session with Newborn Photography Nepal.";
+  "Editorial, safety-led newborn photography in Kathmandu — plus maternity, baby, cake smash and family sessions. Book your studio session today.";
 
 export const metadata: Metadata = {
   title,

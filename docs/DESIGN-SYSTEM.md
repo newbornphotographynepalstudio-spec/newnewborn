@@ -29,9 +29,9 @@ component.
 | `plum` | `#35104A` | Deep Plum — the one **strong accent** (~5%): CTAs, key emphasis, active states |
 | `ivory` | `#FBF7F5` | Warm Ivory — primary page background (neutral, ~80% bucket) |
 | `blush` | `#F4E6E8` | Soft Blush — supporting tone (~15%): soft section backgrounds, hover fills |
-| `taupe` | `#8C7A78` | Warm Taupe — supporting tone: muted text, borders, secondary UI |
+| `taupe` | `#746564` | Warm Taupe — supporting tone: muted text, borders, secondary UI |
 | `charcoal` | `#292529` | Deep Charcoal — primary body text (neutral, ~80% bucket) |
-| `rose` | `#B88F98` | Dusty Rose — supporting tone: sparing highlight/accent |
+| `rose` | `#9C7A81` | Dusty Rose — supporting tone: sparing highlight/accent |
 | `white` | `#FFFFFF` | Soft White — CTA text on plum, elevated surfaces (cards, inputs) |
 
 **Visual balance**: ~80% neutral backgrounds/photography (ivory, white,
@@ -315,17 +315,32 @@ Built into the foundation, not bolted on:
   (2px `plum` outline, 2px offset) — never suppressed on an individual
   component.
 - `NavDropdown` and `MobileNav` are keyboard-operable (Tab/Enter/Escape)
-  with correct `aria-haspopup`/`aria-expanded`/`role="menu"`/
-  `aria-modal` attributes.
+  with focus genuinely trapped/returned correctly, not just the right
+  ARIA attributes present — verified via real keyboard testing (Tab
+  order, Escape behavior), which caught two bugs a code read alone
+  didn't: `NavDropdown` dropped focus to `document.body` on Escape
+  instead of returning it to the trigger, and `MobileNav` claimed
+  `aria-modal="true"` without actually trapping Tab inside the panel.
+  Both fixed (Phase 5.1). `NavDropdown` uses `aria-expanded`/
+  `aria-controls` on the trigger, not `role="menu"`/`"menuitem"` on the
+  links — that role pair implies arrow-key navigation between items,
+  which a plain list of navigation links doesn't need or implement, so
+  using it would be incorrect ARIA rather than helpful ARIA.
 - Form fields (`components/ui/form/*`) pair with `Label`/`FieldError`/
   `HelpText` via standard `htmlFor`/`id`/`aria-describedby` wiring, which
   the calling page is responsible for connecting per-field.
 - `EditorialImage`/`GalleryGrid` require real `alt` text as a prop — there
   is no default/empty fallback baked in.
-- Color contrast: `charcoal` (#292529) on `ivory` (#FBF7F5) and `white`
-  CTA text on `plum` (#35104A) both meet WCAG AA for body text; `taupe`
-  (#8C7A78) is reserved for secondary/muted text, not body copy, since its
-  contrast on `ivory` is lower.
+- Color contrast: every text/background pairing in actual use meets its
+  applicable WCAG AA threshold, verified by computing real contrast
+  ratios (not assumed) — `charcoal` (#292529) on `ivory`/`white`/`blush`
+  and white CTA text on `plum` (#35104A) all exceed 12:1; `taupe`
+  (#746564, used at caption/small sizes down to 12px) clears 4.5:1
+  against ivory/white/blush; `rose` (#9C7A81, used only for large text-h2
+  step-number digits) clears the large-text 3:1 minimum. Both taupe and
+  rose were deepened from their original values during a Phase 5.1 audit
+  after measuring the originals (#8C7A78, #B88F98) failed these
+  thresholds — same hue, same role, just enough darker to pass.
 - `prefers-reduced-motion` is respected globally (see Motion).
 
 ## Border radius & shadows

@@ -349,13 +349,17 @@ placeholder until Navin supplies real photography.
   follow/nofollow, OG title/description/image, Twitter title/description/
   image), editable per document in `pages`, `blogPosts`,
   `portfolioGalleries`, etc.
-- Structured data (JSON-LD): `Organization`, `LocalBusiness`/
-  `ProfessionalService`/`Photographer` (genuinely applicable — a real
-  studio with a real service area), `WebSite`, `BreadcrumbList` on
-  interior pages, `Article` on blog posts, `ImageObject` on gallery images.
-  No unrelated or spammy schema types.
-- Breadcrumbs and dynamic sitemap entries once `blogPosts` and
-  `portfolioGalleries` exist.
+- Structured data already implemented (`lib/seo/jsonld.ts`): `Organization`,
+  `WebSite`, `ProfessionalService` on the homepage; `BreadcrumbList` on
+  every page two levels deep with a genuine hierarchy (all 5
+  `/portfolio/{category}/` pages, all 3 `/areas/{city}/` pages) —
+  `breadcrumbJsonLd()` is a reusable builder, not a one-off. Still
+  planned, once real data exists to back them honestly: `Article` on
+  published blog posts (no posts exist yet, so no invented
+  datePublished/author), `ImageObject` on gallery images.
+- Dynamic sitemap entries once `blogPosts` and `portfolioGalleries` exist
+  as real Firestore collections (the sitemap already lists every current
+  static route correctly).
 - Admin-managed redirects (`redirects` collection) layered on top of the
   static redirects already in `next.config.ts`.
 

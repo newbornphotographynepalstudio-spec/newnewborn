@@ -32,11 +32,19 @@ export const metadata: Metadata = {
     siteName: siteConfig.name,
     title: siteConfig.name,
     description: siteConfig.description,
+    // Site-wide fallback so every page has a social preview image, not
+    // just the homepage (which sets its own, identical, explicitly) —
+    // found via an audit that 22 of 23 pages had no og:image at all,
+    // since only the homepage defined its own `openGraph` and no
+    // fallback existed here. Reuses the same real, approved hero photo
+    // rather than inventing separate per-page OG art.
+    images: [{ url: "/photography/culture1.jpg", width: 2048, height: 1365 }],
   },
   twitter: {
     card: "summary_large_image",
     title: siteConfig.name,
     description: siteConfig.description,
+    images: ["/photography/culture1.jpg"],
   },
 };
 
