@@ -26,7 +26,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-taupe/15 bg-ivory/95 backdrop-blur-sm">
       <Container size="wide" className="flex h-16 items-center justify-between lg:h-20">
-        <Logo />
+        <Logo priority />
 
         <nav aria-label="Primary" className="hidden items-center gap-lg lg:flex">
           <NavDropdown label="Services" items={servicesNav} />

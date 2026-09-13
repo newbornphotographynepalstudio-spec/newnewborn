@@ -280,10 +280,14 @@ could drift out of sync.
   upload path.
 - Working Firebase Authentication (the `/admin/login/` form is a static,
   disabled placeholder built on the real form primitives).
-- Real content, pricing, testimonials, or photography anywhere on the
-  site — every page is an honest "content in progress" placeholder; no
-  stock photography is used anywhere.
-- JSON-LD structured data, breadcrumbs, dynamic sitemap entries.
+- The homepage (Phase 3) is real, but every other route is still an
+  honest "content in progress" `PagePlaceholder`. No stock photography is
+  used anywhere — the homepage's real photography is limited to the one
+  client-supplied `culture1.jpg`, and packages/reviews render honest empty
+  states rather than invented pricing or testimonials (see
+  `lib/data/packages.ts`, `lib/data/reviews.ts`).
+- Dynamic sitemap entries (blog posts, portfolio galleries) once those
+  collections exist; breadcrumbs on interior pages.
 - Resend email and Cloudflare Turnstile integration (booking/contact forms
   aren't functional yet — there's nothing to protect or notify on).
 - The real admin UI design (Phase 2 established shared tokens only — see

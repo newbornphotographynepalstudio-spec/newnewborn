@@ -1,4 +1,5 @@
 import Image, { type ImageProps } from "next/image";
+import type { ReactNode } from "react";
 
 export type ImageAspect = "portrait" | "landscape" | "wide" | "square" | "auto";
 export type ImageFit = "cover" | "contain";
@@ -68,6 +69,10 @@ const positionClassLg: Record<ImagePosition, string> = {
  * - Full-resolution originals are never referenced here directly — `src`
  *   is expected to already be an optimized/derivative URL (see
  *   docs/DESIGN-SYSTEM.md, Image rules).
+ * - `overlay` renders content (e.g. a gradient scrim + hero copy)
+ *   absolutely positioned inside the same aspect-ratio box as the image —
+ *   for the "text in the photograph's negative space" editorial pattern,
+ *   without a separate component reimplementing the image box.
  */
 export function EditorialImage({
   src,
@@ -81,6 +86,7 @@ export function EditorialImage({
   sizes = "(min-width: 1024px) 50vw, 100vw",
   blurDataURL,
   rounded = false,
+  overlay,
   className = "",
 }: {
   src: ImageProps["src"];
@@ -96,6 +102,7 @@ export function EditorialImage({
   sizes?: string;
   blurDataURL?: string;
   rounded?: boolean;
+  overlay?: ReactNode;
   className?: string;
 }) {
   const isStaticImport = typeof src === "object";
@@ -137,6 +144,7 @@ export function EditorialImage({
         blurDataURL={blurDataURL}
         className={`${fitClass[fit]} ${positionClasses}`}
       />
+      {overlay}
     </div>
   );
 }

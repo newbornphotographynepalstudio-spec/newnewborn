@@ -1,41 +1,86 @@
-import { Cluster } from "@/components/primitives/Cluster";
-import { Section } from "@/components/primitives/Section";
-import { Button } from "@/components/ui/Button";
-import { bookASessionCta, routes } from "@/lib/navigation/routes";
+import type { Metadata } from "next";
+
+import { BrandIntro } from "@/components/sections/home/BrandIntro";
+import { ExperienceSteps } from "@/components/sections/home/ExperienceSteps";
+import { FaqPreview } from "@/components/sections/home/FaqPreview";
+import { FeaturedWork } from "@/components/sections/home/FeaturedWork";
+import { FinalCta } from "@/components/sections/home/FinalCta";
+import { HeritageSection } from "@/components/sections/home/HeritageSection";
+import { HomeHero } from "@/components/sections/home/HomeHero";
+import { PackagesPreview } from "@/components/sections/home/PackagesPreview";
+import { ReviewsSection } from "@/components/sections/home/ReviewsSection";
+import { SafetySection } from "@/components/sections/home/SafetySection";
+import { ServiceAreaSection } from "@/components/sections/home/ServiceAreaSection";
+import { ServicesOverview } from "@/components/sections/home/ServicesOverview";
+import { StudioSection } from "@/components/sections/home/StudioSection";
+import { TrainingSection } from "@/components/sections/home/TrainingSection";
+import {
+  organizationJsonLd,
+  professionalServiceJsonLd,
+  websiteJsonLd,
+} from "@/lib/seo/jsonld";
+import { siteConfig } from "@/lib/seo/site";
+
+const title = "Newborn Photography in Kathmandu, Nepal";
+const description =
+  "Premium newborn photography in Kathmandu, Nepal. Editorial, safety-led studio sessions for newborns, maternity, baby, cake smash and family portraits — book your session with Newborn Photography Nepal.";
+
+export const metadata: Metadata = {
+  title,
+  description,
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: siteConfig.locale,
+    siteName: siteConfig.name,
+    url: siteConfig.url,
+    title,
+    description,
+    images: [{ url: "/photography/culture1.jpg", width: 2048, height: 1365 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: ["/photography/culture1.jpg"],
+  },
+};
 
 /**
- * Still a placeholder hero, not the final homepage (Phase 2 is design
- * system + UI foundation only — see docs/DESIGN-SYSTEM.md). Restyled onto
- * the new type scale, spacing and Button/Section primitives so the
- * foundation is demonstrably working, without inventing final copy or
- * placing any photography here yet.
+ * The Phase 3 homepage. Exactly one <h1> (in HomeHero); every section
+ * below it heads with an <h2> (see SectionHeading). No content here is
+ * invented — packages/reviews render honest empty states until real data
+ * exists (see lib/data/packages.ts, lib/data/reviews.ts).
  */
 export default function HomePage() {
+  const jsonLd = [organizationJsonLd(), websiteJsonLd(), professionalServiceJsonLd()];
+
   return (
-    <Section>
-      <div className="max-w-3xl">
-        <p className="text-eyebrow font-medium tracking-eyebrow text-taupe uppercase">
-          Kathmandu Valley, Nepal
-        </p>
-        <h1 className="mt-sm text-display">
-          Newborn Photography Nepal, by Navin
-        </h1>
-        <p className="mt-md max-w-prose text-body-lg leading-relaxed text-charcoal/80">
-          A photography studio for newborn, maternity, baby, cake smash and
-          family sessions — with training for photographers who want to work
-          with newborns safely and beautifully.
-        </p>
-        <Cluster gap="sm" className="mt-lg">
-          <Button href={bookASessionCta.href}>{bookASessionCta.label}</Button>
-          <Button href={routes.portfolio} variant="secondary">
-            Explore Portfolio
-          </Button>
-        </Cluster>
-        <p className="mt-2xl inline-block rounded-sm border border-taupe/30 bg-blush px-sm py-2xs text-small text-charcoal/70">
-          Full homepage content, portfolio photography and pricing are being
-          added.
-        </p>
-      </div>
-    </Section>
+    <>
+      {jsonLd.map((entry, index) => (
+        <script
+          key={index}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(entry) }}
+        />
+      ))}
+
+      <HomeHero />
+      <BrandIntro />
+      <ServicesOverview />
+      <FeaturedWork />
+      <ExperienceSteps />
+      <SafetySection />
+      <StudioSection />
+      <HeritageSection />
+      <PackagesPreview />
+      <ReviewsSection />
+      <TrainingSection />
+      <ServiceAreaSection />
+      <FaqPreview />
+      <FinalCta />
+    </>
   );
 }

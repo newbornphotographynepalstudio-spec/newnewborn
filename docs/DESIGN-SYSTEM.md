@@ -227,18 +227,22 @@ Full-resolution originals are never referenced directly in page markup —
 `src` is always expected to already be an optimized/derivative URL (see
 `docs/ARCHITECTURE.md`, Image / photography architecture).
 
-**`culture1.jpg`** is the approved **primary homepage image** (newborn in
-traditional Nepali styling — heritage/cultural storytelling). The
-client-supplied original stays untouched at the project root; a copy used
-by the app lives at `public/photography/culture1.jpg`, referenced via the
-typed `cultureHeritageImage` export in `lib/media/approved-assets.ts`
-(source, alt text, and recommended `aspect`/`mobileAspect`/`position`/
-`mobilePosition` values for `EditorialImage`). It is **not wired into any
-page yet** — that's the homepage build in a later phase, which should use
-it with `priority` (it will very likely be the LCP image) and the
-`mobileAspect`/`mobilePosition` art-direction props so mobile isn't just a
-squeezed copy of the desktop crop. Don't crop the baby or culturally
-significant objects out of frame at any breakpoint, don't filter it.
+**`culture1.jpg`** is the approved **primary homepage hero image**
+(newborn in traditional Nepali styling — heritage/cultural storytelling).
+The client-supplied original stays untouched at the project root; a copy
+used by the app lives at `public/photography/culture1.jpg`, referenced via
+the typed `cultureHeritageImage` export in `lib/media/approved-assets.ts`.
+It's wired into `HomeHero` (`components/sections/home/HomeHero.tsx`) with
+`priority` (it's the page's LCP element) and `aspect="wide"` /
+`mobileAspect="portrait"` art direction — a 16:9 crop on desktop, 4:5 on
+mobile, from the same unaltered file, both using `position="center"`
+(the image's own empty space at the top means a center crop keeps the
+baby and the flanking brass/textile styling in frame at both ratios). It
+appears a second time, smaller, in the homepage's Featured Work section —
+deliberately not repeated a third time elsewhere on the same page (see
+`HeritageSection`'s comment) to avoid the page reading as thin on content.
+Don't crop the baby or culturally significant objects out of frame at any
+breakpoint, don't filter it.
 
 **`favicon.png`** is the approved favicon (1024×1024 PNG), implemented via
 Next.js's App Router file convention: the untouched original stays at the

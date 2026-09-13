@@ -69,21 +69,22 @@ export const bookASessionCta: NavItem = {
   href: routes.bookASession,
 };
 
-export const footerExploreLinks: NavItem[] = [
+export const footerServiceLinks: NavItem[] = servicesNav;
+
+export const footerStudioLinks: NavItem[] = [
+  { label: "About", href: routes.about },
   { label: "Portfolio", href: routes.portfolio },
   { label: "Packages", href: routes.packages },
   { label: "Studio", href: routes.studio },
+  { label: "Safety", href: routes.safety },
   { label: "Training", href: routes.training },
-  { label: "Blog", href: routes.blog },
 ];
 
-export const footerServiceLinks: NavItem[] = servicesNav;
-
 export const footerConnectLinks: NavItem[] = [
-  { label: "About", href: routes.about },
+  { label: "Blog", href: routes.blog },
+  { label: "FAQ", href: routes.faq },
   { label: "Contact", href: routes.contact },
   { label: "Book a Session", href: routes.bookASession },
-  { label: "FAQ", href: routes.faq },
 ];
 
 export const footerAreaLinks: NavItem[] = [

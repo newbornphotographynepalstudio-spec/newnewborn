@@ -7,7 +7,8 @@ import { SocialLinks, type SocialLink } from "@/components/layout/SocialLinks";
 import {
   footerAreaLinks,
   footerConnectLinks,
-  footerExploreLinks,
+  footerServiceLinks,
+  footerStudioLinks,
   routes,
 } from "@/lib/navigation/routes";
 
@@ -20,17 +21,18 @@ export function Footer() {
 
   return (
     <footer className="border-t border-taupe/15 bg-ivory">
-      <Container size="wide" className="grid gap-2xl py-3xl sm:grid-cols-3">
-        <Stack gap="sm" className="sm:max-w-xs">
+      <Container size="wide" className="grid gap-2xl py-3xl sm:grid-cols-2 lg:grid-cols-4">
+        <Stack gap="sm" className="sm:col-span-2 lg:col-span-1">
           <Logo />
-          <p className="text-small leading-relaxed text-taupe">
+          <p className="max-w-xs text-small leading-relaxed text-taupe">
             Newborn, maternity, baby, cake smash and family photography by
             Navin, serving Kathmandu Valley, Nepal.
           </p>
           <SocialLinks links={socialLinks} className="pt-2xs" />
         </Stack>
 
-        <FooterColumn title="Explore" links={footerExploreLinks} />
+        <FooterColumn title="Services" links={footerServiceLinks} />
+        <FooterColumn title="Studio" links={footerStudioLinks} />
         <FooterColumn title="Connect" links={footerConnectLinks} />
       </Container>
 
