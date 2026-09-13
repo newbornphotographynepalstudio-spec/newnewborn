@@ -15,9 +15,14 @@
   --color-plum: #35104a; /* Deep Plum — the one strong accent (~5% of the UI: CTAs, key emphasis) */
   --color-ivory: #fbf7f5; /* Warm Ivory — primary page background (~80% neutral bucket) */
   --color-blush: #f4e6e8; /* Soft Blush — supporting tone, soft section backgrounds */
-  --color-taupe: #8c7a78; /* Warm Taupe — supporting tone, muted text/borders */
+  --color-taupe: #746564; /* Warm Taupe — supporting tone, muted text/borders. Deepened
+    from the original #8c7a78 (measured 3.35–4.06:1 against ivory/white/blush — fails
+    WCAG AA's 4.5:1 for the small caption/eyebrow text it's used for sitewide); this
+    value clears 4.5:1 against all three, same hue. */
   --color-charcoal: #292529; /* Deep Charcoal — primary body text (~80% neutral bucket) */
-  --color-rose: #b88f98; /* Dusty Rose — supporting tone, sparing highlight/accent */
+  --color-rose: #9c7a81; /* Dusty Rose — supporting tone, sparing highlight/accent. Deepened
+    from the original #b88f98 (measured 2.66–2.83:1 — fails even the 3:1 large-text
+    minimum for the large step-number digits it's used for); this value clears 3:1. */
   --color-white: #ffffff; /* Soft White — CTA text on plum, elevated surfaces */
 
   /* --- Color: semantic aliases — components use these, not the raw names. */
