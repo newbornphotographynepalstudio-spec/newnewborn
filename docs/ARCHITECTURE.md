@@ -51,21 +51,29 @@ app/
 
   admin/                       # separate shell — no public Header/Footer
     layout.tsx
-    page.tsx                   # dashboard
-    login/
+    login/                      # outside (protected) — AdminLoginForm
+    (protected)/                # route group — every real check lives here
+      layout.tsx                 # calls requireAdminSession()
+      page.tsx                   # dashboard
+      bookings/ (+ [id]/)
 
-proxy.ts                       # admin route gate (session-cookie presence; Next.js's edge "proxy"/middleware convention)
+  api/admin/session/route.ts    # mints/clears the __session cookie
+
+proxy.ts                       # admin route gate (session-cookie presence only; Next.js's edge "proxy"/middleware convention)
 
 components/
   layout/   Header.tsx, Footer.tsx
   ui/       Container.tsx, Logo.tsx, PagePlaceholder.tsx
+  sections/admin/ AdminLoginForm.tsx, SignOutButton.tsx
 
 lib/
   navigation/routes.ts          # single source of truth for route paths + nav
-  auth/roles.ts                 # admin role model
+  auth/roles.ts                 # admin role model (planned, not yet wired to a claim)
   admin/modules.ts               # planned admin module list
   firebase/client.ts             # Firebase client SDK (browser-safe)
   firebase/admin.ts              # Firebase Admin SDK (server-only)
+  firebase/session.ts            # real session verification — the actual auth boundary
+  firebase/session-cookie.ts     # cookie name/lifetime shared by proxy.ts + session.ts
   seo/site.ts                    # global site constants
 
 public/
@@ -130,18 +138,54 @@ a role, adjust `ROLE_RANK`) without restructuring the model.
    in depth, so direct client-SDK reads/writes are also constrained even if
    an application-layer check were ever missed.
 
-**Current Phase 1 state**: `proxy.ts` (Next.js 16's file convention for
-what was previously `middleware.ts`) gates `/admin/*` (except
-`/admin/login/`) on the mere *presence* of a `__session` cookie and
-redirects to `/admin/login/` if absent. This is a UX redirect, not the
-security boundary — it runs on the Edge runtime, where the Firebase Admin
-SDK (which needs Node.js) cannot run. **Phase 2** adds: real Firebase
-Authentication sign-in on `/admin/login/`, a Route Handler that verifies
-the ID token server-side and mints a proper session cookie
-(`getAdminAuth().createSessionCookie`), and per-module role checks (see
-`lib/admin/modules.ts` for the planned minimum role per module) enforced in
-Node.js Server Actions/Route Handlers plus matching Firestore rules — never
-in the Edge proxy alone.
+**Current state**: real Firebase Authentication is wired end to end.
+`proxy.ts` still only checks *presence* of a `__session` cookie and
+redirects to `/admin/login/` if absent — that's a UX redirect, not the
+security boundary, since it runs on the Edge runtime where the Firebase
+Admin SDK (which needs Node.js) cannot run. The actual boundary is
+`requireAdminSession()` (`lib/firebase/session.ts`), called in
+`app/admin/(protected)/layout.tsx` (every admin page except
+`/admin/login/`, which sits outside that route group) and independently
+inside `updateInquiryStatus` (`lib/inquiries/actions.ts`, since a Server
+Action is its own callable endpoint and can't assume the page that
+renders its form already checked). It cryptographically verifies the
+`__session` cookie with `getAdminAuth().verifySessionCookie` and requires
+the decoded token's `admin` custom claim to be `true` — a forged or
+expired cookie, or a real signed-in Firebase user without that claim,
+is rejected the same way (redirected / returned an error), never treated
+as authorized.
+
+Sign-in itself: `/admin/login/` (`AdminLoginForm`) signs in with the
+Firebase **client** SDK (`signInWithEmailAndPassword`), gets an ID token,
+and POSTs it to `POST /api/admin/session`, which verifies the ID token
+with the Admin SDK, checks the `admin` claim, and — only then — mints the
+session cookie via `getAdminAuth().createSessionCookie` (httpOnly,
+`secure` in production, `sameSite: lax`). `DELETE /api/admin/session`
+plus a client-side `signOut()` (`SignOutButton`) reverses this. There is
+no self-serve admin signup — the `admin` claim is set once, out-of-band,
+with the Admin SDK (see docs/SETUP.md, "Provisioning an admin user").
+
+**What's real vs. still a placeholder**: the binary `admin` claim gates
+all of `/admin/*` uniformly — it does not yet implement the granular
+`lib/auth/roles.ts` rank model (`SUPER_ADMIN`/`ADMIN`/`EDITOR`/
+`PHOTOGRAPHER_STAFF`) or `lib/admin/modules.ts`'s per-module minimum
+role. That finer-grained model stays a documented plan, not wired to any
+claim, because the only admin module with a real implementation today
+(Leads/Inquiries — `/admin/bookings/`) doesn't need it; per-module role
+checks are worth building once more modules have real data/actions behind
+them, not before. **Not independently verified end-to-end in this
+environment**: there is no `.env.local` here, so no real
+`NEXT_PUBLIC_FIREBASE_*` / `FIREBASE_*` credentials and no Firebase user
+with the `admin` claim exist to sign in with. What *is* verified: the
+code typechecks/builds/lints; a request with no session cookie is
+redirected to `/admin/login/`; a request with a syntactically-present but
+cryptographically invalid (forged) cookie is also redirected — proving
+`requireAdminSession()`, not cookie presence, is what actually gates
+access; and `POST /api/admin/session` fails with a clear, intentional
+error (not a crash) when Admin SDK credentials are absent. The
+client-sign-in → ID-token → session-cookie round trip itself needs real
+credentials to exercise and has not been run against a live Firebase
+project.
 
 **Admin modules** (`lib/admin/modules.ts`): Dashboard, Leads/Inquiries,
 Bookings, Portfolio/Galleries, Services, Packages & Pricing, Blog/Articles,
@@ -216,12 +260,13 @@ Firestore. Three moving pieces:
 2. **Read/update path** — `/admin/bookings/` (list) and
    `/admin/bookings/[id]/` (detail, with a status-update form calling the
    `updateInquiryStatus` Server Action) read exclusively through the
-   Admin SDK too (`lib/inquiries/admin-data.ts`), gated by the same
-   `/admin/*` session-cookie check as the rest of the admin area
-   (`proxy.ts`). Both Firebase-reliant pages degrade to an honest "not
-   configured" message instead of crashing when Admin SDK credentials
-   aren't set — exactly what happens in this repo's own dev/build
-   environment right now.
+   Admin SDK too (`lib/inquiries/admin-data.ts`), gated by
+   `requireAdminSession()` (real, cryptographic session verification —
+   see "Admin & authorization" above) rather than the `/admin/*`
+   cookie-presence check alone. Both Firebase-reliant pages degrade to an
+   honest "not configured" message instead of crashing when Admin SDK
+   credentials aren't set — exactly what happens in this repo's own
+   dev/build environment right now.
 3. **Firestore rules** (`firestore.rules`, `inquiries` match block) — a
    second, independent layer: public `create` is allowed only for
    documents matching the exact real schema (required fields present,
@@ -233,16 +278,15 @@ Firestore. Three moving pieces:
    invariant holds even against a hypothetical future direct
    client-SDK code path, not just the one that exists today.
 
-**Known limitation, stated plainly**: the `/admin/*` session gate
-(`proxy.ts`) checks only for the *presence* of a `__session` cookie, not
-its cryptographic validity — real Firebase Authentication (verifying a
-session cookie server-side via `getAdminAuth().verifySessionCookie`,
-checking a role custom claim) was never wired up in an earlier phase and
-still isn't. That was an acceptable gap when `/admin/*` had no real data
-behind it; now that the admin inbox holds real customer names, emails,
-phone numbers and messages, closing this gap (real sign-in on
-`/admin/login/`, real session verification) is the highest-priority
-follow-up, not a nice-to-have.
+**Formerly a known limitation, now closed**: `/admin/*` used to be gated
+only by `proxy.ts` checking *presence* of a `__session` cookie, not its
+cryptographic validity. Real Firebase Authentication (sign-in on
+`/admin/login/`, `getAdminAuth().verifySessionCookie` server-side
+verification, an `admin` custom claim check) now gates every admin page
+and the `updateInquiryStatus` action — see "Admin & authorization" above
+for exactly what's wired, what's still a placeholder (the granular role
+model), and what remains unverified without real Firebase credentials in
+this environment.
 
 Data model: see `lib/inquiries/types.ts` for the exact `Inquiry` shape
 (customer, session, baby, message, contactPreference, status, source) —
@@ -331,10 +375,10 @@ could drift out of sync.
 - Every planned Firestore collection except `inquiries` (see "Booking /
   inquiry system" above) — no `admins`, `services`, `packages`,
   `portfolioGalleries`, `blogPosts`, etc. yet, and no Storage upload path.
-- Working Firebase Authentication (the `/admin/login/` form is still a
-  static, disabled placeholder). This is now the most important deferred
-  item, not a minor one — see the "Known limitation" note under Booking /
-  inquiry system above.
+- The granular per-module role model (`lib/auth/roles.ts`,
+  `lib/admin/modules.ts`) — real Firebase Authentication itself is wired
+  (see "Admin & authorization" above); only the finer-grained role ranks
+  remain unimplemented, deferred until more admin modules exist.
 - Real content exists on every route except `/blog/` (lists planned
   topics, no published articles yet) and
   `/portfolio/{maternity,baby,cake-smash,family}/` (honest gallery-empty

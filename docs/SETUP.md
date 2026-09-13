@@ -64,9 +64,10 @@ sent to the browser. Never put a secret value behind a `NEXT_PUBLIC_` name.
      newlines, so when pasting into a `.env` file or a Vercel env var box
      (which typically can't hold literal newlines), keep the `\n`
      characters as-is rather than inserting real line breaks.
-4. **Authentication**: enable the Email/Password sign-in provider (Admin
-   sign-in will be wired up in Phase 2 — nothing to do here yet beyond
-   enabling the provider).
+4. **Authentication**: enable the Email/Password sign-in provider.
+   Admin sign-in (`/admin/login`) is fully wired to Firebase Auth — see
+   "Provisioning an admin user" below for the one step still required
+   before anyone can actually sign in.
 5. **Firestore** and **Storage**: enable both in the console. Security
    rules are already defined in this repo (`firestore.rules`,
    `storage.rules`) as deny-all foundations — deploy them with the Firebase
@@ -81,6 +82,34 @@ sent to the browser. Never put a secret value behind a `NEXT_PUBLIC_` name.
 No collections need to be created manually — Firestore creates a
 collection the first time a document is written to it, and none of that
 happens until Phase 2 builds the corresponding feature.
+
+### Provisioning an admin user
+
+`/admin/*` requires a Firebase user that carries the **`admin` custom
+claim** — see `lib/firebase/session.ts`. There is deliberately no
+self-serve admin signup (a real Firebase account alone is not enough to
+reach `/admin/bookings`); the claim is set once, out-of-band, with the
+Admin SDK:
+
+1. In the Firebase Console → Authentication → Users, add the admin's user
+   (email/password), or let them sign up via a script if you build one.
+   Note their **UID**.
+2. Run a one-off script with the Admin SDK credentials already in
+   `.env.local`:
+   ```js
+   // scripts/set-admin-claim.mjs — run with: node scripts/set-admin-claim.mjs <uid>
+   import { getAdminAuth } from "../lib/firebase/admin.ts";
+   const uid = process.argv[2];
+   await getAdminAuth().setCustomUserClaims(uid, { admin: true });
+   console.log(`admin claim set for ${uid}`);
+   ```
+   (This repo doesn't ship that script pre-written — write it when you
+   have a real UID to run it against, rather than leaving an unused
+   privileged script sitting in the repo.)
+3. The user must sign out and back in (or wait for their existing ID
+   token to refresh, up to an hour) for the new claim to appear in a
+   freshly issued ID token — `/api/admin/session` reads the claim from
+   the ID token at sign-in time.
 
 ## Build, lint, type checking
 

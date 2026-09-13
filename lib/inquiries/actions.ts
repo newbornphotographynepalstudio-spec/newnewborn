@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { FieldValue } from "firebase-admin/firestore";
 
 import { getAdminFirestore } from "@/lib/firebase/admin";
+import { verifyAdminSession } from "@/lib/firebase/session";
 import {
   CONTACT_PREFERENCES,
   INQUIRY_STATUSES,
@@ -123,18 +124,24 @@ export async function submitInquiry(
 export type UpdateStatusState = { status: "idle" | "success" | "error"; message?: string };
 
 /**
- * Admin-only: updates one inquiry's status. Reachable only through
- * /admin/bookings/[id]/, which sits behind the /admin/* session gate
- * (proxy.ts) — see docs/ARCHITECTURE.md for why that gate is a UX
- * redirect today, not yet cryptographic verification (real Firebase
- * Authentication, a later phase, closes that gap). This action itself
- * never accepts a client-supplied role — it only ever changes `status`
- * on one already-identified document.
+ * Admin-only: updates one inquiry's status. Reachable through
+ * /admin/bookings/[id]/, which sits behind requireAdminSession() in
+ * app/admin/(protected)/layout.tsx — but a Server Action is its own
+ * callable endpoint and isn't guaranteed to only ever be invoked from a
+ * page that already checked, so it independently calls the same
+ * cryptographic session check here rather than trusting the caller. This
+ * action never accepts a client-supplied role — it only ever changes
+ * `status` on one already-identified document.
  */
 export async function updateInquiryStatus(
   _prevState: UpdateStatusState,
   formData: FormData
 ): Promise<UpdateStatusState> {
+  const session = await verifyAdminSession();
+  if (!session) {
+    return { status: "error", message: "Your session has expired — please sign in again." };
+  }
+
   const id = readString(formData, "id");
   const nextStatus = readString(formData, "status");
 

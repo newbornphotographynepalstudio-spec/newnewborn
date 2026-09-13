@@ -1,22 +1,28 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+import { SESSION_COOKIE_NAME } from "@/lib/firebase/session-cookie";
+
 /**
- * Admin route gate — foundation only.
+ * Admin route gate — a UX redirect, not the authorization boundary.
  *
  * Middleware runs on the Edge runtime, where the Firebase Admin SDK cannot
  * run (it needs Node.js). So this layer only checks for the *presence* of
  * a session cookie and redirects unauthenticated visitors to /admin/login;
- * it is a UX gate, not the authorization boundary.
+ * a forged or expired cookie value still passes this check.
  *
- * The real authorization boundary is server-side, in Node.js: every admin
- * Server Action / Route Handler must independently verify the session
- * cookie with the Firebase Admin SDK (getAdminAuth().verifySessionCookie)
- * and check the decoded token's role claim before doing anything
- * privileged. Firestore Security Rules provide defense in depth for direct
- * client SDK access. Client-supplied role/claim values are never trusted.
+ * The real authorization boundary is server-side, in Node.js:
+ * app/admin/(protected)/layout.tsx calls requireAdminSession()
+ * (lib/firebase/session.ts) on every protected admin page, which
+ * cryptographically verifies the session cookie with the Firebase Admin
+ * SDK (verifySessionCookie) and checks the decoded token's `admin` custom
+ * claim — redirecting to /admin/login if it's missing, expired, or
+ * forged. Every admin Server Action (e.g. updateInquiryStatus in
+ * lib/inquiries/actions.ts) independently calls the same helper, since a
+ * Server Action can be invoked directly and isn't guaranteed to only run
+ * from a page that already checked. Firestore Security Rules provide
+ * defense in depth for any direct client SDK access. Client-supplied
+ * role/claim values are never trusted anywhere in this chain.
  */
-
-const SESSION_COOKIE_NAME = "__session";
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
