@@ -27,11 +27,11 @@ export function GalleryGrid({
   }
 
   return (
-    <div className="columns-1 gap-md sm:columns-2 lg:columns-3">
+    <div className="columns-1 gap-6 sm:columns-2 lg:columns-3">
       {images.map((image, index) => {
         const isInteractive = Boolean(onImageClick);
         const content = (
-          <span className="relative mb-md block w-full overflow-hidden break-inside-avoid rounded-md bg-blush">
+          <span className="relative mb-6 block w-full overflow-hidden break-inside-avoid rounded-md bg-blush">
             <Image
               src={image.src}
               alt={image.alt}
@@ -50,7 +50,7 @@ export function GalleryGrid({
             <figure key={image.id} className="group">
               {content}
               {image.caption ? (
-                <figcaption className="mb-md -mt-xs text-caption text-taupe">
+                <figcaption className="mb-6 -mt-3 text-caption text-taupe">
                   {image.caption}
                 </figcaption>
               ) : null}

@@ -57,7 +57,7 @@ export function NavDropdown({ label, items }: { label: string; items: NavItem[] 
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-3xs text-small text-charcoal transition-colors duration-base hover:text-plum"
+        className="flex items-center gap-1 text-small text-charcoal transition-colors duration-base hover:text-plum"
       >
         {label}
         <svg
@@ -77,7 +77,7 @@ export function NavDropdown({ label, items }: { label: string; items: NavItem[] 
       {open ? (
         <div
           role="menu"
-          className="absolute top-full left-1/2 z-10 mt-sm w-56 -translate-x-1/2 rounded-sm border border-taupe/20 bg-white py-2xs shadow-md"
+          className="absolute top-full left-1/2 z-10 mt-4 w-56 -translate-x-1/2 rounded-sm border border-taupe/20 bg-white py-2 shadow-md"
         >
           {items.map((item) => (
             <Link
@@ -85,7 +85,7 @@ export function NavDropdown({ label, items }: { label: string; items: NavItem[] 
               href={item.href}
               role="menuitem"
               onClick={() => setOpen(false)}
-              className="block px-sm py-2xs text-small text-charcoal transition-colors duration-base hover:bg-blush hover:text-plum"
+              className="block px-4 py-2 text-small text-charcoal transition-colors duration-base hover:bg-blush hover:text-plum"
             >
               {item.label}
             </Link>

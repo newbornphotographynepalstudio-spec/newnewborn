@@ -28,11 +28,11 @@ export function PagePlaceholder({
             {eyebrow}
           </p>
         ) : null}
-        <h1 className="mt-xs text-h1">{title}</h1>
-        <p className="mt-sm text-body-lg leading-relaxed text-charcoal/80">
+        <h1 className="mt-3 text-h1">{title}</h1>
+        <p className="mt-4 text-body-lg leading-relaxed text-charcoal/80">
           {description}
         </p>
-        <p className="mt-lg inline-block rounded-sm border border-taupe/30 bg-blush px-sm py-2xs text-small text-charcoal/70">
+        <p className="mt-8 inline-block rounded-sm border border-taupe/30 bg-blush px-4 py-2 text-small text-charcoal/70">
           Content for this page is in progress and will be added by Newborn
           Photography Nepal.
         </p>

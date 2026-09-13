@@ -8,11 +8,11 @@ export default function NotFound() {
       <p className="text-eyebrow font-medium tracking-eyebrow text-taupe uppercase">
         404
       </p>
-      <h1 className="mt-sm text-h1">Page not found</h1>
-      <p className="mx-auto mt-sm max-w-prose text-body-lg leading-relaxed text-charcoal/80">
+      <h1 className="mt-4 text-h1">Page not found</h1>
+      <p className="mx-auto mt-4 max-w-prose text-body-lg leading-relaxed text-charcoal/80">
         The page you&apos;re looking for doesn&apos;t exist or may have moved.
       </p>
-      <Button href={routes.home} className="mt-lg">
+      <Button href={routes.home} className="mt-8">
         Back to Home
       </Button>
     </Section>

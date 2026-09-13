@@ -239,8 +239,12 @@ mobile, from the same unaltered file, both using `position="center"`
 (the image's own empty space at the top means a center crop keeps the
 baby and the flanking brass/textile styling in frame at both ratios). It
 appears a second time, smaller, in the homepage's Featured Work section —
-deliberately not repeated a third time elsewhere on the same page (see
-`HeritageSection`'s comment) to avoid the page reading as thin on content.
+deliberately not repeated a third time elsewhere on the *same page* (see
+`HeritageSection`'s comment) to avoid that page reading as thin on
+content. It appears once more, site-wide, on `/portfolio/newborn/`
+(`components/sections/portfolio/PortfolioCategoryLayout.tsx`) — the one
+place a repeat is the point, since that page's whole purpose is showing
+newborn photography.
 Don't crop the baby or culturally significant objects out of frame at any
 breakpoint, don't filter it.
 
@@ -375,3 +379,66 @@ visibility) is local `useState`/`useRef`. Server/client boundaries: every
 new component is a Server Component by default; `"use client"` is used
 only where interactivity genuinely requires it (`Header`, `NavDropdown`,
 `MobileNav`, `Reveal`, `GalleryGrid`).
+
+## Phase 3A — three bugs only real browser testing caught
+
+Phase 2/3 passed lint, typecheck and build the whole time these existed.
+None of the three is the kind of thing a type checker or a build can
+catch — they only showed up when the rendered pages were actually looked
+at and interacted with, which is why this phase's process was: rebuild,
+screenshot, look, fix, re-screenshot. Recorded here so the same class of
+mistake isn't repeated:
+
+1. **Spacing-token collision.** The original t-shirt-named spacing scale
+   (`--spacing-sm`, `--spacing-md`, ... `--spacing-3xl`) reused Tailwind
+   v4's own reserved size-scale words. Since `max-w-*`, `w-*`, `h-*`,
+   `gap-*`, `p-*` and `m-*` all read from the same `--spacing-*`
+   namespace, this silently overrode Tailwind's built-in `max-w-sm`
+   through `max-w-3xl` (e.g. `max-w-2xl` became 4rem instead of 42rem)
+   everywhere on the site simultaneously — the "one word per line" text
+   columns this produced were the original visual bug report. Fixed by
+   removing the named aliases entirely and using Tailwind's numeric scale
+   directly (`gap-6` instead of `gap-md`); see the comment above the
+   spacing block in `globals.css` for the full mapping.
+2. **Unlayered base styles beating utility classes.** `h1`–`h4` color was
+   set as plain CSS after `@import "tailwindcss"`, outside any `@layer`.
+   Unlayered CSS unconditionally wins over layered CSS (which is what
+   Tailwind's generated utilities are) regardless of selector specificity
+   — so `text-white` on a heading inside a dark/plum section could never
+   win against that rule, and every such heading rendered in the default
+   dark text color instead of white. Fixed by wrapping the base
+   element-reset rules in `@layer base { ... }` in `globals.css`, which
+   is the documented Tailwind v4 pattern for exactly this situation.
+3. **`position: fixed` collapsing inside a `backdrop-filter` ancestor.**
+   `MobileNav`'s full-screen overlay (`fixed inset-0`) was rendered as a
+   child of `<header>`, which has `backdrop-blur-sm`. A `backdrop-filter`
+   (like `filter` or `transform`) on an ancestor creates a new containing
+   block for `position: fixed` descendants — so the "full screen" overlay
+   was actually sized to `<header>`'s own ~64px height, not the viewport.
+   The bug was invisible in code and even in a static screenshot of the
+   *closed* menu; it only showed up when the menu was actually opened in
+   a real browser. Fixed by rendering `<MobileNav>` as a sibling of
+   `<header>` (`components/layout/Header.tsx`) rather than nesting it
+   inside. If a future fixed-position element needs to live near the
+   header, check this first.
+
+## Phase 3A — additions
+
+- **Contact facts** (`lib/data/contact.ts`): phone, WhatsApp link, email,
+  domain — single source read by `Footer`, `WhatsAppButton`, `/contact/`
+  and `/book-a-session/`.
+- **`WhatsAppButton`** (`components/ui/WhatsAppButton.tsx`): fixed
+  bottom-right, `z-30` (below the mobile menu's `z-50`, above page
+  content), a short fade-in on mount, and — since it's a plain `<a>` to a
+  `wa.me` link — works immediately with no backend.
+- **`PageHero`, `FaqAccordion`, `ContactRow`** (`components/ui/`): the
+  shared pieces every interior page (service pages, area pages, FAQ,
+  contact, booking) is built from, so those pages share one visual
+  vocabulary instead of each inventing its own hero/FAQ/contact-row
+  treatment.
+- **No booking/contact form.** `/contact/` and `/book-a-session/`
+  deliberately lead with `tel:`/`wa.me`/`mailto:` links instead of a web
+  form — those work today with zero backend, where a form that "submits"
+  nowhere would be a worse, dishonest experience than not having one.
+  Building the real, server-backed inquiry form is later-phase work (see
+  `docs/ARCHITECTURE.md`).

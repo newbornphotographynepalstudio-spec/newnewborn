@@ -49,7 +49,7 @@ export function ImageText({
   const imageOrder = imageSide === "right" ? "lg:order-2" : "";
 
   return (
-    <div className={`grid grid-cols-1 items-center gap-lg lg:gap-2xl ${columns} ${className}`}>
+    <div className={`grid grid-cols-1 items-center gap-8 lg:gap-16 ${columns} ${className}`}>
       <div className={`${imageSpan} ${imageOrder}`}>
         <EditorialImage src={image} alt={imageAlt} aspect={imageAspect} />
       </div>

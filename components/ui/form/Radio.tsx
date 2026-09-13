@@ -12,7 +12,7 @@ export const Radio = forwardRef<HTMLInputElement, Props>(function Radio(
   return (
     <label
       htmlFor={id}
-      className={`flex cursor-pointer items-start gap-xs text-small text-charcoal ${className}`}
+      className={`flex cursor-pointer items-start gap-3 text-small text-charcoal ${className}`}
     >
       <input
         ref={ref}

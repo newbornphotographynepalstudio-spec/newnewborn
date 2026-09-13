@@ -16,7 +16,7 @@ export function StudioSection() {
           title="A calm space, made for newborns and families"
           description="Sessions are held in a private, newborn-friendly studio with controlled lighting and a relaxed pace — comfortable for your baby and for you."
         />
-        <Button href={routes.studio} variant="text" className="mt-md">
+        <Button href={routes.studio} variant="text" className="mt-6">
           Visit the Studio
         </Button>
       </Reveal>

@@ -66,7 +66,7 @@ export function MobileNav({
           type="button"
           onClick={onClose}
           aria-label="Close menu"
-          className="inline-flex items-center justify-center rounded-sm border border-taupe/40 p-2xs"
+          className="inline-flex items-center justify-center rounded-sm border border-taupe/40 p-2"
         >
           <svg
             width="18"
@@ -82,14 +82,14 @@ export function MobileNav({
         </button>
       </div>
 
-      <nav className="flex flex-1 flex-col justify-between px-gutter pb-2xl">
-        <ul className="flex flex-col gap-xs pt-lg font-display text-h3">
+      <nav className="flex flex-1 flex-col justify-between px-gutter pb-16">
+        <ul className="flex flex-col gap-3 pt-8 font-display text-h3">
           <li>
             <button
               type="button"
               aria-expanded={servicesOpen}
               onClick={() => setServicesOpen((v) => !v)}
-              className="flex w-full items-center justify-between py-2xs text-left text-charcoal"
+              className="flex w-full items-center justify-between py-2 text-left text-charcoal"
             >
               Services
               <svg
@@ -106,10 +106,10 @@ export function MobileNav({
               </svg>
             </button>
             {servicesOpen ? (
-              <ul className="flex flex-col gap-3xs py-2xs pl-md font-sans text-body">
+              <ul className="flex flex-col gap-1 py-2 pl-6 font-sans text-body">
                 {servicesNav.map((item) => (
                   <li key={item.href}>
-                    <Link href={item.href} onClick={onClose} className="block py-2xs text-taupe">
+                    <Link href={item.href} onClick={onClose} className="block py-2 text-taupe">
                       {item.label}
                     </Link>
                   </li>
@@ -119,14 +119,14 @@ export function MobileNav({
           </li>
           {primaryNav.map((item) => (
             <li key={item.href}>
-              <Link href={item.href} onClick={onClose} className="block py-2xs text-charcoal">
+              <Link href={item.href} onClick={onClose} className="block py-2 text-charcoal">
                 {item.label}
               </Link>
             </li>
           ))}
         </ul>
 
-        <div className="flex flex-col gap-sm pt-2xl">
+        <div className="flex flex-col gap-4 pt-16">
           <Link
             href={contactLink.href}
             onClick={onClose}

@@ -280,15 +280,22 @@ could drift out of sync.
   upload path.
 - Working Firebase Authentication (the `/admin/login/` form is a static,
   disabled placeholder built on the real form primitives).
-- The homepage (Phase 3) is real, but every other route is still an
-  honest "content in progress" `PagePlaceholder`. No stock photography is
-  used anywhere — the homepage's real photography is limited to the one
-  client-supplied `culture1.jpg`, and packages/reviews render honest empty
-  states rather than invented pricing or testimonials (see
-  `lib/data/packages.ts`, `lib/data/reviews.ts`).
+- Real content now exists on every route (Phase 3/3A) except `/blog/`,
+  which lists planned topics rather than published articles since none
+  exist yet, and `/portfolio/{maternity,baby,cake-smash,family}/`, which
+  show the honest gallery-empty state. No stock photography is used
+  anywhere — the site's only real photograph is the one client-supplied
+  `culture1.jpg`, used on the homepage (hero + Featured Work) and on
+  `/portfolio/newborn/`. Packages and reviews render honest empty states
+  rather than invented pricing or testimonials (see
+  `lib/data/packages.ts`, `lib/data/reviews.ts`). `/contact/` and
+  `/book-a-session/` deliberately have no web form — they lead with
+  `tel:`/`wa.me`/`mailto:` links instead, since those work today with no
+  backend (see `docs/DESIGN-SYSTEM.md`, Phase 3A additions).
 - Dynamic sitemap entries (blog posts, portfolio galleries) once those
   collections exist; breadcrumbs on interior pages.
-- Resend email and Cloudflare Turnstile integration (booking/contact forms
-  aren't functional yet — there's nothing to protect or notify on).
+- The actual server-backed booking/inquiry form. Resend email and
+  Cloudflare Turnstile integration (there's nothing to protect or notify
+  on until that form exists).
 - The real admin UI design (Phase 2 established shared tokens only — see
   `docs/DESIGN-SYSTEM.md`, Admin UI section).

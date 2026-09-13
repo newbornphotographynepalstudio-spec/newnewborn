@@ -5,18 +5,18 @@ type Variant = "primary" | "secondary" | "text";
 type Size = "md" | "sm";
 
 const base =
-  "group inline-flex items-center justify-center gap-2xs font-sans font-medium tracking-wide transition-colors duration-base ease-premium focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50";
+  "group inline-flex items-center justify-center gap-2 font-sans font-medium tracking-wide transition-colors duration-base ease-premium focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50";
 
 const variantClass: Record<Variant, string> = {
-  primary: "rounded-sm bg-plum px-lg text-white hover:bg-(--color-accent-hover)",
+  primary: "rounded-sm bg-plum px-8 text-white hover:bg-(--color-accent-hover)",
   secondary:
-    "rounded-sm border border-taupe/40 bg-transparent px-lg text-plum hover:border-plum hover:bg-(--color-accent-soft)",
+    "rounded-sm border border-taupe/40 bg-transparent px-8 text-plum hover:border-plum hover:bg-(--color-accent-soft)",
   text: "bg-transparent px-0 text-plum underline-offset-4 hover:underline",
 };
 
 const sizeClass: Record<Variant, Record<Size, string>> = {
-  primary: { md: "py-sm text-small", sm: "py-2xs text-caption" },
-  secondary: { md: "py-sm text-small", sm: "py-2xs text-caption" },
+  primary: { md: "py-4 text-small", sm: "py-2 text-caption" },
+  secondary: { md: "py-4 text-small", sm: "py-2 text-caption" },
   text: { md: "text-small", sm: "text-caption" },
 };
 

@@ -1,19 +1,16 @@
 import type { Metadata } from "next";
 
-import { PagePlaceholder } from "@/components/ui/PagePlaceholder";
+import { AreaPageLayout } from "@/components/sections/area/AreaPageLayout";
+import { areas } from "@/lib/data/areas";
+
+const content = areas.lalitpur;
 
 export const metadata: Metadata = {
-  title: "Newborn & Family Photography in Lalitpur",
-  description:
-    "Newborn, maternity, baby, cake smash and family photography for families in Lalitpur.",
+  title: content.metaTitle,
+  description: content.metaDescription,
+  alternates: { canonical: content.href },
 };
 
-export default function Page() {
-  return (
-    <PagePlaceholder
-      eyebrow="Areas Served"
-      title="Newborn & Family Photography in Lalitpur"
-      description="Newborn, maternity, baby, cake smash and family photography for families in Lalitpur."
-    />
-  );
+export default function LalitpurAreaPage() {
+  return <AreaPageLayout content={content} />;
 }

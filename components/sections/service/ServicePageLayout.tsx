@@ -1,0 +1,177 @@
+import { Cluster } from "@/components/primitives/Cluster";
+import { Section } from "@/components/primitives/Section";
+import { Button } from "@/components/ui/Button";
+import { EditorialImage } from "@/components/ui/EditorialImage";
+import { FaqAccordion } from "@/components/ui/FaqAccordion";
+import { PageHero } from "@/components/ui/PageHero";
+import { Reveal } from "@/components/ui/Reveal";
+import { SectionHeading } from "@/components/ui/SectionHeading";
+import { experienceSteps } from "@/lib/data/experience";
+import type { ServicePageContent, ServiceSlug } from "@/lib/data/service-pages";
+import { bookASessionCta, routes } from "@/lib/navigation/routes";
+
+/**
+ * Shared structure for all five service pages — hero, intro, what's
+ * included / why choose us, process, safety note, photography showcase,
+ * FAQ, related services, final CTA. Content (copy, images, FAQs) is
+ * entirely data-driven from lib/data/service-pages.ts; this component
+ * only supplies the layout.
+ */
+export function ServicePageLayout({
+  content,
+  related,
+}: {
+  content: ServicePageContent;
+  related: { slug: ServiceSlug; name: string; href: string }[];
+}) {
+  return (
+    <>
+      <PageHero eyebrow={content.heroEyebrow} title={content.h1} description={content.heroDescription}>
+        <Cluster gap="sm" className="mt-8">
+          <Button href={bookASessionCta.href}>{bookASessionCta.label}</Button>
+          <Button href={routes.portfolio} variant="secondary">
+            View Portfolio
+          </Button>
+        </Cluster>
+      </PageHero>
+
+      <Section>
+        <div className="mx-auto max-w-prose">
+          <h2 className="text-h2">{content.introHeading}</h2>
+          <div className="mt-5 space-y-4">
+            {content.introParagraphs.map((paragraph) => (
+              <p key={paragraph} className="text-body-lg leading-relaxed text-charcoal/80">
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      <Section tone="blush">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
+          <div>
+            <p className="text-eyebrow font-medium tracking-eyebrow text-taupe uppercase">
+              What&apos;s Included
+            </p>
+            <ul className="mt-4 space-y-3">
+              {content.includes.map((item) => (
+                <li key={item} className="border-b border-taupe/20 pb-3 text-body text-charcoal/85">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p className="text-eyebrow font-medium tracking-eyebrow text-taupe uppercase">
+              Why Families Choose This Studio
+            </p>
+            <ul className="mt-4 space-y-3">
+              {content.whyChoose.map((item) => (
+                <li key={item} className="border-b border-taupe/20 pb-3 text-body text-charcoal/85">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </Section>
+
+      <Section>
+        <SectionHeading eyebrow="The Process" title="How a session comes together" />
+        <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12">
+          {experienceSteps.map((step) => (
+            <div key={step.number}>
+              <p className="font-display text-h2 text-rose">{step.number}</p>
+              <h3 className="mt-2 text-h4 text-plum">{step.title}</h3>
+              <p className="mt-2 text-small leading-relaxed text-charcoal/75">{step.description}</p>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section tone="ivory" compact>
+        <div className="flex flex-col items-start justify-between gap-4 border-t border-b border-taupe/20 py-8 lg:flex-row lg:items-center">
+          <div>
+            <p className="text-eyebrow font-medium tracking-eyebrow text-taupe uppercase">Safety</p>
+            <p className="mt-2 max-w-lg text-body text-charcoal/80">
+              Every session is planned around your baby&apos;s comfort — baby-led
+              posing, careful handling, and a controlled studio environment.
+            </p>
+          </div>
+          <Button href={routes.safety} variant="secondary" size="sm" className="shrink-0">
+            Learn About Safety
+          </Button>
+        </div>
+      </Section>
+
+      <Section>
+        <SectionHeading eyebrow="Photography" title={`${content.name} Portfolio`} />
+        <Reveal className="mt-10">
+          {content.showcaseImage ? (
+            <EditorialImage
+              src={content.showcaseImage}
+              alt={content.showcaseAlt ?? content.name}
+              aspect="wide"
+              mobileAspect="landscape"
+              rounded
+            />
+          ) : (
+            <div className="flex aspect-[21/9] items-center justify-center border border-dashed border-taupe/40 bg-blush/40">
+              <p className="text-small tracking-eyebrow text-taupe uppercase">
+                {content.name} portfolio coming soon
+              </p>
+            </div>
+          )}
+        </Reveal>
+        <div className="mt-6">
+          <Button href={routes.portfolio} variant="text">
+            View Full Portfolio
+          </Button>
+        </div>
+      </Section>
+
+      <Section tone="blush" containerSize="prose">
+        <SectionHeading eyebrow="FAQ" title="Common questions" align="center" />
+        <div className="mt-10">
+          <FaqAccordion items={content.faqs} />
+        </div>
+      </Section>
+
+      <Section compact>
+        <p className="text-eyebrow font-medium tracking-eyebrow text-taupe uppercase">
+          Related Sessions
+        </p>
+        <Cluster gap="md" className="mt-4">
+          {related.map((item) => (
+            <Button key={item.slug} href={item.href} variant="secondary" size="sm">
+              {item.name} Photography
+            </Button>
+          ))}
+        </Cluster>
+      </Section>
+
+      <Section tone="plum">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-h1 text-white">Ready to book your session?</h2>
+          <p className="mx-auto mt-4 max-w-prose text-body-lg leading-relaxed text-white/80">
+            Reach out to check availability — we&apos;ll help you find the
+            right time for your {content.name.toLowerCase()} session.
+          </p>
+          <Cluster gap="sm" align="center" justify="center" className="mt-8">
+            <Button href={bookASessionCta.href} className="!bg-white !text-plum hover:!bg-blush">
+              {bookASessionCta.label}
+            </Button>
+            <Button
+              href={routes.contact}
+              variant="secondary"
+              className="!border-white/50 !text-white hover:!border-white hover:!bg-white/10"
+            >
+              Contact Us
+            </Button>
+          </Cluster>
+        </div>
+      </Section>
+    </>
+  );
+}

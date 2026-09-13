@@ -18,7 +18,7 @@ const safetyPoints = [
 export function SafetySection() {
   return (
     <Section tone="ivory">
-      <div className="grid grid-cols-1 gap-2xl lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-16 lg:grid-cols-12">
         <div className="lg:col-span-5">
           <Reveal>
             <SectionHeading
@@ -26,7 +26,7 @@ export function SafetySection() {
               title="Your baby's safety comes first"
               description="Every session is planned and run around your baby's comfort, from posing to the studio environment itself."
             />
-            <Button href={routes.safety} variant="text" className="mt-md">
+            <Button href={routes.safety} variant="text" className="mt-6">
               Learn About Safety
             </Button>
           </Reveal>
@@ -37,7 +37,7 @@ export function SafetySection() {
               {safetyPoints.map((point) => (
                 <li
                   key={point}
-                  className="border-b border-taupe/20 pb-sm text-body-lg text-charcoal/85 last:border-b-0"
+                  className="border-b border-taupe/20 pb-4 text-body-lg text-charcoal/85 last:border-b-0"
                 >
                   {point}
                 </li>

@@ -35,9 +35,9 @@ export function SectionHeading({
           {eyebrow}
         </p>
       ) : null}
-      <Heading className={`${eyebrow ? "mt-xs" : ""} ${titleSize} ${toneTitle}`}>{title}</Heading>
+      <Heading className={`${eyebrow ? "mt-3" : ""} ${titleSize} ${toneTitle}`}>{title}</Heading>
       {description ? (
-        <p className={`mt-sm text-body-lg leading-relaxed ${toneDescription}`}>{description}</p>
+        <p className={`mt-4 text-body-lg leading-relaxed ${toneDescription}`}>{description}</p>
       ) : null}
     </div>
   );

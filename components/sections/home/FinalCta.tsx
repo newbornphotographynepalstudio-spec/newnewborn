@@ -11,11 +11,11 @@ export function FinalCta() {
         <h2 className="text-display text-white">
           Let&apos;s preserve these little moments.
         </h2>
-        <p className="mx-auto mt-md max-w-prose text-body-lg leading-relaxed text-white/80">
+        <p className="mx-auto mt-6 max-w-prose text-body-lg leading-relaxed text-white/80">
           Reach out to check availability and talk through your session —
           we&apos;d love to help you remember these days well.
         </p>
-        <Cluster gap="sm" align="center" justify="center" className="mt-lg">
+        <Cluster gap="sm" align="center" justify="center" className="mt-8">
           <Button href={bookASessionCta.href} className="!bg-white !text-plum hover:!bg-blush">
             {bookASessionCta.label}
           </Button>

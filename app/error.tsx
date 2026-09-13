@@ -21,12 +21,12 @@ export default function GlobalError({
       <p className="text-eyebrow font-medium tracking-eyebrow text-taupe uppercase">
         Error
       </p>
-      <h1 className="mt-sm text-h1">Something went wrong</h1>
-      <p className="mx-auto mt-sm max-w-prose text-body-lg leading-relaxed text-charcoal/80">
+      <h1 className="mt-4 text-h1">Something went wrong</h1>
+      <p className="mx-auto mt-4 max-w-prose text-body-lg leading-relaxed text-charcoal/80">
         Please try again. If the problem continues, please contact us
         directly.
       </p>
-      <Button type="button" onClick={reset} className="mt-lg">
+      <Button type="button" onClick={reset} className="mt-8">
         Try again
       </Button>
     </Section>

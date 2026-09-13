@@ -22,7 +22,7 @@ export function EditorialGrid({
   gap?: "sm" | "md" | "lg";
   className?: string;
 }) {
-  const gapClass = { sm: "gap-sm", md: "gap-lg", lg: "gap-2xl" }[gap];
+  const gapClass = { sm: "gap-4", md: "gap-8", lg: "gap-16" }[gap];
   return (
     <div className={`grid grid-cols-12 ${gapClass} ${className}`}>
       {children}

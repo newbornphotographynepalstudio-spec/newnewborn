@@ -12,15 +12,15 @@ export type SpaceToken =
   | "3xl";
 
 const gapClass: Record<SpaceToken, string> = {
-  "3xs": "gap-3xs",
-  "2xs": "gap-2xs",
-  xs: "gap-xs",
-  sm: "gap-sm",
-  md: "gap-md",
-  lg: "gap-lg",
-  xl: "gap-xl",
-  "2xl": "gap-2xl",
-  "3xl": "gap-3xl",
+  "3xs": "gap-1",
+  "2xs": "gap-2",
+  xs: "gap-3",
+  sm: "gap-4",
+  md: "gap-6",
+  lg: "gap-8",
+  xl: "gap-12",
+  "2xl": "gap-16",
+  "3xl": "gap-24",
 };
 
 const alignClass = {

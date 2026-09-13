@@ -19,7 +19,7 @@ function Star({ filled }: { filled: boolean }) {
 
 export function StarRating({ rating }: { rating: 1 | 2 | 3 | 4 | 5 }) {
   return (
-    <div role="img" aria-label={`${rating} out of 5 stars`} className="flex gap-3xs text-plum">
+    <div role="img" aria-label={`${rating} out of 5 stars`} className="flex gap-1 text-plum">
       {[1, 2, 3, 4, 5].map((n) => (
         <Star key={n} filled={n <= rating} />
       ))}

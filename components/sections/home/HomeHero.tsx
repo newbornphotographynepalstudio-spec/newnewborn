@@ -35,19 +35,19 @@ export function HomeHero() {
               className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-charcoal/90 via-charcoal/40 to-transparent"
             />
             <div className="absolute inset-x-0 bottom-0">
-              <Container size="wide" className="pt-3xl pb-2xl lg:pb-3xl">
+              <Container size="wide" className="pt-24 pb-16 lg:pb-24">
                 <p className="text-eyebrow font-medium tracking-eyebrow text-blush uppercase">
                   Newborn Photography
                 </p>
-                <h1 className="mt-xs max-w-2xl text-h1 text-white">
+                <h1 className="mt-3 max-w-2xl text-h1 text-white">
                   Newborn Photography in Kathmandu, Nepal
                 </h1>
-                <p className="mt-sm max-w-xl text-body-lg leading-relaxed text-white/85">
+                <p className="mt-4 max-w-xl text-body-lg leading-relaxed text-white/85">
                   Editorial newborn portraits crafted in a calm, safety-led
                   studio — preserving your baby&apos;s earliest days as
                   images your family will treasure for generations.
                 </p>
-                <Cluster gap="sm" className="mt-lg">
+                <Cluster gap="sm" className="mt-8">
                   <Button href={bookASessionCta.href}>{bookASessionCta.label}</Button>
                   <Button
                     href={routes.portfolio}

@@ -4,6 +4,7 @@ import { Container } from "@/components/primitives/Container";
 import { Stack } from "@/components/primitives/Stack";
 import { Logo } from "@/components/ui/Logo";
 import { SocialLinks, type SocialLink } from "@/components/layout/SocialLinks";
+import { contactInfo } from "@/lib/data/contact";
 import {
   footerAreaLinks,
   footerConnectLinks,
@@ -21,14 +22,22 @@ export function Footer() {
 
   return (
     <footer className="border-t border-taupe/15 bg-ivory">
-      <Container size="wide" className="grid gap-2xl py-3xl sm:grid-cols-2 lg:grid-cols-4">
+      <Container size="wide" className="grid gap-16 py-24 sm:grid-cols-2 lg:grid-cols-4">
         <Stack gap="sm" className="sm:col-span-2 lg:col-span-1">
           <Logo />
           <p className="max-w-xs text-small leading-relaxed text-taupe">
-            Newborn, maternity, baby, cake smash and family photography by
-            Navin, serving Kathmandu Valley, Nepal.
+            Newborn photography in Kathmandu, Nepal — with maternity, baby,
+            cake smash and family sessions.
           </p>
-          <SocialLinks links={socialLinks} className="pt-2xs" />
+          <div className="text-small text-charcoal">
+            <a href={`tel:${contactInfo.phoneE164}`} className="block hover:text-plum">
+              {contactInfo.phoneDisplay}
+            </a>
+            <a href={`mailto:${contactInfo.email}`} className="mt-1 block hover:text-plum">
+              {contactInfo.email}
+            </a>
+          </div>
+          <SocialLinks links={socialLinks} className="pt-2" />
         </Stack>
 
         <FooterColumn title="Services" links={footerServiceLinks} />
@@ -39,13 +48,13 @@ export function Footer() {
       <div className="border-t border-taupe/15">
         <Container
           size="wide"
-          className="flex flex-col gap-xs py-lg text-caption text-taupe sm:flex-row sm:items-center sm:justify-between"
+          className="flex flex-col gap-3 py-8 text-caption text-taupe sm:flex-row sm:items-center sm:justify-between"
         >
           <p>&copy; {year} Newborn Photography Nepal by Navin. All rights reserved.</p>
-          <div className="flex flex-wrap items-center gap-xs">
+          <div className="flex flex-wrap items-center gap-3">
             <span>Serving</span>
             {footerAreaLinks.map((item, index) => (
-              <span key={item.href} className="flex items-center gap-xs">
+              <span key={item.href} className="flex items-center gap-3">
                 <Link href={item.href} className="hover:text-plum">
                   {item.label}
                 </Link>
@@ -73,7 +82,7 @@ function FooterColumn({
   return (
     <div>
       <p className="text-caption tracking-eyebrow text-taupe uppercase">{title}</p>
-      <ul className="mt-sm space-y-2xs">
+      <ul className="mt-4 space-y-2">
         {links.map((item) => (
           <li key={item.href}>
             <Link

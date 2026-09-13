@@ -2,7 +2,7 @@
  * The small subset of design tokens needed in JS/TS (not just CSS).
  * Colors, type scale, spacing, radii and shadows live in app/globals.css as
  * CSS custom properties / Tailwind v4 @theme — use the generated Tailwind
- * utilities (bg-plum, text-ivory, gap-md, etc.) for those. This file only
+ * utilities (bg-plum, text-ivory, gap-6, etc.) for those. This file only
  * covers values a component needs to read in JavaScript.
  */
 

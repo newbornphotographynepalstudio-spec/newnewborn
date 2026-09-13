@@ -68,22 +68,26 @@
   --tracking-wide: 0.04em;
   --tracking-eyebrow: 0.16em;
 
-  /* --- Spacing: named entries alongside (not replacing) Tailwind's numeric
-     scale — p-4/gap-2/etc. keep working; these add p-md, gap-lg, py-section-y
-     and so on for the rhythm Stack/Cluster/Section actually use. */
-  --spacing-3xs: 0.25rem;
-  --spacing-2xs: 0.5rem;
-  --spacing-xs: 0.75rem;
-  --spacing-sm: 1rem;
-  --spacing-md: 1.5rem;
-  --spacing-lg: 2rem;
-  --spacing-xl: 3rem;
-  --spacing-2xl: 4rem;
-  --spacing-3xl: 6rem;
+  /* --- Spacing ------------------------------------------------------------
+     IMPORTANT: never add a named --spacing-{key} here where {key} is one of
+     Tailwind's reserved size-scale words (xs, sm, md, lg, xl, 2xl, 3xl, and
+     so on). Tailwind v4 derives its max-width, width, height, gap, padding
+     and margin utilities from this same --spacing- namespace, so a key
+     like --spacing-md silently overrides Tailwind's own max-w-md (28rem)
+     with whatever you gave --spacing-md. This happened once already (see
+     git history, "Phase 3A") and broke every max-w utility on the site
+     simultaneously. Tailwind's built-in numeric scale (gap-1, gap-2,
+     gap-3, gap-4, gap-6, gap-8, gap-12, gap-16, gap-24, and so on) already
+     covers a t-shirt-style rhythm without needing named aliases at all —
+     use those directly. Only fluid clamp() values that don't collide with
+     a reserved word belong here. */
 
-  /* Generous, fluid section rhythm — never compressed to fit content. */
-  --spacing-section-y: clamp(4rem, 3rem + 5vw, 8rem);
-  --spacing-section-y-sm: clamp(2.5rem, 2rem + 2.5vw, 4.5rem);
+  /* Generous, fluid section rhythm — never compressed to fit content, but
+     tuned down from an earlier pass that measured out to ~240px of dead
+     space between two same-tone sections at desktop widths (see git
+     history, "Phase 3A" visual QA). */
+  --spacing-section-y: clamp(3.5rem, 2.75rem + 3vw, 6rem);
+  --spacing-section-y-sm: clamp(2rem, 1.5rem + 2vw, 3.5rem);
   --spacing-gutter: clamp(1.25rem, 1rem + 2vw, 3rem);
 
   /* --- Radii: subtle/square by default — this is editorial, not dashboard.
@@ -157,15 +161,6 @@
   --tracking-wide: var(--tracking-wide);
   --tracking-eyebrow: var(--tracking-eyebrow);
 
-  --spacing-3xs: var(--spacing-3xs);
-  --spacing-2xs: var(--spacing-2xs);
-  --spacing-xs: var(--spacing-xs);
-  --spacing-sm: var(--spacing-sm);
-  --spacing-md: var(--spacing-md);
-  --spacing-lg: var(--spacing-lg);
-  --spacing-xl: var(--spacing-xl);
-  --spacing-2xl: var(--spacing-2xl);
-  --spacing-3xl: var(--spacing-3xl);
   --spacing-section-y: var(--spacing-section-y);
   --spacing-section-y-sm: var(--spacing-section-y-sm);
   --spacing-gutter: var(--spacing-gutter);
@@ -183,39 +178,51 @@
  * Base element styles
  * ------------------------------------------------------------------------ */
 
-* {
-  border-color: var(--color-border);
-}
+/*
+ * Wrapped in @layer base so these participate in the same CSS cascade
+ * layer Tailwind's own base styles use. Unlayered CSS unconditionally
+ * beats ANY layered style regardless of selector specificity — without
+ * this @layer wrapper, a utility class like `text-white` on an `<h1>`
+ * could never win against the plain `h1 { color: ... }` rule below (this
+ * happened once already, see git history, "Phase 3A": every heading on a
+ * dark/plum section rendered in the default dark text color instead of
+ * white, because the override utility had no way to win the cascade).
+ */
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
 
-body {
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font-sans);
-  font-size: var(--text-body);
-  line-height: var(--leading-normal);
-}
+  body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--leading-normal);
+  }
 
-h1,
-h2,
-h3,
-h4 {
-  font-family: var(--font-display);
-  font-weight: 500;
-  letter-spacing: var(--tracking-tight);
-  line-height: var(--leading-tight);
-  color: var(--color-text);
-}
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+    color: var(--color-text);
+  }
 
-/* Visible, on-brand focus state everywhere — never suppressed. */
-:focus-visible {
-  outline: 2px solid var(--color-focus-ring);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
-}
+  /* Visible, on-brand focus state everywhere — never suppressed. */
+  :focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
 
-::selection {
-  background: var(--color-blush);
-  color: var(--color-plum);
+  ::selection {
+    background: var(--color-blush);
+    color: var(--color-plum);
+  }
 }
 
 /* ---------------------------------------------------------------------------

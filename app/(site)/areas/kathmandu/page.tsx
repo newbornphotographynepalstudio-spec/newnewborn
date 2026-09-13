@@ -1,19 +1,16 @@
 import type { Metadata } from "next";
 
-import { PagePlaceholder } from "@/components/ui/PagePlaceholder";
+import { AreaPageLayout } from "@/components/sections/area/AreaPageLayout";
+import { areas } from "@/lib/data/areas";
+
+const content = areas.kathmandu;
 
 export const metadata: Metadata = {
-  title: "Newborn & Family Photography in Kathmandu",
-  description:
-    "Newborn, maternity, baby, cake smash and family photography for families in Kathmandu.",
+  title: content.metaTitle,
+  description: content.metaDescription,
+  alternates: { canonical: content.href },
 };
 
-export default function Page() {
-  return (
-    <PagePlaceholder
-      eyebrow="Areas Served"
-      title="Newborn & Family Photography in Kathmandu"
-      description="Newborn, maternity, baby, cake smash and family photography for families in Kathmandu."
-    />
-  );
+export default function KathmanduAreaPage() {
+  return <AreaPageLayout content={content} />;
 }

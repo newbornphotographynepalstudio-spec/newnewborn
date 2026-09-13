@@ -19,14 +19,14 @@ export const metadata: Metadata = {
  */
 export default function AdminLoginPage() {
   return (
-    <div className="mx-auto flex min-h-[70vh] max-w-sm flex-col justify-center px-gutter py-2xl">
+    <div className="mx-auto flex min-h-[70vh] max-w-sm flex-col justify-center px-gutter py-16">
       <h1 className="text-h2 text-plum">Admin Sign In</h1>
-      <p className="mt-2xs text-small text-charcoal/70">
+      <p className="mt-2 text-small text-charcoal/70">
         Sign-in will be connected to Firebase Authentication in a later
         phase.
       </p>
 
-      <form className="mt-lg">
+      <form className="mt-8">
         <Stack gap="md">
           <div>
             <Label htmlFor="email">Email</Label>
@@ -35,7 +35,7 @@ export default function AdminLoginPage() {
               name="email"
               type="email"
               disabled
-              className="mt-2xs"
+              className="mt-2"
               placeholder="you@example.com"
             />
           </div>
@@ -46,7 +46,7 @@ export default function AdminLoginPage() {
               name="password"
               type="password"
               disabled
-              className="mt-2xs"
+              className="mt-2"
               placeholder="••••••••"
             />
           </div>

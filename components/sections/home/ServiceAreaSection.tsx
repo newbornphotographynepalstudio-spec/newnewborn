@@ -15,7 +15,7 @@ export function ServiceAreaSection() {
           title="Newborn Photography in Kathmandu Valley"
           description="Sessions are held primarily at the studio, with home sessions available where offered, for families across the valley."
         />
-        <Cluster gap="md" className="mt-md">
+        <Cluster gap="md" className="mt-6">
           {footerAreaLinks.map((area) => (
             <Link
               key={area.href}

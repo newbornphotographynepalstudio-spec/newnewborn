@@ -9,13 +9,13 @@ import { routes } from "@/lib/navigation/routes";
 export function TrainingSection() {
   return (
     <Section compact>
-      <Reveal className="flex flex-col items-start justify-between gap-md border-t border-b border-taupe/20 py-lg lg:flex-row lg:items-center">
+      <Reveal className="flex flex-col items-start justify-between gap-6 border-t border-b border-taupe/20 py-8 lg:flex-row lg:items-center">
         <div>
           <p className="text-eyebrow font-medium tracking-eyebrow text-taupe uppercase">
             For Photographers
           </p>
-          <h2 className="mt-2xs text-h3">Newborn Photography Training</h2>
-          <p className="mt-2xs max-w-lg text-small text-charcoal/75">
+          <h2 className="mt-2 text-h3">Newborn Photography Training</h2>
+          <p className="mt-2 max-w-lg text-small text-charcoal/75">
             For photographers who want to learn newborn photography safely,
             confidently and professionally.
           </p>

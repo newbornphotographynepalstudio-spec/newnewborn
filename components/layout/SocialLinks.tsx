@@ -24,7 +24,7 @@ export function SocialLinks({
   }
 
   return (
-    <ul className={`flex items-center gap-sm ${className}`}>
+    <ul className={`flex items-center gap-4 ${className}`}>
       {links.map((link) => (
         <li key={link.platform}>
           <a

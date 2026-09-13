@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
 
-import { PagePlaceholder } from "@/components/ui/PagePlaceholder";
+import { ServicePageLayout } from "@/components/sections/service/ServicePageLayout";
+import { getServicePages } from "@/lib/data/service-pages";
+import { cultureHeritageImage } from "@/lib/media/approved-assets";
+
+const pages = getServicePages(cultureHeritageImage.src, cultureHeritageImage.alt);
+const content = pages.family;
 
 export const metadata: Metadata = {
-  title: "Family Photography",
-  description:
-    "Family photography sessions by Navin, based in Kathmandu Valley, Nepal.",
+  title: content.metaTitle,
+  description: content.metaDescription,
+  alternates: { canonical: content.href },
 };
 
-export default function Page() {
-  return (
-    <PagePlaceholder
-      eyebrow="Family Photography"
-      title="Family Photography"
-      description="Family photography sessions by Navin, based in Kathmandu Valley, Nepal."
-    />
-  );
+export default function FamilyPhotographyPage() {
+  const related = content.relatedSlugs.map((slug) => pages[slug]);
+  return <ServicePageLayout content={content} related={related} />;
 }
