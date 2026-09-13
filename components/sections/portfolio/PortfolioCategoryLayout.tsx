@@ -7,6 +7,7 @@ import { EditorialImage } from "@/components/ui/EditorialImage";
 import { PageHero } from "@/components/ui/PageHero";
 import { GalleryGrid } from "@/components/gallery/GalleryGrid";
 import type { PortfolioCategory } from "@/lib/data/portfolio";
+import { breadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
 
 /**
@@ -24,8 +25,17 @@ export function PortfolioCategoryLayout({
   featuredImage?: ImageProps["src"];
   featuredAlt?: string;
 }) {
+  const jsonLd = breadcrumbJsonLd([
+    { name: "Portfolio", href: routes.portfolio },
+    { name: category.name, href: category.href },
+  ]);
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <PageHero eyebrow="Portfolio" title={`${category.name} Portfolio`}>
         <Cluster gap="sm" className="mt-8">
           <Button href={bookASessionCta.href}>{bookASessionCta.label}</Button>

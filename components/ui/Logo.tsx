@@ -16,6 +16,13 @@ import logo from "@/public/brand/logo.jpg";
  * `priority` should be true only for the header's instance (above the
  * fold on every page). Leave it false anywhere else (e.g. the footer) so
  * Next.js doesn't preload/eager-load an image nowhere near the LCP.
+ *
+ * `sizes="48px"` matters here even though it looks pointless on a 2048×2048
+ * source: without it, next/image has no hint that this always renders
+ * tiny (max h-12/48px) and falls back to picking from its large
+ * `deviceSizes` bucket — measured serving a 2048px-wide, ~378KB derivative
+ * for a 48px logo before this was added. With it, the browser correctly
+ * requests from the small `imageSizes` bucket instead.
  */
 export function Logo({
   className = "",
@@ -39,6 +46,7 @@ export function Logo({
         src={logo}
         alt="Newborn Photography Nepal by Navin"
         priority={priority}
+        sizes="48px"
         className={`w-auto ${heightClass}`}
       />
     </Link>

@@ -12,13 +12,19 @@ import {
   servicesNav,
 } from "@/lib/navigation/routes";
 
+const FOCUSABLE_SELECTOR = "a[href], button:not([disabled])";
+
 /**
  * A dedicated full-screen mobile menu — not the desktop nav squeezed into a
  * drawer. Large editorial type, Services as an inline accordion (mirroring
  * the desktop dropdown's grouping), booking as the clear final action.
  *
- * Traps scroll on the body while open and returns focus to the trigger on
- * close; Escape closes.
+ * Traps scroll AND keyboard focus on the body while open (`aria-modal`
+ * only means something if Tab genuinely can't reach anything behind it —
+ * found via real keyboard testing that Tab could escape the open overlay
+ * into the page underneath, which a modal must never allow), and returns
+ * focus to whatever opened it (the header's hamburger button) on close,
+ * rather than dropping focus. Escape closes.
  */
 export function MobileNav({
   open,
@@ -29,19 +35,41 @@ export function MobileNav({
 }) {
   const [servicesOpen, setServicesOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!open) return;
 
+    previouslyFocusedRef.current = document.activeElement as HTMLElement | null;
+
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    const firstLink = panelRef.current?.querySelector<HTMLElement>("a, button");
+    const firstLink = panelRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
     firstLink?.focus();
 
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         onClose();
+        return;
+      }
+      if (event.key !== "Tab" || !panelRef.current) return;
+
+      const focusable = Array.from(
+        panelRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
+      );
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
       }
     }
     document.addEventListener("keydown", onKeyDown);
@@ -49,6 +77,7 @@ export function MobileNav({
     return () => {
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", onKeyDown);
+      previouslyFocusedRef.current?.focus();
     };
   }, [open, onClose]);
 

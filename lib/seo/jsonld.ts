@@ -48,3 +48,24 @@ export function professionalServiceJsonLd() {
     ],
   };
 }
+
+/**
+ * BreadcrumbList for pages that sit two or more levels deep (portfolio
+ * sub-galleries, area pages) — purely navigational metadata derived from
+ * the same route/label data already shown on the page, never a separate
+ * invented hierarchy. `items` excludes Home; it's prepended here so every
+ * caller doesn't repeat it.
+ */
+export function breadcrumbJsonLd(items: { name: string; href: string }[]) {
+  const trail = [{ name: "Home", href: "/" }, ...items];
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: trail.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: new URL(item.href, siteConfig.url).toString(),
+    })),
+  };
+}

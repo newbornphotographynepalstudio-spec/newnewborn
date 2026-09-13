@@ -3,12 +3,22 @@ import { Section } from "@/components/primitives/Section";
 import { Button } from "@/components/ui/Button";
 import { PageHero } from "@/components/ui/PageHero";
 import type { AreaContent } from "@/lib/data/areas";
+import { breadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { servicesNav } from "@/lib/navigation/routes";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
 
 export function AreaPageLayout({ content }: { content: AreaContent }) {
+  const jsonLd = breadcrumbJsonLd([
+    { name: "Areas", href: routes.areas },
+    { name: content.name, href: content.href },
+  ]);
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <PageHero eyebrow="Service Area" title={content.h1}>
         <Cluster gap="sm" className="mt-8">
           <Button href={bookASessionCta.href}>{bookASessionCta.label}</Button>

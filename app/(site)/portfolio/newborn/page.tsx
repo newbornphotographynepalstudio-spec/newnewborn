@@ -9,6 +9,7 @@ import { PageHero } from "@/components/ui/PageHero";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { newbornGallery } from "@/lib/media/newborn-gallery";
+import { breadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
 
 const [featured, ...rest] = newbornGallery.filter((img) => img.id !== "newborn-family-heritage");
@@ -22,9 +23,18 @@ export const metadata: Metadata = {
   alternates: { canonical: routes.portfolioNewborn },
 };
 
+const jsonLd = breadcrumbJsonLd([
+  { name: "Portfolio", href: routes.portfolio },
+  { name: "Newborn", href: routes.portfolioNewborn },
+]);
+
 export default function NewbornPortfolioPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <PageHero
         eyebrow="Portfolio"
         title="Newborn Photography Portfolio"

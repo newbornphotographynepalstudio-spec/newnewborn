@@ -43,9 +43,9 @@ export function HomeHero() {
                   Newborn Photography in Kathmandu, Nepal
                 </h1>
                 <p className="mt-4 max-w-xl text-body-lg leading-relaxed text-white/85">
-                  Editorial newborn portraits crafted in a calm, safety-led
-                  studio — preserving your baby&apos;s earliest days as
-                  images your family will treasure for generations.
+                  Editorial newborn portraits in a calm, safety-led studio
+                  in Kathmandu — unrushed sessions planned around your
+                  baby&apos;s comfort, not a fixed shot list.
                 </p>
                 <Cluster gap="sm" className="mt-8">
                   <Button href={bookASessionCta.href}>{bookASessionCta.label}</Button>

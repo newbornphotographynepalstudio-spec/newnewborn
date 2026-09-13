@@ -9,6 +9,7 @@ import { PageHero } from "@/components/ui/PageHero";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { cakeSmashGallery } from "@/lib/media/cake-smash-gallery";
+import { breadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
 
 const [featured, ...rest] = cakeSmashGallery;
@@ -21,9 +22,18 @@ export const metadata: Metadata = {
   alternates: { canonical: routes.portfolioCakeSmash },
 };
 
+const jsonLd = breadcrumbJsonLd([
+  { name: "Portfolio", href: routes.portfolio },
+  { name: "Cake Smash", href: routes.portfolioCakeSmash },
+]);
+
 export default function CakeSmashPortfolioPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <PageHero
         eyebrow="Portfolio"
         title="Cake Smash Photography Portfolio"
