@@ -11,12 +11,14 @@ import { NavDropdown } from "@/components/layout/NavDropdown";
 import {
   bookASessionCta,
   contactLink,
+  newbornNav,
   primaryNav,
   servicesNav,
 } from "@/lib/navigation/routes";
 
 /**
- * Desktop: Logo — Services (dropdown) + 5 flat items — Contact + Book a
+ * Desktop: Logo — Newborn Photography (standalone, primary specialty) —
+ * Services (dropdown, the other four) + 5 flat items — Contact + Book a
  * Session (stronger visual priority). Mobile: Logo + menu trigger only,
  * opening the dedicated MobileNav overlay (not this nav squeezed down).
  *
@@ -38,6 +40,12 @@ export function Header() {
           <Logo priority />
 
           <nav aria-label="Primary" className="hidden items-center gap-8 lg:flex">
+            <Link
+              href={newbornNav.href}
+              className="text-small text-charcoal transition-colors duration-base hover:text-plum"
+            >
+              {newbornNav.label}
+            </Link>
             <NavDropdown label="Services" items={servicesNav} />
             {primaryNav.map((item) => (
               <Link

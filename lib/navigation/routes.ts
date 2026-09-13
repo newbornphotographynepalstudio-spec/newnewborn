@@ -59,6 +59,14 @@ export const primaryNav: NavItem[] = [
   { label: "Blog", href: routes.blog },
 ];
 
+/** Standalone top-level link, ahead of the Services dropdown — newborn
+ * photography is this studio's primary specialty, not just one of five
+ * equally-weighted services (see docs/DESIGN-SYSTEM.md, Header section). */
+export const newbornNav: NavItem = {
+  label: "Newborn Photography",
+  href: routes.newborn,
+};
+
 export const contactLink: NavItem = {
   label: "Contact",
   href: routes.contact,

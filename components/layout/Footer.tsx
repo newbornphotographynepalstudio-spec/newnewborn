@@ -33,7 +33,18 @@ export function Footer() {
             <a href={`tel:${contactInfo.phoneE164}`} className="block hover:text-plum">
               {contactInfo.phoneDisplay}
             </a>
-            <a href={`mailto:${contactInfo.email}`} className="mt-1 block hover:text-plum">
+            <a
+              href={contactInfo.whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-1 block hover:text-plum"
+            >
+              WhatsApp
+            </a>
+            <a
+              href={`mailto:${contactInfo.email}`}
+              className="mt-1 block break-words hover:text-plum"
+            >
               {contactInfo.email}
             </a>
           </div>
@@ -51,7 +62,11 @@ export function Footer() {
           className="flex flex-col gap-3 py-8 text-caption text-taupe sm:flex-row sm:items-center sm:justify-between"
         >
           <p>&copy; {year} Newborn Photography Nepal by Navin. All rights reserved.</p>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 sm:mr-24 lg:mr-28">
+            {/* Right margin at sm+ keeps this row clear of the fixed
+                WhatsAppButton (bottom-right, ~80-96px footprint from the
+                viewport edge) — without it, "All areas" sits directly
+                under the button at the bottom of the page. */}
             <span>Serving</span>
             {footerAreaLinks.map((item, index) => (
               <span key={item.href} className="flex items-center gap-3">

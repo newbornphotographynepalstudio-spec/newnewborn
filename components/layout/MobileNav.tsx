@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import {
   bookASessionCta,
   contactLink,
+  newbornNav,
   primaryNav,
   servicesNav,
 } from "@/lib/navigation/routes";
@@ -84,6 +85,11 @@ export function MobileNav({
 
       <nav className="flex flex-1 flex-col justify-between px-gutter pb-16">
         <ul className="flex flex-col gap-3 pt-8 font-display text-h3">
+          <li>
+            <Link href={newbornNav.href} onClick={onClose} className="block py-2 text-charcoal">
+              {newbornNav.label}
+            </Link>
+          </li>
           <li>
             <button
               type="button"
