@@ -10,7 +10,6 @@ import { HomeHero } from "@/components/sections/home/HomeHero";
 import { PackagesPreview } from "@/components/sections/home/PackagesPreview";
 import { ReviewsSection } from "@/components/sections/home/ReviewsSection";
 import { SafetySection } from "@/components/sections/home/SafetySection";
-import { ServiceAreaSection } from "@/components/sections/home/ServiceAreaSection";
 import { ServicesOverview } from "@/components/sections/home/ServicesOverview";
 import { StudioSection } from "@/components/sections/home/StudioSection";
 import { TrainingSection } from "@/components/sections/home/TrainingSection";
@@ -49,10 +48,19 @@ export const metadata: Metadata = {
 };
 
 /**
- * The Phase 3 homepage. Exactly one <h1> (in HomeHero); every section
- * below it heads with an <h2> (see SectionHeading). No content here is
- * invented — packages/reviews render honest empty states until real data
- * exists (see lib/data/packages.ts, lib/data/reviews.ts).
+ * The homepage. Exactly one <h1> (in HomeHero); every section below it
+ * heads with an <h2> (see SectionHeading). No content here is invented —
+ * packages/reviews render honest empty states until real data exists (see
+ * lib/data/packages.ts, lib/data/reviews.ts).
+ *
+ * Section order follows the required narrative arc: hero, trust/
+ * positioning, the newborn photography experience, featured work,
+ * services, safety, the studio, packages, reviews, why families choose
+ * this studio (HeritageSection's Nepali-family-heritage positioning is
+ * the real, non-invented answer to that question here), training, FAQ,
+ * final CTA. The Service Area section is intentionally NOT rendered here
+ * — Kathmandu/Lalitpur/Bhaktapur stay as their own indexable /areas/
+ * pages (linked from the footer) rather than a large homepage section.
  */
 export default function HomePage() {
   const jsonLd = [organizationJsonLd(), websiteJsonLd(), professionalServiceJsonLd()];
@@ -69,16 +77,15 @@ export default function HomePage() {
 
       <HomeHero />
       <BrandIntro />
-      <ServicesOverview />
-      <FeaturedWork />
       <ExperienceSteps />
+      <FeaturedWork />
+      <ServicesOverview />
       <SafetySection />
       <StudioSection />
-      <HeritageSection />
       <PackagesPreview />
       <ReviewsSection />
+      <HeritageSection />
       <TrainingSection />
-      <ServiceAreaSection />
       <FaqPreview />
       <FinalCta />
     </>
