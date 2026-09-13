@@ -2,8 +2,9 @@ import type { FaqItem } from "@/lib/faq/types";
 
 /**
  * Training content rewritten from factual information found on the
- * studio's existing training page (newbornphotographynpl.com/training —
- * same business, same phone number) — see docs/ARCHITECTURE.md for the
+ * studio's existing training page (www.newbornphotographynpl.com/training —
+ * same business, same phone number, and the same domain this site is
+ * moving to once finalized) — see docs/ARCHITECTURE.md for the
  * research notes. Course names, durations, audiences, module topics and
  * inclusions are real; wording is rewritten into this site's voice, not
  * copied. No price is published on the reference page either, so none is

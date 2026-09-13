@@ -17,12 +17,14 @@ export const siteConfig = {
   // canonical/OG URLs; override with NEXT_PUBLIC_SITE_URL=http://localhost:3000
   // in .env.local for local development if that distinction matters to you.
   //
-  // newbornphotographynpl.com is the confirmed domain the site will move
-  // to once finalized (client-confirmed, Phase 4) — not yet live, but the
-  // correct value for canonical/OG/sitemap URLs to point to now, so no
-  // second migration is needed later. If the site is deployed under a
-  // different domain in the meantime, set NEXT_PUBLIC_SITE_URL in that
-  // environment instead of editing this fallback.
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://newbornphotographynpl.com",
+  // https://www.newbornphotographynpl.com is the official, canonical
+  // production domain (client-confirmed) — the www subdomain specifically,
+  // not the bare domain, and not newbornphotographynepal.studio (an
+  // earlier, incorrect placeholder). Every canonical/OG/sitemap URL must
+  // resolve to this exact host so there's never a competing www vs.
+  // non-www canonical. If the site is deployed under a different domain
+  // in the meantime, set NEXT_PUBLIC_SITE_URL in that environment instead
+  // of editing this fallback.
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.newbornphotographynpl.com",
   locale: "en_US",
 } as const;

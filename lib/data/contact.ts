@@ -9,7 +9,8 @@ export const contactInfo = {
   whatsappUrl: "https://wa.me/9779851278641",
   email: "newbornphotographynepal.studio@gmail.com",
   // The Gmail address above is unrelated to the website domain — its
-  // local part just happens to be this name. Confirmed production domain
-  // (client-confirmed, Phase 4; not yet live): newbornphotographynpl.com.
-  domain: "newbornphotographynpl.com",
+  // local part just happens to be this name. This must match
+  // siteConfig.url (lib/seo/site.ts) exactly — the www subdomain is the
+  // official canonical host, not the bare domain.
+  domain: "www.newbornphotographynpl.com",
 } as const;
