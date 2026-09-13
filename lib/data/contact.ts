@@ -8,5 +8,8 @@ export const contactInfo = {
   phoneE164: "+9779851278641",
   whatsappUrl: "https://wa.me/9779851278641",
   email: "newbornphotographynepal.studio@gmail.com",
-  domain: "newbornphotographynepal.studio",
+  // The Gmail address above is unrelated to the website domain — its
+  // local part just happens to be this name. Confirmed production domain
+  // (client-confirmed, Phase 4; not yet live): newbornphotographynpl.com.
+  domain: "newbornphotographynpl.com",
 } as const;

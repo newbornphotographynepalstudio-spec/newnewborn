@@ -1,18 +1,50 @@
 rules_version = '2';
 
-// Phase 1 foundation: deny-all by default.
-//
-// No collections are defined yet (see docs/ARCHITECTURE.md for the planned
-// schema). When collections are added in Phase 2, add explicit per-
-// collection rules below — public reads only for published content,
-// create-only for public lead/inquiry submissions, and every other write
-// gated on `request.auth.token.role` (custom claims set server-side via
-// the Firebase Admin SDK, never trusted from client input). Do not replace
-// this default with a blanket `allow read, write: if true`.
+// Deny-all by default. Explicit per-collection rules are added below only
+// once that collection is actually implemented — see docs/ARCHITECTURE.md
+// for the planned schema. Every other write stays gated on
+// `request.auth.token.role` (custom claims set server-side via the
+// Firebase Admin SDK, never trusted from client input) once real
+// authentication exists. Do not replace this default with a blanket
+// `allow read, write: if true`.
 service cloud.firestore {
   match /databases/{database}/documents {
     match /{document=**} {
       allow read, write: if false;
+    }
+
+    // inquiries — booking/training enquiries from /book-a-session/.
+    //
+    // In this app, the public form actually submits through a Server
+    // Action (lib/inquiries/actions.ts) that writes via the Firebase
+    // Admin SDK, which bypasses these rules entirely — so this "create"
+    // rule isn't the only thing standing between a visitor and writing a
+    // document; it's a second, independent layer that still correctly
+    // restricts any future direct client-SDK write. `read` is
+    // unconditionally denied for every client: the admin inbox also
+    // reads exclusively through the Admin SDK on the server
+    // (lib/inquiries/admin-data.ts), so no public code path can ever
+    // read a customer's name, email, phone or message.
+    match /inquiries/{inquiryId} {
+      allow read: if false;
+      allow update, delete: if false;
+
+      allow create: if request.resource.data.keys().hasAll(
+          ['createdAt', 'updatedAt', 'customer', 'session', 'contactPreference', 'status', 'source']
+        )
+        && request.resource.data.customer.keys().hasAll(['name', 'email', 'phone'])
+        && request.resource.data.customer.name is string
+        && request.resource.data.customer.name.size() > 0
+        && request.resource.data.customer.email is string
+        && request.resource.data.customer.phone is string
+        && request.resource.data.session.type in
+          ['newborn', 'maternity', 'baby', 'cake-smash', 'family', 'training']
+        && request.resource.data.contactPreference in ['phone', 'whatsapp', 'email']
+        // A public submission may only ever create a fresh, untouched
+        // enquiry — never pre-set its own status or attribute a fake
+        // source.
+        && request.resource.data.status == 'new'
+        && request.resource.data.source == 'website';
     }
   }
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { Cluster } from "@/components/primitives/Cluster";
 import { Section } from "@/components/primitives/Section";
 import { Stack } from "@/components/primitives/Stack";
 import { Button } from "@/components/ui/Button";
@@ -16,10 +17,10 @@ export const metadata: Metadata = {
 };
 
 /**
- * A booking/inquiry web form needs a server to receive it — that's later
- * phase work (see docs/ARCHITECTURE.md). Rather than ship a form that
- * silently goes nowhere, this page leads with the contact channels that
- * already work today: phone, WhatsApp and email.
+ * Leads with the contact channels that work immediately with no backend
+ * (tel:/wa.me/mailto: links), and points to the full enquiry form at
+ * /book-a-session/ for anyone who'd rather send full session details in
+ * one go.
  */
 export default function ContactPage() {
   return (
@@ -27,7 +28,7 @@ export default function ContactPage() {
       <PageHero
         eyebrow="Contact"
         title="Get in touch"
-        description="The fastest way to reach us is by phone, WhatsApp or email — for a structured booking request, use Book a Session instead."
+        description="Reach out directly, or send full session details through the booking form — whichever is easier."
       />
 
       <Section>
@@ -37,11 +38,12 @@ export default function ContactPage() {
           <ContactRow label="Email" value={contactInfo.email} href={`mailto:${contactInfo.email}`} />
         </Stack>
 
-        <div className="mt-12">
-          <Button href={routes.bookASession} variant="text">
-            Or Start a Booking Request
+        <Cluster gap="sm" className="mt-12">
+          <Button href={routes.bookASession}>Book a Session</Button>
+          <Button href={contactInfo.whatsappUrl} variant="secondary">
+            Message on WhatsApp
           </Button>
-        </div>
+        </Cluster>
       </Section>
     </>
   );

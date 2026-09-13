@@ -163,18 +163,21 @@ fails if it's ever imported into a client bundle) and reads
 none of which are prefixed `NEXT_PUBLIC_`, so none reach the browser. No
 service account file is created or committed by this scaffold.
 
-### Firestore — planned collections (not yet created)
+### Firestore — collections
 
-No collections exist yet; `firestore.rules` denies all reads/writes by
-default until they're designed and implemented deliberately. Planned,
-chosen by actual access pattern rather than mirroring every noun in the
-business domain 1:1:
+`firestore.rules` denies all reads/writes by default; each collection
+below gets an explicit rule only once it's actually implemented — chosen
+by real access pattern rather than mirroring every noun in the business
+domain 1:1.
+
+**`inquiries` is implemented** (Phase 4) — every other collection below
+is still planned, not yet created. See "Booking / inquiry system" further
+down for the full data model, write path and security rules.
 
 | Collection | Notes |
 |---|---|
 | `admins` | Admin user records (role, display name); auth identity itself lives in Firebase Auth. |
-| `leads` | Public, create-only inquiry submissions (contact form, book-a-session form). |
-| `bookings` | Confirmed sessions; created/edited by staff only, referencing a `leads` doc when converted from an inquiry. |
+| `inquiries` | **Implemented.** One document per booking/training enquiry from `/book-a-session/`. Superseded the earlier planned split of `leads` + `bookings` — a single collection with a `status` field (new/contacted/booked/closed) models the same lifecycle without needing to migrate a document between two collections. |
 | `services` | Newborn / maternity / baby / cake smash / family — service page content. |
 | `packages`, `packageAddons`, `products` | Pricing structure; add-ons and products (albums/frames/prints) kept separate from base packages to avoid duplicating pricing logic. |
 | `portfolioGalleries` (+ `portfolioImages` subcollection) | One gallery doc per shoot/category; images as a subcollection so a gallery document never grows unbounded. |
@@ -189,12 +192,61 @@ business domain 1:1:
 | `areas` | Kathmandu / Lalitpur / Bhaktapur area-page content. |
 | `auditLogs` | Append-only record of privileged admin actions (who, what, when). |
 
-Design rules for Phase 2 implementation: avoid oversized documents (large
+Design rules for future collections: avoid oversized documents (large
 repeating arrays → subcollection instead), avoid duplicating data that has
 one owner (e.g. don't copy full author objects onto every post — reference
 by ID and denormalize only the 1–2 display fields actually read on list
 views), and default every new collection's rules to deny until a specific
 access pattern justifies opening it.
+
+### Booking / inquiry system (Phase 4)
+
+The one full public-write / admin-read feature actually wired to
+Firestore. Three moving pieces:
+
+1. **Write path** — `/book-a-session/` renders `BookingForm`
+   (`components/sections/booking/BookingForm.tsx`, a client component
+   using React's `useActionState`), which posts to the `submitInquiry`
+   Server Action (`lib/inquiries/actions.ts`). That action validates
+   required fields server-side, verifies a Turnstile token when
+   `TURNSTILE_SECRET_KEY` is configured (no-op otherwise — see
+   `lib/security/turnstile.ts`), and writes the document directly via the
+   **Firebase Admin SDK**. The public Firebase *client* SDK is never used
+   to create an inquiry, by design.
+2. **Read/update path** — `/admin/bookings/` (list) and
+   `/admin/bookings/[id]/` (detail, with a status-update form calling the
+   `updateInquiryStatus` Server Action) read exclusively through the
+   Admin SDK too (`lib/inquiries/admin-data.ts`), gated by the same
+   `/admin/*` session-cookie check as the rest of the admin area
+   (`proxy.ts`). Both Firebase-reliant pages degrade to an honest "not
+   configured" message instead of crashing when Admin SDK credentials
+   aren't set — exactly what happens in this repo's own dev/build
+   environment right now.
+3. **Firestore rules** (`firestore.rules`, `inquiries` match block) — a
+   second, independent layer: public `create` is allowed only for
+   documents matching the exact real schema (required fields present,
+   `status` forced to `"new"`, `source` forced to `"website"`), and
+   `read`/`update`/`delete` are unconditionally denied for every client.
+   Because both the write and read paths already go through the Admin
+   SDK (which bypasses rules entirely), these rules aren't the only thing
+   enforcing "public creates, only admin reads" — but they mean that
+   invariant holds even against a hypothetical future direct
+   client-SDK code path, not just the one that exists today.
+
+**Known limitation, stated plainly**: the `/admin/*` session gate
+(`proxy.ts`) checks only for the *presence* of a `__session` cookie, not
+its cryptographic validity — real Firebase Authentication (verifying a
+session cookie server-side via `getAdminAuth().verifySessionCookie`,
+checking a role custom claim) was never wired up in an earlier phase and
+still isn't. That was an acceptable gap when `/admin/*` had no real data
+behind it; now that the admin inbox holds real customer names, emails,
+phone numbers and messages, closing this gap (real sign-in on
+`/admin/login/`, real session verification) is the highest-priority
+follow-up, not a nice-to-have.
+
+Data model: see `lib/inquiries/types.ts` for the exact `Inquiry` shape
+(customer, session, baby, message, contactPreference, status, source) —
+it matches what's actually stored, not an aspirational schema.
 
 ### Storage
 
@@ -276,26 +328,36 @@ could drift out of sync.
 
 ## What's deliberately deferred
 
-- Any real Firestore collection, security rule beyond deny-all, or Storage
-  upload path.
-- Working Firebase Authentication (the `/admin/login/` form is a static,
-  disabled placeholder built on the real form primitives).
-- Real content now exists on every route (Phase 3/3A) except `/blog/`,
-  which lists planned topics rather than published articles since none
-  exist yet, and `/portfolio/{maternity,baby,cake-smash,family}/`, which
-  show the honest gallery-empty state. No stock photography is used
-  anywhere — the site's only real photograph is the one client-supplied
-  `culture1.jpg`, used on the homepage (hero + Featured Work) and on
-  `/portfolio/newborn/`. Packages and reviews render honest empty states
-  rather than invented pricing or testimonials (see
-  `lib/data/packages.ts`, `lib/data/reviews.ts`). `/contact/` and
-  `/book-a-session/` deliberately have no web form — they lead with
-  `tel:`/`wa.me`/`mailto:` links instead, since those work today with no
-  backend (see `docs/DESIGN-SYSTEM.md`, Phase 3A additions).
+- Every planned Firestore collection except `inquiries` (see "Booking /
+  inquiry system" above) — no `admins`, `services`, `packages`,
+  `portfolioGalleries`, `blogPosts`, etc. yet, and no Storage upload path.
+- Working Firebase Authentication (the `/admin/login/` form is still a
+  static, disabled placeholder). This is now the most important deferred
+  item, not a minor one — see the "Known limitation" note under Booking /
+  inquiry system above.
+- Real content exists on every route except `/blog/` (lists planned
+  topics, no published articles yet) and
+  `/portfolio/{maternity,baby,cake-smash,family}/` (honest gallery-empty
+  state — no approved photography for those categories yet). No stock
+  photography is used anywhere. Real photography now spans: `culture1.jpg`
+  (homepage hero + Featured Work), 6 real newborn session photos and 5
+  real cake smash session photos (`lib/media/newborn-gallery.ts`,
+  `lib/media/cake-smash-gallery.ts`), used across the homepage,
+  `/newborn-photography/`, `/cake-smash-photography/`,
+  `/portfolio/newborn/` and `/portfolio/cake-smash/`.
+- Newborn session packages are real, published pricing (Phase 4,
+  `lib/data/packages.ts`) — maternity/baby/cake-smash/family packages
+  still aren't published, so those pages keep the "pricing on request"
+  treatment. Reviews still render an honest empty state (no invented
+  testimonials) — see `lib/data/reviews.ts`.
+- `/contact/` and `/book-a-session/` lead with `tel:`/`wa.me`/`mailto:`
+  links (work with no backend) *and* `/book-a-session/` now also has a
+  real, Firestore-backed enquiry form (see "Booking / inquiry system").
+- Resend email notifications on new inquiries (the Server Action writes
+  to Firestore; nothing emails the studio yet when one arrives).
 - Dynamic sitemap entries (blog posts, portfolio galleries) once those
   collections exist; breadcrumbs on interior pages.
-- The actual server-backed booking/inquiry form. Resend email and
-  Cloudflare Turnstile integration (there's nothing to protect or notify
-  on until that form exists).
-- The real admin UI design (Phase 2 established shared tokens only — see
-  `docs/DESIGN-SYSTEM.md`, Admin UI section).
+- The real admin UI design (shared tokens only — see
+  `docs/DESIGN-SYSTEM.md`, Admin UI section) and every admin module
+  besides Bookings: no gallery manager, package editor, copy editor or
+  analytics dashboard.

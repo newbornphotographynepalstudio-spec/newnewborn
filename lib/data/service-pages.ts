@@ -1,7 +1,12 @@
 import type { ImageProps } from "next/image";
 
 import type { FaqItem } from "@/lib/faq/types";
+import { cakeSmashGallery } from "@/lib/media/cake-smash-gallery";
+import { newbornGallery } from "@/lib/media/newborn-gallery";
 import { routes } from "@/lib/navigation/routes";
+
+const newbornShowcase = newbornGallery.find((img) => img.id === "newborn-yellow-wrap")!;
+const cakeSmashShowcase = cakeSmashGallery.find((img) => img.id === "cakesmash-cake-moment")!;
 
 export type ServiceSlug = "newborn" | "maternity" | "baby" | "cake-smash" | "family";
 
@@ -26,14 +31,13 @@ export type ServicePageContent = {
 
 /**
  * Real, specific copy per service — not interchangeable placeholder text.
- * `showcaseImage` is only set for newborn (the one approved,
- * category-matching photograph); every other page's showcase section
- * renders an honest placeholder instead of a stand-in photo.
+ * `showcaseImage` is only set for newborn and cake-smash (the two
+ * categories with approved, category-matching photography — see
+ * lib/media/newborn-gallery.ts and lib/media/cake-smash-gallery.ts);
+ * maternity/baby/family render an honest placeholder instead of a
+ * stand-in photo until their own sessions are photographed.
  */
-export function getServicePages(
-  cultureImage: ImageProps["src"],
-  cultureAlt: string
-): Record<ServiceSlug, ServicePageContent> {
+export function getServicePages(): Record<ServiceSlug, ServicePageContent> {
   return {
     newborn: {
       slug: "newborn",
@@ -63,8 +67,8 @@ export function getServicePages(
         "Careful, practiced handling throughout every pose",
         "Parents are present and involved for the whole session",
       ],
-      showcaseImage: cultureImage,
-      showcaseAlt: cultureAlt,
+      showcaseImage: newbornShowcase.src,
+      showcaseAlt: newbornShowcase.alt,
       faqs: [
         {
           id: "newborn-age",
@@ -194,6 +198,8 @@ export function getServicePages(
       heroEyebrow: "Cake Smash Photography",
       h1: "Cake Smash Photography in Kathmandu",
       heroDescription: "A playful studio session to mark your baby's first birthday.",
+      showcaseImage: cakeSmashShowcase.src,
+      showcaseAlt: cakeSmashShowcase.alt,
       introHeading: "One cake, a lot of personality",
       introParagraphs: [
         "A cake smash session is less posed and more reactive — most of the best photographs happen in the moments your baby isn't expecting, whether that's total delight or complete suspicion of the cake in front of them.",
