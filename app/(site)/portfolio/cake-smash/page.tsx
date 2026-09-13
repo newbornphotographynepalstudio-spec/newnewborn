@@ -30,7 +30,7 @@ export default function CakeSmashPortfolioPage() {
         description="First-birthday sessions as they actually happened — icing, mess and all."
       >
         <Cluster gap="sm" className="mt-8">
-          <Button href={bookASessionCta.href}>{bookASessionCta.label}</Button>
+          <Button href={`${bookASessionCta.href}?type=cake-smash`}>{bookASessionCta.label}</Button>
           <Button href={routes.cakeSmash} variant="secondary">
             Cake Smash Photography
           </Button>
@@ -155,7 +155,7 @@ export default function CakeSmashPortfolioPage() {
             reach out to check available dates.
           </p>
           <Cluster gap="sm" align="center" justify="center" className="mt-8">
-            <Button href={bookASessionCta.href} className="!bg-white !text-plum hover:!bg-blush">
+            <Button href={`${bookASessionCta.href}?type=cake-smash`} className="!bg-white !text-plum hover:!bg-blush">
               {bookASessionCta.label}
             </Button>
             <Button

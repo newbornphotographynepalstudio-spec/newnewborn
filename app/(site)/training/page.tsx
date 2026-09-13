@@ -65,7 +65,7 @@ export default function TrainingPage() {
           professional newborn photography business.
         </p>
         <Cluster gap="sm" className="mt-8">
-          <Button href={routes.bookASession}>Enquire About Training</Button>
+          <Button href={`${routes.bookASession}?type=training`}>Enquire About Training</Button>
           <Button href={routes.safety} variant="secondary">
             Our Safety Approach
           </Button>
@@ -133,7 +133,7 @@ export default function TrainingPage() {
                       </p>
                     ))}
                   </Stack>
-                  <Button href={routes.bookASession} variant="text" className="mt-6">
+                  <Button href={`${routes.bookASession}?type=training`} variant="text" className="mt-6">
                     Enquire About This Course
                   </Button>
                 </div>
@@ -188,7 +188,7 @@ export default function TrainingPage() {
             Enquire with your experience level and the course you&apos;re
             considering — we&apos;ll take it from there.
           </p>
-          <Button href={routes.bookASession} className="mt-8 !bg-white !text-plum hover:!bg-blush">
+          <Button href={`${routes.bookASession}?type=training`} className="mt-8 !bg-white !text-plum hover:!bg-blush">
             Enquire About Training
           </Button>
         </div>

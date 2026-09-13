@@ -24,11 +24,13 @@ export function ServicePageLayout({
   content: ServicePageContent;
   related: { slug: ServiceSlug; name: string; href: string }[];
 }) {
+  const bookingHref = `${bookASessionCta.href}?type=${content.slug}`;
+
   return (
     <>
       <PageHero eyebrow={content.heroEyebrow} title={content.h1} description={content.heroDescription}>
         <Cluster gap="sm" className="mt-8">
-          <Button href={bookASessionCta.href}>{bookASessionCta.label}</Button>
+          <Button href={bookingHref}>{bookASessionCta.label}</Button>
           <Button href={routes.portfolio} variant="secondary">
             View Portfolio
           </Button>
@@ -159,7 +161,7 @@ export function ServicePageLayout({
             right time for your {content.name.toLowerCase()} session.
           </p>
           <Cluster gap="sm" align="center" justify="center" className="mt-8">
-            <Button href={bookASessionCta.href} className="!bg-white !text-plum hover:!bg-blush">
+            <Button href={bookingHref} className="!bg-white !text-plum hover:!bg-blush">
               {bookASessionCta.label}
             </Button>
             <Button

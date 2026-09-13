@@ -28,7 +28,7 @@ export default function PackagesPage() {
         description="Three newborn session collections, from a short essential sitting to the full luxury experience — real pricing, shown here in full."
       >
         <Cluster gap="sm" className="mt-8">
-          <Button href={bookASessionCta.href}>{bookASessionCta.label}</Button>
+          <Button href={`${bookASessionCta.href}?type=newborn`}>{bookASessionCta.label}</Button>
           <Button href={routes.newborn} variant="secondary">
             Newborn Photography
           </Button>
@@ -79,7 +79,7 @@ export default function PackagesPage() {
               </Stack>
 
               <Button
-                href={pkg.href}
+                href={`${pkg.href}?type=newborn&package=${encodeURIComponent(pkg.name)}`}
                 variant={pkg.featured ? "primary" : "secondary"}
                 className="mt-8 w-full justify-center"
               >

@@ -31,7 +31,7 @@ export default function NewbornPortfolioPage() {
         description="A look at real newborn sessions — no stock photography, every image from an actual session in the studio."
       >
         <Cluster gap="sm" className="mt-8">
-          <Button href={bookASessionCta.href}>{bookASessionCta.label}</Button>
+          <Button href={`${bookASessionCta.href}?type=newborn`}>{bookASessionCta.label}</Button>
           <Button href={routes.newborn} variant="secondary">
             Newborn Photography
           </Button>
@@ -180,7 +180,7 @@ export default function NewbornPortfolioPage() {
             held for the first couple of weeks after birth.
           </p>
           <Cluster gap="sm" align="center" justify="center" className="mt-8">
-            <Button href={bookASessionCta.href} className="!bg-white !text-plum hover:!bg-blush">
+            <Button href={`${bookASessionCta.href}?type=newborn`} className="!bg-white !text-plum hover:!bg-blush">
               {bookASessionCta.label}
             </Button>
             <Button

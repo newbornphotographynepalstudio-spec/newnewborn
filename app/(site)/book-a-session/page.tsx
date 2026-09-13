@@ -6,6 +6,7 @@ import { Stack } from "@/components/primitives/Stack";
 import { BookingForm } from "@/components/sections/booking/BookingForm";
 import { ContactRow } from "@/components/ui/ContactRow";
 import { contactInfo } from "@/lib/data/contact";
+import { SESSION_TYPES, type SessionType } from "@/lib/inquiries/types";
 import { routes } from "@/lib/navigation/routes";
 
 export const metadata: Metadata = {
@@ -15,7 +16,16 @@ export const metadata: Metadata = {
   alternates: { canonical: routes.bookASession },
 };
 
-export default function BookASessionPage() {
+export default async function BookASessionPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ type?: string; package?: string }>;
+}) {
+  const { type, package: packageParam } = await searchParams;
+  const defaultSessionType = SESSION_TYPES.includes(type as SessionType)
+    ? (type as SessionType)
+    : undefined;
+
   return (
     <Section>
       <Container size="wide">
@@ -52,7 +62,7 @@ export default function BookASessionPage() {
           </div>
 
           <div className="lg:col-span-7">
-            <BookingForm />
+            <BookingForm defaultSessionType={defaultSessionType} defaultPackage={packageParam} />
           </div>
         </div>
       </Container>

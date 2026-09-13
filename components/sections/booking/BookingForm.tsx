@@ -30,10 +30,24 @@ const contactPreferenceLabels: Record<(typeof CONTACT_PREFERENCES)[number], stri
  * /training/). Submits to the submitInquiry Server Action, which writes
  * straight to Firestore via the Admin SDK — see docs/ARCHITECTURE.md for
  * why this needs real Firebase credentials to actually persist data.
+ *
+ * `defaultSessionType` lets a page link here with the right session type
+ * already selected (e.g. /book-a-session/?type=training from the Training
+ * page) instead of every visitor landing on "Newborn Photography" and
+ * having to change it themselves.
  */
-export function BookingForm() {
+export function BookingForm({
+  defaultSessionType = "newborn",
+  defaultPackage,
+}: {
+  defaultSessionType?: SessionType;
+  /** Pre-selects "Preferred Package" — e.g. linking from a specific
+   * package's "Book This Package" button. Ignored if it doesn't match one
+   * of that session type's real package/course names. */
+  defaultPackage?: string;
+}) {
   const [state, formAction, pending] = useActionState(submitInquiry, initialState);
-  const [sessionType, setSessionType] = useState<SessionType>("newborn");
+  const [sessionType, setSessionType] = useState<SessionType>(defaultSessionType);
   const packageOptions = getPackageOptions(sessionType);
 
   if (state.status === "success") {
@@ -106,7 +120,12 @@ export function BookingForm() {
             {packageOptions.length > 0 ? (
               <div>
                 <Label htmlFor="package">Preferred Package</Label>
-                <Select id="package" name="package" className="mt-2" defaultValue="">
+                <Select
+                  id="package"
+                  name="package"
+                  className="mt-2"
+                  defaultValue={defaultPackage && packageOptions.includes(defaultPackage) ? defaultPackage : ""}
+                >
                   <option value="">Not sure yet</option>
                   {packageOptions.map((name) => (
                     <option key={name} value={name}>
