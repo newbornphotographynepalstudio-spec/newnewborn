@@ -32,6 +32,11 @@ export function PortfolioCategoryLayout({
     { name: "Portfolio", href: routes.portfolio },
     { name: category.name, href: category.href },
   ]);
+  // Matches ServicePageLayout's own booking link exactly — category.slug
+  // is already the same value as SessionType, so a visitor booking from
+  // e.g. /portfolio/maternity/ lands on the form with "Maternity" already
+  // selected instead of the default.
+  const bookingHref = `${bookASessionCta.href}?type=${category.slug}`;
 
   return (
     <>
@@ -41,7 +46,7 @@ export function PortfolioCategoryLayout({
       />
       <PageHero eyebrow="Portfolio" title={`${category.name} Portfolio`}>
         <Cluster gap="sm" className="mt-8">
-          <Button href={bookASessionCta.href}>{bookASessionCta.label}</Button>
+          <Button href={bookingHref}>{bookASessionCta.label}</Button>
           <Button href={category.serviceHref} variant="secondary">
             {category.name} Photography
           </Button>
@@ -67,7 +72,7 @@ export function PortfolioCategoryLayout({
               <Button href={routes.portfolio} variant="text">
                 View the Portfolio
               </Button>
-              <Button href={bookASessionCta.href} variant="text">
+              <Button href={bookingHref} variant="text">
                 {bookASessionCta.label}
               </Button>
             </Cluster>

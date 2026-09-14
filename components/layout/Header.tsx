@@ -74,6 +74,8 @@ export function Header() {
             type="button"
             onClick={() => setMobileOpen(true)}
             aria-label="Open menu"
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-nav-panel"
             className="inline-flex items-center justify-center rounded-sm border border-taupe/40 p-2 lg:hidden"
           >
             <svg

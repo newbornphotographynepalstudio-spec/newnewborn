@@ -86,6 +86,7 @@ export function MobileNav({
   return (
     <div
       ref={panelRef}
+      id="mobile-nav-panel"
       role="dialog"
       aria-modal="true"
       aria-label="Site menu"

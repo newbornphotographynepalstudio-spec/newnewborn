@@ -116,7 +116,7 @@ export function BookingForm({
 
   if (state.status === "success") {
     return (
-      <div className="border border-taupe/25 bg-white px-8 py-12 text-center">
+      <div role="status" className="border border-taupe/25 bg-white px-8 py-12 text-center">
         <p className="text-eyebrow font-medium tracking-eyebrow text-plum uppercase">
           Request Received
         </p>
