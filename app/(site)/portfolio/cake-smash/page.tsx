@@ -8,6 +8,7 @@ import { EditorialImage } from "@/components/ui/EditorialImage";
 import { PageHero } from "@/components/ui/PageHero";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { MediaGallerySection } from "@/components/sections/portfolio/MediaGallerySection";
 import { cakeSmashGallery } from "@/lib/media/cake-smash-gallery";
 import { breadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
@@ -27,7 +28,7 @@ const jsonLd = breadcrumbJsonLd([
   { name: "Cake Smash", href: routes.portfolioCakeSmash },
 ]);
 
-export default function CakeSmashPortfolioPage() {
+export default async function CakeSmashPortfolioPage() {
   return (
     <>
       <script
@@ -156,6 +157,8 @@ export default function CakeSmashPortfolioPage() {
           </Cluster>
         </div>
       </Section>
+
+      <MediaGallerySection category="cake-smash" />
 
       <Section tone="plum">
         <div className="mx-auto max-w-xl text-center">

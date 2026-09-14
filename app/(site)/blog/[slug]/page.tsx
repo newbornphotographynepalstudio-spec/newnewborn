@@ -7,7 +7,7 @@ import { PageHero } from "@/components/ui/PageHero";
 import { getPublishedPostBySlug } from "@/lib/blog/data";
 import { findGalleryImage } from "@/lib/media/all-images";
 import { routes } from "@/lib/navigation/routes";
-import { breadcrumbJsonLd } from "@/lib/seo/jsonld";
+import { blogPostingJsonLd, breadcrumbJsonLd } from "@/lib/seo/jsonld";
 
 type Params = { slug: string };
 
@@ -41,15 +41,24 @@ export default async function BlogPostPage({
   }
 
   const image = findGalleryImage(post.featuredImageId);
-  const jsonLd = breadcrumbJsonLd([
-    { name: "Blog", href: routes.blog },
-    { name: post.title, href: `${routes.blog}${post.slug}/` },
-  ]);
+  const jsonLd = [
+    breadcrumbJsonLd([
+      { name: "Blog", href: routes.blog },
+      { name: post.title, href: `${routes.blog}${post.slug}/` },
+    ]),
+    blogPostingJsonLd(post),
+  ];
   const paragraphs = post.content.split(/\n\s*\n/).filter(Boolean);
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      {jsonLd.map((entry, index) => (
+        <script
+          key={index}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(entry) }}
+        />
+      ))}
       <PageHero eyebrow="Blog" title={post.title} description={post.excerpt} />
 
       {image ? (

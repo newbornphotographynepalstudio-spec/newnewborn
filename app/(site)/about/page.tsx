@@ -8,17 +8,22 @@ import { PageHero } from "@/components/ui/PageHero";
 import { Reveal } from "@/components/ui/Reveal";
 import { newbornGallery } from "@/lib/media/newborn-gallery";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
+import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
 /** The one newborn gallery photo not already used elsewhere outside the
  * full portfolio grid — keeps this page from being text-only. */
 const aboutPhoto = newbornGallery.find((img) => img.id === "newborn-tutu-bed")!;
 
-export const metadata: Metadata = {
-  title: "About",
-  description:
-    "Newborn Photography Nepal is a photography studio in Kathmandu Valley offering newborn, maternity, baby, cake smash and family photography, plus training for photographers.",
-  alternates: { canonical: routes.about },
-};
+/** generateMetadata (not a static export) so an admin-entered override
+ * from /admin/seo/ (lib/seo/page-overrides.ts) can replace any field —
+ * every field falls back to the values below when no override exists. */
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata(routes.about, {
+    title: "About",
+    description:
+      "Newborn Photography Nepal is a photography studio in Kathmandu Valley offering newborn, maternity, baby, cake smash and family photography, plus training for photographers.",
+  });
+}
 
 export default function AboutPage() {
   return (

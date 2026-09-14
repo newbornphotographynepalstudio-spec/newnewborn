@@ -7,6 +7,7 @@ import { FaqAccordion } from "@/components/ui/FaqAccordion";
 import { PageHero } from "@/components/ui/PageHero";
 import { getFaqs } from "@/lib/faq/data";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
+import { faqPageJsonLd } from "@/lib/seo/jsonld";
 
 export const metadata: Metadata = {
   title: "Frequently Asked Questions",
@@ -17,8 +18,10 @@ export const metadata: Metadata = {
 
 export default async function FaqPage() {
   const faqs = await getFaqs();
+  const jsonLd = faqPageJsonLd(faqs);
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <PageHero
         eyebrow="FAQ"
         title="Frequently Asked Questions"

@@ -11,6 +11,7 @@ const navItems = [
   { label: "FAQs", href: "/admin/faqs" },
   { label: "Media", href: "/admin/media" },
   { label: "Portfolio", href: "/admin/portfolio" },
+  { label: "SEO", href: "/admin/seo" },
   { label: "Settings", href: "/admin/settings" },
   { label: "Security", href: "/admin/security" },
 ];

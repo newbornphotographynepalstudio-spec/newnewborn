@@ -6,6 +6,7 @@ import { FieldValue } from "firebase-admin/firestore";
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import { verifyAdminSession } from "@/lib/firebase/session";
 import { auditActorFromSession, writeAuditLog } from "@/lib/audit/log";
+import { sendBookingNotificationEmail } from "@/lib/email/booking-notification";
 import {
   CONTACT_PREFERENCES,
   INQUIRY_STATUSES,
@@ -79,36 +80,60 @@ export async function submitInquiry(
   const familyMembersRaw = readOptionalString(formData, "familyMembers");
   const familyMembers = familyMembersRaw ? Number.parseInt(familyMembersRaw, 10) : undefined;
 
+  const session = {
+    type: sessionType,
+    package: readOptionalString(formData, "package"),
+    preferredDate: readOptionalString(formData, "preferredDate"),
+    preferredTime: readOptionalString(formData, "preferredTime"),
+    alternativeDate: readOptionalString(formData, "alternativeDate"),
+  };
+  const baby = {
+    name: readOptionalString(formData, "babyName"),
+    dateOfBirth: readOptionalString(formData, "babyDob"),
+    dueDate: readOptionalString(formData, "dueDate"),
+  };
+  const message = readOptionalString(formData, "message");
+
   try {
     const db = getAdminFirestore();
-    await db.collection("inquiries").add({
+    const now = new Date();
+    const ref = await db.collection("inquiries").add({
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
-      customer: {
-        name,
-        email,
-        phone,
-        whatsapp: phone,
-      },
-      session: {
-        type: sessionType,
-        package: readOptionalString(formData, "package"),
-        preferredDate: readOptionalString(formData, "preferredDate"),
-        preferredTime: readOptionalString(formData, "preferredTime"),
-        alternativeDate: readOptionalString(formData, "alternativeDate"),
-      },
-      baby: {
-        name: readOptionalString(formData, "babyName"),
-        dateOfBirth: readOptionalString(formData, "babyDob"),
-        dueDate: readOptionalString(formData, "dueDate"),
-      },
+      customer: { name, email, phone, whatsapp: phone },
+      session,
+      baby,
       familyMembers: Number.isFinite(familyMembers) ? familyMembers : undefined,
-      message: readOptionalString(formData, "message"),
+      message,
       contactPreference,
       consent,
       status: "new",
       source: "website",
     });
+
+    // Awaited (not fire-and-forget) so the send is actually attempted
+    // before this serverless function's execution context can be torn
+    // down — but its result never changes the response below: the
+    // booking has already saved successfully by this point regardless of
+    // whether this email sends. See lib/email/booking-notification.ts.
+    try {
+      await sendBookingNotificationEmail({
+        id: ref.id,
+        createdAt: now.toISOString(),
+        updatedAt: now.toISOString(),
+        customer: { name, email, phone, whatsapp: phone },
+        session,
+        baby,
+        familyMembers: Number.isFinite(familyMembers) ? familyMembers : undefined,
+        message,
+        contactPreference,
+        consent,
+        status: "new",
+        source: "website",
+      });
+    } catch (error) {
+      console.error("sendBookingNotificationEmail threw unexpectedly:", error);
+    }
 
     return {
       status: "success",

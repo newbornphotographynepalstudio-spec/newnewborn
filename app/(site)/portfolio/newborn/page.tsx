@@ -8,6 +8,7 @@ import { EditorialImage } from "@/components/ui/EditorialImage";
 import { PageHero } from "@/components/ui/PageHero";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { MediaGallerySection } from "@/components/sections/portfolio/MediaGallerySection";
 import { newbornGallery } from "@/lib/media/newborn-gallery";
 import { breadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
@@ -28,7 +29,7 @@ const jsonLd = breadcrumbJsonLd([
   { name: "Newborn", href: routes.portfolioNewborn },
 ]);
 
-export default function NewbornPortfolioPage() {
+export default async function NewbornPortfolioPage() {
   return (
     <>
       <script
@@ -181,6 +182,8 @@ export default function NewbornPortfolioPage() {
           </Button>
         </div>
       </Section>
+
+      <MediaGallerySection category="newborn" />
 
       <Section tone="plum">
         <div className="mx-auto max-w-xl text-center">

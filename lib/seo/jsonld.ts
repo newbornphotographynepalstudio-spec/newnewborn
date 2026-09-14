@@ -8,11 +8,11 @@ import { siteConfig } from "@/lib/seo/site";
  * a real value exists for it.
  */
 
-export function organizationJsonLd() {
+export function organizationJsonLd(nameOverride?: string) {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: siteConfig.name,
+    name: nameOverride || siteConfig.name,
     url: siteConfig.url,
     logo: new URL("/brand/logo.jpg", siteConfig.url).toString(),
     // The real Google Business Profile review link — an identity
@@ -47,11 +47,14 @@ export function websiteJsonLd() {
  * — exactly the current state of this codebase, since no Google API
  * credentials exist in this environment.
  */
-export function professionalServiceJsonLd(aggregateRating?: { ratingValue: number; reviewCount: number }) {
+export function professionalServiceJsonLd(
+  aggregateRating?: { ratingValue: number; reviewCount: number },
+  nameOverride?: string
+) {
   return {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
-    name: siteConfig.name,
+    name: nameOverride || siteConfig.name,
     url: siteConfig.url,
     image: new URL("/brand/logo.jpg", siteConfig.url).toString(),
     description: siteConfig.description,
@@ -69,6 +72,52 @@ export function professionalServiceJsonLd(aggregateRating?: { ratingValue: numbe
           },
         }
       : {}),
+  };
+}
+
+/**
+ * BlogPosting for one published post — every field comes from the post
+ * document itself (title, excerpt, author, publish/update dates); there
+ * is no invented field here (no fake `datePublished` for a draft, since
+ * this is only ever called with an already-published post).
+ */
+export function blogPostingJsonLd(post: {
+  title: string;
+  excerpt: string;
+  author: string;
+  slug: string;
+  publishedAt?: string;
+  updatedAt: string;
+}) {
+  const url = new URL(`/blog/${post.slug}/`, siteConfig.url).toString();
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt || undefined,
+    author: { "@type": "Organization", name: siteConfig.name },
+    publisher: { "@type": "Organization", name: siteConfig.name },
+    url,
+    mainEntityOfPage: url,
+    ...(post.publishedAt ? { datePublished: post.publishedAt } : {}),
+    dateModified: post.updatedAt,
+  };
+}
+
+/**
+ * FAQPage — built from the exact same question/answer pairs already
+ * rendered on the page (lib/faq/data.ts), never a separate hand-written
+ * set that could drift from what a visitor actually sees.
+ */
+export function faqPageJsonLd(faqs: { question: string; answer: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: { "@type": "Answer", text: faq.answer },
+    })),
   };
 }
 

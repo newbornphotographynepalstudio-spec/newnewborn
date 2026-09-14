@@ -7,11 +7,14 @@ export type MediaLibraryAsset = {
   url: string;
   title: string;
   alt: string;
+  caption?: string;
   category: MediaLibraryCategory;
   featured: boolean;
   published: boolean;
   order: number;
   contentType: string;
   sizeBytes: number;
+  width?: number;
+  height?: number;
   createdAt: string;
 };

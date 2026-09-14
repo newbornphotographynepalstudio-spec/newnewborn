@@ -1,7 +1,11 @@
 import Link from "next/link";
 
+import { listAllPosts } from "@/lib/blog/admin-data";
+import { listFaqsAdmin } from "@/lib/faq/admin-data";
 import { getInquiryStats } from "@/lib/inquiries/stats";
 import { SESSION_TYPE_LABELS, STATUS_LABELS } from "@/lib/inquiries/types";
+import { listMedia } from "@/lib/media/library-data";
+import { getSystemDiagnostics } from "@/lib/settings/diagnostics";
 
 const statusToneClass: Record<string, string> = {
   new: "bg-blush text-plum",
@@ -17,12 +21,22 @@ const quickLinks = [
   { label: "FAQs", href: "/admin/faqs", description: "Edit questions shown on /faq/ and the homepage." },
   { label: "Media Library", href: "/admin/media", description: "Upload and manage photos." },
   { label: "Portfolio Photos", href: "/admin/portfolio", description: "Edit captions, categories and featured status." },
-  { label: "Site Settings", href: "/admin/settings", description: "SEO defaults, Google Reviews status, integrations." },
+  { label: "SEO", href: "/admin/seo", description: "Global SEO, per-page overrides, schema inspector." },
+  { label: "Site Settings", href: "/admin/settings", description: "Social links, system status, integrations." },
   { label: "Security", href: "/admin/security", description: "Audit log of admin changes." },
 ];
 
 export default async function AdminDashboardPage() {
-  const stats = await getInquiryStats();
+  const [stats, posts, faqs, media, diagnostics] = await Promise.all([
+    getInquiryStats(),
+    listAllPosts(),
+    listFaqsAdmin(),
+    listMedia(),
+    getSystemDiagnostics(),
+  ]);
+  const publishedPostCount = posts.configured ? posts.posts.filter((p) => p.status === "published").length : 0;
+  const faqCount = faqs.configured ? faqs.faqs.length : 0;
+  const mediaCount = media.configured ? media.assets.length : 0;
 
   return (
     <div className="mx-auto max-w-7xl px-gutter py-16">
@@ -93,6 +107,22 @@ export default async function AdminDashboardPage() {
       )}
 
       <div className="mt-12">
+        <h2 className="text-h4 text-plum">Content</h2>
+        <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <StatCard label="Published Blog Posts" value={publishedPostCount} />
+          <StatCard label="FAQs" value={faqCount} />
+          <StatCard label="Media Library Photos" value={mediaCount} />
+          <StatCard
+            label="System Status"
+            value={
+              [diagnostics.firestoreConnected, diagnostics.authConnected].filter(Boolean).length
+            }
+            suffix="/2 connected"
+          />
+        </div>
+      </div>
+
+      <div className="mt-12">
         <h2 className="text-h4 text-plum">Quick Actions</h2>
         <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {quickLinks.map((link) => (
@@ -112,11 +142,14 @@ export default async function AdminDashboardPage() {
   );
 }
 
-function StatCard({ label, value, tone }: { label: string; value: number; tone?: string }) {
+function StatCard({ label, value, tone, suffix }: { label: string; value: number; tone?: string; suffix?: string }) {
   return (
     <div className="border border-taupe/20 bg-white p-5">
       <p className="text-caption tracking-eyebrow text-taupe uppercase">{label}</p>
-      <p className={`mt-2 text-h2 ${tone ? "text-plum" : "text-charcoal"}`}>{value}</p>
+      <p className={`mt-2 text-h2 ${tone ? "text-plum" : "text-charcoal"}`}>
+        {value}
+        {suffix ? <span className="text-small text-charcoal/60">{suffix}</span> : null}
+      </p>
     </div>
   );
 }

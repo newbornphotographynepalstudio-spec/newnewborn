@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { MediaCard } from "@/components/sections/admin/MediaCard";
+import { MediaLibraryGrid } from "@/components/sections/admin/MediaLibraryGrid";
 import { UploadMediaForm } from "@/components/sections/admin/UploadMediaForm";
 import { listMedia } from "@/lib/media/library-data";
 import { getSystemDiagnostics } from "@/lib/settings/diagnostics";
@@ -17,22 +17,28 @@ export default async function AdminMediaPage() {
     <div className="mx-auto max-w-6xl px-gutter py-2xl">
       <h1 className="text-h2 text-plum">Media Library</h1>
       <p className="mt-2xs text-small text-charcoal/70">
-        Upload and manage photos. Uploaded photos aren&apos;t shown on the public site yet — the
-        existing approved galleries remain live; this is where new photography will be added.
+        Upload and manage photos. Assign a photo to a category and it becomes available to the
+        matching portfolio page and, if marked Featured, the homepage — the existing approved
+        photography stays exactly as it is alongside anything uploaded here.
       </p>
 
-      {!diagnostics.storageEnabled ? (
+      {!diagnostics.mediaStorageConfigured ? (
         <div className="mt-lg border border-dashed border-taupe/40 bg-white p-lg text-small text-taupe">
-          <p className="font-medium text-charcoal">Firebase Storage isn&apos;t enabled yet.</p>
+          <p className="font-medium text-charcoal">Photo storage isn&apos;t configured yet.</p>
           <p className="mt-2">
-            Uploads will fail until it is. Enable it once in the Firebase Console: Storage → Get
-            Started. No code changes are needed afterward — this page is ready to use immediately.
+            Uploads will fail until it is. See Site Settings for exactly what&apos;s needed —
+            this page is otherwise ready to use immediately once that&apos;s set.
           </p>
+        </div>
+      ) : !diagnostics.mediaStorageConnected ? (
+        <div className="mt-lg border border-dashed border-taupe/40 bg-white p-lg text-small text-taupe">
+          <p className="font-medium text-charcoal">Photo storage is configured but not reachable.</p>
+          <p className="mt-2">See Site Settings for the likely cause.</p>
         </div>
       ) : null}
 
       <div className="mt-lg border border-taupe/20 bg-white p-6">
-        <h2 className="text-caption font-medium tracking-eyebrow text-taupe uppercase">Upload a Photo</h2>
+        <h2 className="text-caption font-medium tracking-eyebrow text-taupe uppercase">Upload Photos</h2>
         <div className="mt-4">
           <UploadMediaForm />
         </div>
@@ -49,11 +55,7 @@ export default async function AdminMediaPage() {
             No photos uploaded yet.
           </div>
         ) : (
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {result.assets.map((asset) => (
-              <MediaCard key={asset.id} asset={asset} />
-            ))}
-          </div>
+          <MediaLibraryGrid assets={result.assets} />
         )}
       </div>
     </div>

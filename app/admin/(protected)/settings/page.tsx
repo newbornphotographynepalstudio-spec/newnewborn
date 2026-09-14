@@ -39,18 +39,46 @@ export default async function AdminSettingsPage() {
             <dd><StatusBadge ok={diagnostics.firestoreConnected} yesLabel="Connected" noLabel="Not connected" /></dd>
           </div>
           <div className="flex items-center justify-between border-b border-taupe/15 pb-3">
-            <dt className="text-small text-charcoal">Firebase Storage</dt>
-            <dd><StatusBadge ok={diagnostics.storageEnabled} yesLabel="Enabled" noLabel="Not enabled" /></dd>
+            <dt className="text-small text-charcoal">Firebase Authentication</dt>
+            <dd><StatusBadge ok={diagnostics.authConnected} yesLabel="Connected" noLabel="Not connected" /></dd>
+          </div>
+          <div className="flex items-center justify-between border-b border-taupe/15 pb-3">
+            <dt className="text-small text-charcoal">Media storage (Supabase)</dt>
+            <dd>
+              <StatusBadge
+                ok={diagnostics.mediaStorageConfigured && diagnostics.mediaStorageConnected}
+                yesLabel="Connected"
+                noLabel={diagnostics.mediaStorageConfigured ? "Configured, not reachable" : "Not configured"}
+              />
+            </dd>
+          </div>
+          <div className="flex items-center justify-between border-b border-taupe/15 pb-3">
+            <dt className="text-small text-charcoal">Booking email notifications</dt>
+            <dd><StatusBadge ok={diagnostics.emailConfigured} yesLabel="Configured" noLabel="Not configured" /></dd>
           </div>
           <div className="flex items-center justify-between">
             <dt className="text-small text-charcoal">Google Reviews (Places API)</dt>
             <dd><StatusBadge ok={diagnostics.googlePlacesConfigured} yesLabel="Configured" noLabel="Not configured" /></dd>
           </div>
         </dl>
-        {!diagnostics.storageEnabled ? (
+        {!diagnostics.mediaStorageConfigured ? (
           <p className="mt-4 text-caption text-charcoal/60">
-            Photo uploads from admin need Firebase Storage enabled first: Firebase Console →
-            Storage → Get Started. No code changes are needed once it&apos;s on.
+            Media Library uploads need a Supabase project: set NEXT_PUBLIC_SUPABASE_URL and
+            SUPABASE_SERVICE_ROLE_KEY as environment variables, and create a public bucket named
+            &quot;media&quot; in that project&apos;s Storage dashboard. The service role key is
+            server-only and is never sent to the browser.
+          </p>
+        ) : !diagnostics.mediaStorageConnected ? (
+          <p className="mt-4 text-caption text-charcoal/60">
+            Supabase credentials are set, but the &quot;media&quot; bucket couldn&apos;t be
+            reached — confirm it exists and is public in the Supabase Storage dashboard.
+          </p>
+        ) : null}
+        {!diagnostics.emailConfigured ? (
+          <p className="mt-4 text-caption text-charcoal/60">
+            Set RESEND_API_KEY as a server-only environment variable to email the studio when a
+            new booking comes in. The booking still saves to Firestore and appears in admin
+            either way — this only affects the email notification.
           </p>
         ) : null}
         {!diagnostics.googlePlacesConfigured ? (

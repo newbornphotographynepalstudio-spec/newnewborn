@@ -6,12 +6,21 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
 
   images: {
-    // Photography will be served from Firebase Storage; original files are
-    // never referenced directly in page markup, only via next/image.
+    // Original files are never referenced directly in page markup, only
+    // via next/image. Media Library uploads are served from Supabase
+    // Storage (this project stays on the Firebase Spark plan, which
+    // doesn't include Firebase Storage — Firestore/Auth remain on
+    // Firebase; see lib/supabase/admin.ts). The firebasestorage.googleapis.com
+    // pattern is kept for forward-compatibility with any future Firebase
+    // Storage usage, but nothing currently uses it.
     remotePatterns: [
       {
         protocol: "https",
         hostname: "firebasestorage.googleapis.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
       },
     ],
   },

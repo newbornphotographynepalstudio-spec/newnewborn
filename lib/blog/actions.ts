@@ -69,9 +69,13 @@ export async function savePost(_prevState: PostFormState, formData: FormData): P
     content,
     author,
     status,
-    seoTitle: seoTitle || undefined,
-    seoDescription: seoDescription || undefined,
-    featuredImageId: featuredImageId || undefined,
+    // FieldValue.delete() (not `undefined`, which ignoreUndefinedProperties
+    // strips before Firestore ever sees it) so blanking one of these
+    // fields on an existing post actually clears it on this merge write,
+    // rather than silently leaving the previous value in place.
+    seoTitle: seoTitle || FieldValue.delete(),
+    seoDescription: seoDescription || FieldValue.delete(),
+    featuredImageId: featuredImageId || FieldValue.delete(),
     updatedAt: FieldValue.serverTimestamp(),
   };
 

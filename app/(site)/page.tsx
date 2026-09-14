@@ -19,6 +19,7 @@ import {
   websiteJsonLd,
 } from "@/lib/seo/jsonld";
 import { siteConfig } from "@/lib/seo/site";
+import { getSiteSettings } from "@/lib/settings/data";
 
 const title = "Newborn Photography in Kathmandu, Nepal";
 const description =
@@ -72,15 +73,16 @@ export default async function HomePage() {
   // null in this environment — no GOOGLE_PLACES_API_KEY/PLACE_ID
   // configured, so this always falls back to the honest static empty
   // state (see lib/reviews/google-places.ts and ReviewsSection).
-  const liveGoogleReviews = await fetchGoogleReviews();
+  const [liveGoogleReviews, { seo }] = await Promise.all([fetchGoogleReviews(), getSiteSettings()]);
 
   const jsonLd = [
-    organizationJsonLd(),
+    organizationJsonLd(seo.organizationName),
     websiteJsonLd(),
     professionalServiceJsonLd(
       liveGoogleReviews
         ? { ratingValue: liveGoogleReviews.rating, reviewCount: liveGoogleReviews.userRatingCount }
-        : undefined
+        : undefined,
+      seo.organizationName
     ),
   ];
 
