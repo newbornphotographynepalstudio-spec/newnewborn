@@ -48,5 +48,7 @@ firestore-debug.log
 ui-debug.log
 *service-account*.json
 *serviceAccountKey*.json
+*firebase-adminsdk*.json
+newborn-9a2be-*.json
 *.pem
 *.key

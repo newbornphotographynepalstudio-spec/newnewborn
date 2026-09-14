@@ -51,8 +51,23 @@ export function getAdminAuth(): Auth {
   return getAuth(getAdminApp());
 }
 
+let firestoreConfigured = false;
+
+/**
+ * `ignoreUndefinedProperties` lets callers write documents built with
+ * optional fields left as `undefined` (e.g. `readOptionalString()` in
+ * lib/inquiries/actions.ts) without manually stripping each one first.
+ * The Admin SDK rejects `undefined` values by default. `.settings()` may
+ * only be called once per Firestore instance, before any read/write, so
+ * this guards against re-applying it on every call.
+ */
 export function getAdminFirestore(): Firestore {
-  return getFirestore(getAdminApp());
+  const db = getFirestore(getAdminApp());
+  if (!firestoreConfigured) {
+    db.settings({ ignoreUndefinedProperties: true });
+    firestoreConfigured = true;
+  }
+  return db;
 }
 
 export function getAdminStorage(): Storage {
