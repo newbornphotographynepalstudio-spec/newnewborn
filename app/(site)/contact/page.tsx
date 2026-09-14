@@ -57,6 +57,21 @@ export default function ContactPage() {
                 Message on WhatsApp
               </Button>
             </Cluster>
+
+            <div className="mt-12 max-w-md border-t border-taupe/20 pt-8">
+              <p className="text-caption tracking-eyebrow text-taupe uppercase">Studio Location</p>
+              <p className="mt-1 text-body text-charcoal/80">Kathmandu Valley, Nepal</p>
+              <Button
+                href={contactInfo.mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="secondary"
+                size="sm"
+                className="mt-4"
+              >
+                Get Directions
+              </Button>
+            </div>
           </div>
           <div className="lg:col-span-6">
             <Reveal>

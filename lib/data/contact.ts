@@ -8,6 +8,10 @@ export const contactInfo = {
   phoneE164: "+9779851278641",
   whatsappUrl: "https://wa.me/9779851278641",
   email: "newbornphotographynepal.studio@gmail.com",
+  // The studio's real Google Maps listing — client-provided, exact URL,
+  // not reconstructed from coordinates or a place ID. Opens Google Maps
+  // directly; no API key involved.
+  mapsUrl: "https://maps.app.goo.gl/oJQWF59m6VkBPSYx8",
   // The Gmail address above is unrelated to the website domain — its
   // local part just happens to be this name. This must match
   // siteConfig.url (lib/seo/site.ts) exactly — the www subdomain is the
