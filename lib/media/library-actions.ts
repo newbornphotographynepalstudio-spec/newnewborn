@@ -9,6 +9,22 @@ import { auditActorFromSession, writeAuditLog } from "@/lib/audit/log";
 import { getImageDimensions } from "@/lib/media/image-dimensions";
 import { MEDIA_CATEGORIES, type MediaLibraryCategory } from "@/lib/media/library-types";
 import { getSupabaseAdmin, isSupabaseConfigured, MEDIA_BUCKET } from "@/lib/supabase/admin";
+import { portfolioCategories } from "@/lib/data/portfolio";
+import { routes } from "@/lib/navigation/routes";
+
+/** Media only reaches the public site through a category's portfolio
+ * page or the homepage's Featured Work section — neither is revalidated
+ * by Next.js automatically on a Firestore/Storage write, so every
+ * mutation here must name the specific public paths it could affect. */
+function revalidatePublicMediaPaths(category: MediaLibraryCategory, featuredMayHaveChanged: boolean) {
+  const categoryPage = portfolioCategories.find((c) => c.slug === category);
+  if (categoryPage) {
+    revalidatePath(categoryPage.href);
+  }
+  if (featuredMayHaveChanged) {
+    revalidatePath(routes.home);
+  }
+}
 
 export type MediaFormState = { status: "idle" | "success" | "error"; message?: string; uploadedCount?: number };
 
@@ -133,6 +149,11 @@ export async function uploadMedia(_prevState: MediaFormState, formData: FormData
     }
 
     revalidatePath("/admin/media");
+    if (uploadedCount > 0) {
+      // New uploads are always featured:false, so Featured Work can't
+      // have changed — only the category page needs revalidating.
+      revalidatePublicMediaPaths(category, false);
+    }
     if (uploadedIds.length > 0) {
       await writeAuditLog({
         ...auditActorFromSession(session),
@@ -181,7 +202,11 @@ export async function updateMediaMetadata(_prevState: MediaFormState, formData: 
 
   try {
     const db = getAdminFirestore();
-    await db.collection("media").doc(id).update({
+    const docRef = db.collection("media").doc(id);
+    const before = await docRef.get();
+    const previousCategory = before.data()?.category as MediaLibraryCategory | undefined;
+
+    await docRef.update({
       title,
       alt,
       // FieldValue.delete() (not `undefined`, which ignoreUndefinedProperties
@@ -195,6 +220,13 @@ export async function updateMediaMetadata(_prevState: MediaFormState, formData: 
       order: Number.isNaN(order) ? 0 : order,
     });
     revalidatePath("/admin/media");
+    // featured/published could have changed either way, so always
+    // revalidate Featured Work; revalidate both category pages if the
+    // photo moved categories.
+    revalidatePublicMediaPaths(category, true);
+    if (previousCategory && previousCategory !== category) {
+      revalidatePublicMediaPaths(previousCategory, false);
+    }
     await writeAuditLog({
       ...auditActorFromSession(session),
       action: "media.updated",
@@ -219,12 +251,19 @@ export async function deleteMedia(id: string): Promise<MediaFormState> {
     if (!doc.exists) {
       return { status: "error", message: "Not found." };
     }
-    const storagePath = doc.data()?.storagePath;
+    const data = doc.data();
+    const storagePath = data?.storagePath;
     if (storagePath && isSupabaseConfigured()) {
       await getSupabaseAdmin().storage.from(MEDIA_BUCKET).remove([storagePath]);
     }
     await doc.ref.delete();
     revalidatePath("/admin/media");
+    const category = data?.category as MediaLibraryCategory | undefined;
+    if (category) {
+      // A deleted photo may have been featured, so revalidate the
+      // homepage too, not just its category page.
+      revalidatePublicMediaPaths(category, true);
+    }
     await writeAuditLog({
       ...auditActorFromSession(session),
       action: "media.deleted",
