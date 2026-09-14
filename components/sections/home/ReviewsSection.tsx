@@ -65,12 +65,9 @@ export function ReviewsSection({
         </div>
       ) : (
         <div className="mx-auto mt-12 max-w-lg text-center">
-          <p aria-hidden className="font-display text-h1 leading-none text-plum/15">
-            &ldquo;
-          </p>
-          <p className="-mt-6 text-body-lg leading-relaxed text-charcoal/75">
-            Read what families have shared about their experience with
-            Newborn Photography Nepal.
+          <p className="text-body-lg leading-relaxed text-charcoal/75">
+            See our latest Google reviews to read what families have shared
+            about their experience with Newborn Photography Nepal.
           </p>
         </div>
       )}
