@@ -18,7 +18,6 @@ import {
   professionalServiceJsonLd,
   websiteJsonLd,
 } from "@/lib/seo/jsonld";
-import { siteConfig } from "@/lib/seo/site";
 import { getSiteSettings } from "@/lib/settings/data";
 import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
@@ -26,34 +25,15 @@ const title = "Newborn Photography in Kathmandu, Nepal";
 const description =
   "Editorial, safety-led newborn photography in Kathmandu, plus maternity, baby, cake smash and family sessions. Book your studio session today.";
 
-/**
- * Uses buildPageMetadata (like every other page) so a Page SEO override
- * for "/" actually takes effect, then re-applies the fields Next.js
- * would otherwise drop — page-level `openGraph`/`twitter` objects
- * replace the layout's wholesale rather than merging key-by-key, so
- * type/locale/siteName/card must be repeated here or they'd disappear.
- */
+/** Uses buildPageMetadata (like every other page) so a Page SEO override
+ * for "/" actually takes effect; type/locale/siteName/url/card are all
+ * filled in by buildPageMetadata itself now (Phase 15.1). */
 export async function generateMetadata(): Promise<Metadata> {
-  const base = await buildPageMetadata("/", {
+  return buildPageMetadata("/", {
     title,
     description,
     ogImage: "/photography/culture1.jpg",
   });
-
-  return {
-    ...base,
-    openGraph: {
-      ...base.openGraph,
-      type: "website",
-      locale: siteConfig.locale,
-      siteName: siteConfig.name,
-      url: siteConfig.url,
-    },
-    twitter: {
-      ...base.twitter,
-      card: "summary_large_image",
-    },
-  };
 }
 
 /**
