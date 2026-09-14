@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { FieldValue } from "firebase-admin/firestore";
 
+import { contactInfo } from "@/lib/data/contact";
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import { verifyAdminSession } from "@/lib/firebase/session";
 import {
@@ -116,8 +117,7 @@ export async function submitInquiry(
     console.error("submitInquiry failed:", error);
     return {
       status: "error",
-      message:
-        "We couldn't submit your enquiry right now — please reach out on WhatsApp or by phone instead.",
+      message: `We couldn't send your enquiry just now. You can contact us directly on WhatsApp or call ${contactInfo.phoneDisplay} and we'll help you arrange your session.`,
     };
   }
 }
