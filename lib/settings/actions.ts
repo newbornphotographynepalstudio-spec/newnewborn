@@ -6,7 +6,6 @@ import { FieldValue } from "firebase-admin/firestore";
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import { verifyAdminSession } from "@/lib/firebase/session";
 import { auditActorFromSession, writeAuditLog } from "@/lib/audit/log";
-import { routes } from "@/lib/navigation/routes";
 import type { SocialLinkEntry } from "@/lib/settings/data";
 
 export type SettingsFormState = { status: "idle" | "success" | "error"; message?: string };
@@ -33,7 +32,13 @@ export async function saveSocialLinks(
   try {
     const db = getAdminFirestore();
     await db.collection("settings").doc("site").set({ socialLinks }, { merge: true });
-    revalidatePath(routes.home);
+    // Social links render in Footer(), which lives in app/(site)/layout.tsx
+    // — every public route, not just "/". Found live in Phase 15: a real
+    // save correctly updated the homepage (the old `revalidatePath(routes.home)`
+    // covered that) but left every other page's footer stale, since a
+    // plain page-path revalidation doesn't reach a shared layout. Same
+    // fix already applied to saveGlobalSeo below for the same reason.
+    revalidatePath("/", "layout");
     revalidatePath("/admin/settings");
     await writeAuditLog({
       ...auditActorFromSession(session),

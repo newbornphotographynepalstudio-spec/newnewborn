@@ -21,7 +21,6 @@ import {
 } from "firebase-admin/app";
 import { getAuth, type Auth } from "firebase-admin/auth";
 import { getFirestore, type Firestore } from "firebase-admin/firestore";
-import { getStorage, type Storage } from "firebase-admin/storage";
 
 function getAdminApp(): App {
   const existing = getApps();
@@ -91,8 +90,4 @@ export function getAdminFirestore(): Firestore {
     firestoreConfigured = true;
   }
   return db;
-}
-
-export function getAdminStorage(): Storage {
-  return getStorage(getAdminApp());
 }
