@@ -9,13 +9,15 @@ import { PageHero } from "@/components/ui/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { trainingAudience, trainingCourses, trainingFaqs } from "@/lib/data/training";
 import { routes } from "@/lib/navigation/routes";
+import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
-export const metadata: Metadata = {
-  title: "Newborn Photography Training in Nepal",
-  description:
-    "Newborn photography training in Nepal: hands-on courses covering safety, wrapping, posing, lighting and studio workflow, from beginner to professional.",
-  alternates: { canonical: routes.training },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata(routes.training, {
+    title: "Newborn Photography Training in Nepal",
+    description:
+      "Newborn photography training in Nepal: hands-on courses covering safety, wrapping, posing, lighting and studio workflow, from beginner to professional.",
+  });
+}
 
 const learningThemes = [
   {

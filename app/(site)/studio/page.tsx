@@ -8,6 +8,7 @@ import { PageHero } from "@/components/ui/PageHero";
 import { Reveal } from "@/components/ui/Reveal";
 import { newbornGallery } from "@/lib/media/newborn-gallery";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
+import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
 /** A real photo from an actual session held in this studio — not a
  * staged "studio interior" shot (none exists yet), but genuine proof
@@ -15,12 +16,13 @@ import { bookASessionCta, routes } from "@/lib/navigation/routes";
  * elsewhere on the site outside the full portfolio grid. */
 const studioPhoto = newbornGallery.find((img) => img.id === "newborn-robe-chair")!;
 
-export const metadata: Metadata = {
-  title: "Studio",
-  description:
-    "Inside the Newborn Photography Nepal studio in Kathmandu Valley: a private, newborn-friendly space with controlled lighting, built for a calm session.",
-  alternates: { canonical: routes.studio },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata(routes.studio, {
+    title: "Studio",
+    description:
+      "Inside the Newborn Photography Nepal studio in Kathmandu Valley: a private, newborn-friendly space with controlled lighting, built for a calm session.",
+  });
+}
 
 const features = [
   {

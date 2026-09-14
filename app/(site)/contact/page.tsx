@@ -11,6 +11,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { contactInfo } from "@/lib/data/contact";
 import { cakeSmashGallery } from "@/lib/media/cake-smash-gallery";
 import { routes } from "@/lib/navigation/routes";
+import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
 /** A real, warm session photo not used anywhere outside the full
  * portfolio grid — fills what was a large empty right-hand column at
@@ -18,12 +19,13 @@ import { routes } from "@/lib/navigation/routes";
  * photography instead of dead space. */
 const contactPhoto = cakeSmashGallery.find((img) => img.id === "cakesmash-messy-smile")!;
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description:
-    "Contact Newborn Photography Nepal by phone, WhatsApp or email to ask about availability, pricing or your session.",
-  alternates: { canonical: routes.contact },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata(routes.contact, {
+    title: "Contact",
+    description:
+      "Contact Newborn Photography Nepal by phone, WhatsApp or email to ask about availability, pricing or your session.",
+  });
+}
 
 /**
  * Leads with the contact channels that work immediately with no backend

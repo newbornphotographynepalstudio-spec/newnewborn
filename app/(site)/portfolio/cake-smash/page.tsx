@@ -12,16 +12,18 @@ import { MediaGallerySection } from "@/components/sections/portfolio/MediaGaller
 import { cakeSmashGallery } from "@/lib/media/cake-smash-gallery";
 import { breadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
+import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
 const [featured, ...rest] = cakeSmashGallery;
 const [rowOne1, rowOne2, rowTwo1, rowTwo2] = rest;
 
-export const metadata: Metadata = {
-  title: "Cake Smash Portfolio",
-  description:
-    "A cake smash photography portfolio from Newborn Photography Nepal: real first-birthday sessions photographed in a Kathmandu studio.",
-  alternates: { canonical: routes.portfolioCakeSmash },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata(routes.portfolioCakeSmash, {
+    title: "Cake Smash Portfolio",
+    description:
+      "A cake smash photography portfolio from Newborn Photography Nepal: real first-birthday sessions photographed in a Kathmandu studio.",
+  });
+}
 
 const jsonLd = breadcrumbJsonLd([
   { name: "Portfolio", href: routes.portfolio },

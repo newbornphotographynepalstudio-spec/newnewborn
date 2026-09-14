@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/Button";
 import { PageHero } from "@/components/ui/PageHero";
 import { portfolioCategories } from "@/lib/data/portfolio";
 import { routes } from "@/lib/navigation/routes";
+import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
-export const metadata: Metadata = {
-  title: "Portfolio",
-  description: "Newborn, maternity, baby, cake smash and family photography from Newborn Photography Nepal.",
-  alternates: { canonical: routes.portfolio },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata(routes.portfolio, {
+    title: "Portfolio",
+    description: "Newborn, maternity, baby, cake smash and family photography from Newborn Photography Nepal.",
+  });
+}
 
 export default function PortfolioPage() {
   return (

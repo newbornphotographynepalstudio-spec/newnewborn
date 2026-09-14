@@ -11,6 +11,7 @@ import { contactInfo } from "@/lib/data/contact";
 import { cakeSmashGallery } from "@/lib/media/cake-smash-gallery";
 import { SESSION_TYPES, type SessionType } from "@/lib/inquiries/types";
 import { routes } from "@/lib/navigation/routes";
+import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
 /** A real session photo, not used anywhere outside the full portfolio
  * grid — the intro column here is naturally much shorter than the long
@@ -18,12 +19,13 @@ import { routes } from "@/lib/navigation/routes";
  * WhatsApp block at wide viewports. */
 const bookingPhoto = cakeSmashGallery.find((img) => img.id === "cakesmash-balloon-portrait")!;
 
-export const metadata: Metadata = {
-  title: "Book a Session",
-  description:
-    "Book a newborn, maternity, baby, cake smash, family or training enquiry with Newborn Photography Nepal. Send your details and we'll be in touch.",
-  alternates: { canonical: routes.bookASession },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata(routes.bookASession, {
+    title: "Book a Session",
+    description:
+      "Book a newborn, maternity, baby, cake smash, family or training enquiry with Newborn Photography Nepal. Send your details and we'll be in touch.",
+  });
+}
 
 export default async function BookASessionPage({
   searchParams,

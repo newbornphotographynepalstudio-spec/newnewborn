@@ -8,13 +8,15 @@ import { PageHero } from "@/components/ui/PageHero";
 import { getFaqs } from "@/lib/faq/data";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
 import { faqPageJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
-export const metadata: Metadata = {
-  title: "Frequently Asked Questions",
-  description:
-    "Answers to common questions about booking, safety, session timing and what to expect from a session with Newborn Photography Nepal.",
-  alternates: { canonical: routes.faq },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata(routes.faq, {
+    title: "Frequently Asked Questions",
+    description:
+      "Answers to common questions about booking, safety, session timing and what to expect from a session with Newborn Photography Nepal.",
+  });
+}
 
 export default async function FaqPage() {
   const faqs = await getFaqs();

@@ -7,12 +7,14 @@ import { PageHero } from "@/components/ui/PageHero";
 import { getPublishedPosts } from "@/lib/blog/data";
 import { findGalleryImage } from "@/lib/media/all-images";
 import { routes } from "@/lib/navigation/routes";
+import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
-export const metadata: Metadata = {
-  title: "Blog",
-  description: "Articles on newborn safety, session preparation and photography from Newborn Photography Nepal.",
-  alternates: { canonical: routes.blog },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata(routes.blog, {
+    title: "Blog",
+    description: "Articles on newborn safety, session preparation and photography from Newborn Photography Nepal.",
+  });
+}
 
 export default async function BlogPage() {
   const posts = await getPublishedPosts();

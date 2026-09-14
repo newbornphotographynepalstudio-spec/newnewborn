@@ -7,13 +7,15 @@ import { Button } from "@/components/ui/Button";
 import { PageHero } from "@/components/ui/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
+import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
-export const metadata: Metadata = {
-  title: "Newborn Safety",
-  description:
-    "How newborn safety is built into every session: baby-led posing, trained handling, a controlled studio environment, and parents present throughout.",
-  alternates: { canonical: routes.safety },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata(routes.safety, {
+    title: "Newborn Safety",
+    description:
+      "How newborn safety is built into every session: baby-led posing, trained handling, a controlled studio environment, and parents present throughout.",
+  });
+}
 
 const principles = [
   {

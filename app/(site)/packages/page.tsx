@@ -12,13 +12,15 @@ import { getServices } from "@/lib/data/services";
 import { getPackages } from "@/lib/packages/data";
 import { newbornGallery } from "@/lib/media/newborn-gallery";
 import { bookASessionCta, contactLink, routes } from "@/lib/navigation/routes";
+import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
-export const metadata: Metadata = {
-  title: "Newborn Photography Packages & Pricing",
-  description:
-    "Newborn photography packages and pricing in Nepal: Mini, Premium and Luxury newborn session collections from Newborn Photography Nepal, Kathmandu.",
-  alternates: { canonical: routes.packages },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata(routes.packages, {
+    title: "Newborn Photography Packages & Pricing",
+    description:
+      "Newborn photography packages and pricing in Nepal: Mini, Premium and Luxury newborn session collections from Newborn Photography Nepal, Kathmandu.",
+  });
+}
 
 const otherServices = getServices().filter((s) => s.slug !== "newborn");
 

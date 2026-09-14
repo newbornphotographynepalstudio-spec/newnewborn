@@ -6,13 +6,15 @@ import { Button } from "@/components/ui/Button";
 import { PageHero } from "@/components/ui/PageHero";
 import { areas } from "@/lib/data/areas";
 import { routes } from "@/lib/navigation/routes";
+import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
-export const metadata: Metadata = {
-  title: "Areas We Serve",
-  description:
-    "Newborn Photography Nepal serves families across Kathmandu Valley, Nepal, including Kathmandu, Lalitpur and Bhaktapur.",
-  alternates: { canonical: routes.areas },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata(routes.areas, {
+    title: "Areas We Serve",
+    description:
+      "Newborn Photography Nepal serves families across Kathmandu Valley, Nepal, including Kathmandu, Lalitpur and Bhaktapur.",
+  });
+}
 
 export default function AreasPage() {
   return (

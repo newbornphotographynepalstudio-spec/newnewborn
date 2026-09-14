@@ -2,15 +2,14 @@ import type { Metadata } from "next";
 
 import { ServicePageLayout } from "@/components/sections/service/ServicePageLayout";
 import { getServicePages } from "@/lib/data/service-pages";
+import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
 const pages = getServicePages();
 const content = pages.baby;
 
-export const metadata: Metadata = {
-  title: content.metaTitle,
-  description: content.metaDescription,
-  alternates: { canonical: content.href },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata(content.href, { title: content.metaTitle, description: content.metaDescription });
+}
 
 export default function BabyPhotographyPage() {
   const related = content.relatedSlugs.map((slug) => pages[slug]);

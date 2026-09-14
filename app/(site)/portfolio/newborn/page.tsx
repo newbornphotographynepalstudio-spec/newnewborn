@@ -12,17 +12,19 @@ import { MediaGallerySection } from "@/components/sections/portfolio/MediaGaller
 import { newbornGallery } from "@/lib/media/newborn-gallery";
 import { breadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
+import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
 const [featured, ...rest] = newbornGallery.filter((img) => img.id !== "newborn-family-heritage");
 const familyPortrait = newbornGallery.find((img) => img.id === "newborn-family-heritage")!;
 const [rowOne1, rowOne2, rowTwo1, rowTwo2] = rest;
 
-export const metadata: Metadata = {
-  title: "Newborn Portfolio",
-  description:
-    "A newborn photography portfolio from Newborn Photography Nepal: real sessions photographed in a Kathmandu studio, styled with quiet care.",
-  alternates: { canonical: routes.portfolioNewborn },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata(routes.portfolioNewborn, {
+    title: "Newborn Portfolio",
+    description:
+      "A newborn photography portfolio from Newborn Photography Nepal: real sessions photographed in a Kathmandu studio, styled with quiet care.",
+  });
+}
 
 const jsonLd = breadcrumbJsonLd([
   { name: "Portfolio", href: routes.portfolio },
