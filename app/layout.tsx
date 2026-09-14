@@ -20,6 +20,25 @@ const manrope = Manrope({
   display: "swap",
 });
 
+/** `new URL(siteConfig.url)` is the single highest-blast-radius line in
+ * this app — every route's generateMetadata inherits this layout's, so a
+ * bad value here throws on every request for every dynamic route (found
+ * live: an env var that was set-but-blank made siteConfig.url an empty
+ * string, which took down /admin/login/, /book-a-session/ and every
+ * other dynamic route with a 500, while already-prerendered static
+ * pages kept serving fine — see lib/seo/site.ts for the actual value
+ * fix). siteConfig.url can't produce that specific failure anymore, but
+ * this still guards the one call every request depends on, rather than
+ * trusting it can never be invalid again. */
+function safeMetadataBase(url: string): URL {
+  try {
+    return new URL(url);
+  } catch (error) {
+    console.error("Invalid siteConfig.url, falling back to the production domain:", url, error);
+    return new URL("https://www.newbornphotographynpl.com");
+  }
+}
+
 /**
  * `generateMetadata` (not a static `export const metadata`) so this can
  * read admin-editable Global SEO overrides from Firestore
@@ -38,7 +57,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const ogImage = seo.defaultOgImage || "/photography/culture1.jpg";
 
   return {
-    metadataBase: new URL(siteConfig.url),
+    metadataBase: safeMetadataBase(siteConfig.url),
     title: {
       default: `${name} | ${tagline}`,
       template: `%s | ${name}`,
