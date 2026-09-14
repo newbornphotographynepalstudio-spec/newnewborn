@@ -2,13 +2,15 @@ import { EditorialGrid } from "@/components/primitives/EditorialGrid";
 import { Section } from "@/components/primitives/Section";
 import { Button } from "@/components/ui/Button";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { newbornPackages } from "@/lib/data/packages";
+import { getPackages } from "@/lib/packages/data";
 import { routes } from "@/lib/navigation/routes";
 
-/** Real newborn session pricing (NPR), exactly as provided — no invented
- * figures. Other services still show "pricing on request" on /packages/
- * until their own packages are published. */
-export function PackagesPreview() {
+/** Real newborn session pricing (NPR), admin-editable via /admin/packages/,
+ * falling back to the original approved figures if Firestore is empty or
+ * unreachable. Other services still show "pricing on request" on
+ * /packages/ until their own packages are published. */
+export async function PackagesPreview() {
+  const newbornPackages = await getPackages();
   return (
     <Section tone="ivory">
       <SectionHeading

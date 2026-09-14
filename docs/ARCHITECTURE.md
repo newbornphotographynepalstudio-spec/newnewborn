@@ -214,27 +214,54 @@ below gets an explicit rule only once it's actually implemented — chosen
 by real access pattern rather than mirroring every noun in the business
 domain 1:1.
 
-**`inquiries` is implemented** (Phase 4) — every other collection below
-is still planned, not yet created. See "Booking / inquiry system" further
-down for the full data model, write path and security rules.
+**`inquiries`, `packages`, `posts` and `settings` are implemented**
+(Phases 4 and 11) — every other collection below is still planned, not
+yet created. See "Booking / inquiry system" further down for the
+`inquiries` data model, write path and security rules.
 
 | Collection | Notes |
 |---|---|
-| `admins` | Admin user records (role, display name); auth identity itself lives in Firebase Auth. |
-| `inquiries` | **Implemented.** One document per booking/training enquiry from `/book-a-session/`. Superseded the earlier planned split of `leads` + `bookings` — a single collection with a `status` field (new/contacted/booked/closed) models the same lifecycle without needing to migrate a document between two collections. |
-| `services` | Newborn / maternity / baby / cake smash / family — service page content. |
-| `packages`, `packageAddons`, `products` | Pricing structure; add-ons and products (albums/frames/prints) kept separate from base packages to avoid duplicating pricing logic. |
-| `portfolioGalleries` (+ `portfolioImages` subcollection) | One gallery doc per shoot/category; images as a subcollection so a gallery document never grows unbounded. |
-| `blogPosts`, `blogCategories`, `authors` | Normalized so category/author edits don't require rewriting every post. |
-| `testimonials`, `faqs` | Simple flat collections. |
-| `pages` | Editable copy for otherwise-static routes (About, Safety, Studio, etc.). |
-| `seoSettings` | Per-page SEO overrides, keyed by route. |
-| `mediaAssets` | Media Library metadata (alt/title/caption/description/filename) — see Image architecture. |
+| `admins` | Admin user records (role, display name); auth identity itself lives in Firebase Auth. Not yet needed — there is exactly one admin account, gated by the `admin` custom claim, not a Firestore-backed role table. |
+| `inquiries` | **Implemented.** One document per booking/training enquiry from `/book-a-session/`. A single collection with a `status` field (new/contacted/booked/closed) models the lifecycle without needing to migrate a document between two collections. |
+| `packages` | **Implemented** (Phase 11) — `lib/packages/data.ts` / `admin-data.ts` / `actions.ts`. Admin-editable via `/admin/packages/`; public `/packages/` and the homepage preview read from here, falling back to the original approved hardcoded pricing (`lib/data/packages.ts`) if the collection is empty or unreachable. Seeded with the exact original figures on first setup, never invented. |
+| `posts` | **Implemented** (Phase 11) — `lib/blog/data.ts` / `admin-data.ts` / `actions.ts`. Admin-editable via `/admin/blog/`; `/blog/` and `/blog/[slug]/` read only `status == "published"` posts, sorted in memory (not a Firestore `orderBy`, to avoid requiring a composite index at this post volume). Draft posts are never shown publicly. |
+| `settings` (single `site` document) | **Implemented** (Phase 11), partially — currently holds `socialLinks` only (`lib/settings/data.ts`). Admin-editable via `/admin/settings/`, which also surfaces live, read-only system status (Firestore/Storage/Google Places configuration) computed on each load, never stored. |
+| `services` | Newborn / maternity / baby / cake smash / family — service page content. Still code-controlled (`lib/data/service-pages.ts`); not migrated, since the copy is tightly tied to hand-written, service-specific FAQ and editorial content. |
+| `portfolioGalleries` (+ `portfolioImages` subcollection) | Still code-controlled (`lib/media/newborn-gallery.ts`, `lib/media/cake-smash-gallery.ts`). Blocked on Firebase Storage being enabled for real uploads — see "Storage" below. `/admin/portfolio/` currently shows this data read-only. |
+| `blogCategories`, `authors` | Not implemented — `posts` currently stores `author` as a plain string rather than a reference, since there is one author. Revisit if/when there's more than one contributor. |
+| `testimonials`, `faqs` | Simple flat collections. Still code-controlled; FAQ content is stable, low-churn copy. |
+| `pages` | Editable copy for otherwise-static routes (About, Safety, Studio, etc.). Deliberately still code-controlled — see "What's deliberately deferred." |
+| `seoSettings` | Per-page SEO overrides, keyed by route. `packages` and `posts` documents already carry their own `seoTitle`/`seoDescription` fields directly rather than a separate keyed-by-route collection; a dedicated `seoSettings` collection is only worth adding if per-page overrides are needed for routes that aren't already CMS-backed. |
+| `mediaAssets` | Media Library metadata (alt/title/caption/description/filename) — see Image architecture. Blocked on Storage, same as `portfolioGalleries`. |
 | `redirects` | Admin-managed 301s beyond the ones hardcoded in `next.config.ts`. |
-| `websiteSettings`, `socialLinks`, `contactInformation` | Global site settings, split by concern so unrelated settings don't share one oversized document. |
-| `training`, `trainingModules` | Training offering + its modules/curriculum as a subcollection or normalized reference, avoiding one large document. |
-| `areas` | Kathmandu / Lalitpur / Bhaktapur area-page content. |
+| `contactInformation` | Studio phone/email/WhatsApp — still code-controlled (`lib/data/contact.ts`); these are stable business facts that change rarely enough that a code review on change is a feature, not friction. |
+| `training`, `trainingModules` | Training offering + its modules/curriculum as a subcollection or normalized reference, avoiding one large document. Still code-controlled. |
+| `areas` | Kathmandu / Lalitpur / Bhaktapur area-page content. Still code-controlled. |
 | `auditLogs` | Append-only record of privileged admin actions (who, what, when). |
+
+### Realtime Database — deliberately not used
+
+The Firebase project also has a Realtime Database instance (enabled by
+the owner, console URL supplied in Phase 11). It is **not used by this
+app** and Firestore remains the sole source of truth for `inquiries`,
+`packages`, `posts` and `settings`.
+
+Reasoning: RTDB's actual advantage over Firestore is push-based realtime
+listeners at lower latency/cost for very high-frequency updates (live
+chat, presence, live cursors). Nothing in this application has that
+shape — bookings arrive at human speed (one enquiry every so often, not
+a stream), and the admin panel already gets fresh data on every
+navigation via server-side rendering plus `revalidatePath()` after every
+write, which is simpler to reason about than keeping two databases in
+sync. Maintaining the same booking data in both RTDB and Firestore would
+mean either double-writing on every mutation (a real source of the two
+going out of sync) or picking one as authoritative and the other as a
+stale mirror, neither of which buys anything here. If a genuine
+low-latency multi-viewer requirement emerges later (e.g. two admins
+editing the same booking at once and needing to see each other's
+cursor), Firestore's own `onSnapshot` real-time listeners are the more
+appropriate tool before reaching for RTDB, since they'd let this app
+gain realtime updates without introducing a second database at all.
 
 Design rules for future collections: avoid oversized documents (large
 repeating arrays → subcollection instead), avoid duplicating data that has

@@ -4,7 +4,9 @@ import { Container } from "@/components/primitives/Container";
 import { Stack } from "@/components/primitives/Stack";
 import { Logo } from "@/components/ui/Logo";
 import { SocialLinks, type SocialLink } from "@/components/layout/SocialLinks";
+import { socialIcons } from "@/components/layout/social-icons";
 import { contactInfo } from "@/lib/data/contact";
+import { getSiteSettings } from "@/lib/settings/data";
 import {
   footerAreaLinks,
   footerConnectLinks,
@@ -13,12 +15,14 @@ import {
   routes,
 } from "@/lib/navigation/routes";
 
-/** Populated once real handles exist (Website Settings, a later phase) — no
- * social URL is invented here. */
-const socialLinks: SocialLink[] = [];
-
-export function Footer() {
+export async function Footer() {
   const year = new Date().getFullYear();
+  const settings = await getSiteSettings();
+  const socialLinks: SocialLink[] = settings.socialLinks.map((link) => ({
+    platform: link.platform,
+    href: link.href,
+    icon: socialIcons[link.platform],
+  }));
 
   return (
     <footer className="border-t border-taupe/15 bg-ivory">

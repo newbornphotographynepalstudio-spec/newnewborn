@@ -1,0 +1,66 @@
+import "server-only";
+
+import { getAdminFirestore } from "@/lib/firebase/admin";
+import type { BlogPost } from "@/lib/blog/types";
+
+function docToPost(id: string, data: FirebaseFirestore.DocumentData): BlogPost {
+  return {
+    id,
+    slug: data.slug,
+    title: data.title,
+    excerpt: data.excerpt ?? "",
+    content: data.content ?? "",
+    featuredImageId: data.featuredImageId,
+    author: data.author ?? "Newborn Photography Nepal",
+    status: data.status === "published" ? "published" : "draft",
+    publishedAt: toIso(data.publishedAt),
+    seoTitle: data.seoTitle,
+    seoDescription: data.seoDescription,
+    createdAt: toIso(data.createdAt) ?? new Date().toISOString(),
+    updatedAt: toIso(data.updatedAt) ?? new Date().toISOString(),
+  };
+}
+
+function toIso(value: unknown): string | undefined {
+  if (!value) return undefined;
+  if (typeof value === "object" && "toDate" in value) {
+    return (value as { toDate: () => Date }).toDate().toISOString();
+  }
+  return undefined;
+}
+
+/** Public read: only published posts, newest first. No fake posts, no
+ * posts shown before they're actually published. Sorted in memory rather
+ * than with a Firestore `orderBy` alongside the `status` filter, which
+ * would require a composite index to be deployed first — unnecessary
+ * complexity at this post volume (a local studio's blog, not a
+ * high-traffic publication). */
+export async function getPublishedPosts(): Promise<BlogPost[]> {
+  try {
+    const db = getAdminFirestore();
+    const snapshot = await db.collection("posts").where("status", "==", "published").get();
+    return snapshot.docs
+      .map((doc) => docToPost(doc.id, doc.data()))
+      .sort((a, b) => (b.publishedAt ?? "").localeCompare(a.publishedAt ?? ""));
+  } catch (error) {
+    console.error("getPublishedPosts failed:", error);
+    return [];
+  }
+}
+
+export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | null> {
+  try {
+    const db = getAdminFirestore();
+    const snapshot = await db
+      .collection("posts")
+      .where("slug", "==", slug)
+      .where("status", "==", "published")
+      .limit(1)
+      .get();
+    if (snapshot.empty) return null;
+    return docToPost(snapshot.docs[0].id, snapshot.docs[0].data());
+  } catch (error) {
+    console.error("getPublishedPostBySlug failed:", error);
+    return null;
+  }
+}

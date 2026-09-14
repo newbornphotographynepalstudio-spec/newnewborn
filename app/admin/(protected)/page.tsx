@@ -1,33 +1,118 @@
-import { adminModules } from "@/lib/admin/modules";
+import Link from "next/link";
 
-/**
- * Dashboard foundation. Reachable only when the proxy (middleware)
- * session-cookie gate passes (see /proxy.ts); real data, per-module screens
- * and the real admin UI design are later phases.
- */
-export default function AdminDashboardPage() {
+import { getInquiryStats } from "@/lib/inquiries/stats";
+import { SESSION_TYPE_LABELS, STATUS_LABELS } from "@/lib/inquiries/types";
+
+const statusToneClass: Record<string, string> = {
+  new: "bg-blush text-plum",
+  contacted: "bg-white text-charcoal border border-taupe/30",
+  booked: "bg-plum text-white",
+  closed: "bg-stone-soft text-taupe",
+};
+
+const quickLinks = [
+  { label: "Bookings & Inquiries", href: "/admin/bookings", description: "View and manage every enquiry." },
+  { label: "Packages", href: "/admin/packages", description: "Edit pricing, inclusions and featured package." },
+  { label: "Blog", href: "/admin/blog", description: "Write, publish and manage articles." },
+  { label: "Portfolio Photos", href: "/admin/portfolio", description: "Edit captions, categories and featured status." },
+  { label: "Site Settings", href: "/admin/settings", description: "SEO defaults, Google Reviews status, integrations." },
+];
+
+export default async function AdminDashboardPage() {
+  const stats = await getInquiryStats();
+
   return (
     <div className="mx-auto max-w-7xl px-gutter py-16">
       <h1 className="text-h2 text-plum">Dashboard</h1>
       <p className="mt-2 text-small text-charcoal/70">
-        Admin modules planned for this project. Each will get real data,
-        forms and role-based access in later phases.
+        A quick overview of enquiries and content, all from real data.
       </p>
 
-      <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {adminModules.map((mod) => (
-          <li
-            key={mod.label}
-            className="rounded-sm border border-taupe/20 bg-white p-6"
-          >
-            <p className="text-small font-medium text-plum">{mod.label}</p>
-            <p className="mt-1 text-caption text-charcoal/60">{mod.description}</p>
-            <p className="mt-3 text-caption tracking-eyebrow text-charcoal/40 uppercase">
-              Min. role: {mod.minimumRole}
-            </p>
-          </li>
-        ))}
-      </ul>
+      {!stats.configured ? (
+        <div className="mt-8 border border-dashed border-taupe/40 bg-white p-lg text-small text-taupe">
+          Firebase Admin credentials aren&apos;t configured in this environment yet, so live
+          numbers can&apos;t be loaded here.
+        </div>
+      ) : (
+        <>
+          <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <StatCard label="Total Enquiries" value={stats.total} />
+            <StatCard label="New" value={stats.newCount} tone="new" />
+            <StatCard label="Contacted" value={stats.contactedCount} tone="contacted" />
+            <StatCard label="Booked" value={stats.bookedCount} tone="booked" />
+          </div>
+
+          <div className="mt-12">
+            <div className="flex items-center justify-between">
+              <h2 className="text-h4 text-plum">Recent Enquiries</h2>
+              <Link href="/admin/bookings" className="text-small text-plum hover:underline">
+                View all
+              </Link>
+            </div>
+            {stats.recent.length === 0 ? (
+              <div className="mt-4 border border-dashed border-taupe/40 bg-white p-lg text-small text-taupe">
+                No enquiries yet. They&apos;ll appear here as soon as someone books through the
+                website.
+              </div>
+            ) : (
+              <div className="mt-4 overflow-x-auto border border-taupe/20 bg-white">
+                <table className="w-full min-w-[560px] text-left text-small">
+                  <tbody>
+                    {stats.recent.map((inquiry) => (
+                      <tr key={inquiry.id} className="border-b border-taupe/10 last:border-b-0 hover:bg-blush/40">
+                        <td className="px-4 py-3">
+                          <Link href={`/admin/bookings/${inquiry.id}`} className="font-medium text-plum hover:underline">
+                            {inquiry.customer.name || "-"}
+                          </Link>
+                        </td>
+                        <td className="px-4 py-3 text-charcoal/80">
+                          {SESSION_TYPE_LABELS[inquiry.session.type]}
+                        </td>
+                        <td className="px-4 py-3 text-charcoal/60">
+                          {new Date(inquiry.createdAt).toLocaleDateString()}
+                        </td>
+                        <td className="px-4 py-3">
+                          <span
+                            className={`inline-block rounded-sm px-2 py-1 text-caption font-medium uppercase ${statusToneClass[inquiry.status]}`}
+                          >
+                            {STATUS_LABELS[inquiry.status]}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      <div className="mt-12">
+        <h2 className="text-h4 text-plum">Quick Actions</h2>
+        <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {quickLinks.map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                className="block h-full rounded-sm border border-taupe/20 bg-white p-5 hover:border-plum/40"
+              >
+                <p className="text-small font-medium text-plum">{link.label}</p>
+                <p className="mt-1 text-caption text-charcoal/60">{link.description}</p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({ label, value, tone }: { label: string; value: number; tone?: string }) {
+  return (
+    <div className="border border-taupe/20 bg-white p-5">
+      <p className="text-caption tracking-eyebrow text-taupe uppercase">{label}</p>
+      <p className={`mt-2 text-h2 ${tone ? "text-plum" : "text-charcoal"}`}>{value}</p>
     </div>
   );
 }

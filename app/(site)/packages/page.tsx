@@ -8,8 +8,8 @@ import { EditorialImage } from "@/components/ui/EditorialImage";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { contactInfo } from "@/lib/data/contact";
-import { newbornPackages } from "@/lib/data/packages";
 import { getServices } from "@/lib/data/services";
+import { getPackages } from "@/lib/packages/data";
 import { newbornGallery } from "@/lib/media/newborn-gallery";
 import { bookASessionCta, contactLink, routes } from "@/lib/navigation/routes";
 
@@ -32,7 +32,8 @@ const heroPhoto = newbornGallery.find((img) => img.id === "newborn-yellow-wrap")
 const introPhoto = newbornGallery.find((img) => img.id === "newborn-tutu-bed")!;
 const closingPhoto = newbornGallery.find((img) => img.id === "newborn-robe-chair")!;
 
-export default function PackagesPage() {
+export default async function PackagesPage() {
+  const newbornPackages = await getPackages();
   return (
     <>
       <Section tone="ivory" compact className="border-b border-taupe/15">
