@@ -69,13 +69,6 @@ export async function savePost(_prevState: PostFormState, formData: FormData): P
     content,
     author,
     status,
-    // FieldValue.delete() (not `undefined`, which ignoreUndefinedProperties
-    // strips before Firestore ever sees it) so blanking one of these
-    // fields on an existing post actually clears it on this merge write,
-    // rather than silently leaving the previous value in place.
-    seoTitle: seoTitle || FieldValue.delete(),
-    seoDescription: seoDescription || FieldValue.delete(),
-    featuredImageId: featuredImageId || FieldValue.delete(),
     updatedAt: FieldValue.serverTimestamp(),
   };
 
@@ -83,6 +76,15 @@ export async function savePost(_prevState: PostFormState, formData: FormData): P
     const db = getAdminFirestore();
     let postId = id;
     if (id) {
+      // FieldValue.delete() (not `undefined`, which ignoreUndefinedProperties
+      // strips before Firestore ever sees it) so blanking one of these
+      // fields on an existing post actually clears it on this merge write,
+      // rather than silently leaving the previous value in place. Only
+      // valid against an existing document — see the create branch below.
+      data.seoTitle = seoTitle || FieldValue.delete();
+      data.seoDescription = seoDescription || FieldValue.delete();
+      data.featuredImageId = featuredImageId || FieldValue.delete();
+
       const existing = await db.collection("posts").doc(id).get();
       const wasPublished = existing.exists && existing.data()?.status === "published";
       if (status === "published" && !wasPublished) {
@@ -90,6 +92,13 @@ export async function savePost(_prevState: PostFormState, formData: FormData): P
       }
       await db.collection("posts").doc(id).set(data, { merge: true });
     } else {
+      // FieldValue.delete() is only valid against an existing field on an
+      // existing document, not `.add()` (a plain create) — there is
+      // nothing yet to delete, so a blank optional field is simply
+      // omitted (ignoreUndefinedProperties strips the `undefined`).
+      data.seoTitle = seoTitle || undefined;
+      data.seoDescription = seoDescription || undefined;
+      data.featuredImageId = featuredImageId || undefined;
       data.createdAt = FieldValue.serverTimestamp();
       if (status === "published") data.publishedAt = FieldValue.serverTimestamp();
       const ref = await db.collection("posts").add(data);
