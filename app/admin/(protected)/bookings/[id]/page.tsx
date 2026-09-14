@@ -54,6 +54,7 @@ export default async function AdminBookingDetailPage({
         <Field label="Email" value={inquiry.customer.email} />
         <Field label="Phone / WhatsApp" value={inquiry.customer.phone} />
         <Field label="Preferred Contact Method" value={inquiry.contactPreference} />
+        <Field label="Consent to Contact" value={inquiry.consent ? "Yes" : "No"} />
       </div>
 
       <div className="mt-8 border border-taupe/20 bg-white p-6">

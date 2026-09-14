@@ -47,6 +47,12 @@ export type Inquiry = {
   familyMembers?: number;
   message?: string;
   contactPreference: ContactPreference;
+  /** Always true for a stored document — submitInquiry rejects the
+   * submission server-side before writing anything if this isn't
+   * checked. Stored (not just validated) so the admin record reflects
+   * it explicitly rather than only being implied by the record's mere
+   * existence. */
+  consent: boolean;
   status: InquiryStatus;
   source: string;
 };

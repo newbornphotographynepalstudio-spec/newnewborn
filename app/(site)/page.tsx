@@ -12,7 +12,6 @@ import { ReviewsSection } from "@/components/sections/home/ReviewsSection";
 import { SafetySection } from "@/components/sections/home/SafetySection";
 import { ServicesOverview } from "@/components/sections/home/ServicesOverview";
 import { StudioSection } from "@/components/sections/home/StudioSection";
-import { TrainingSection } from "@/components/sections/home/TrainingSection";
 import { fetchGoogleReviews } from "@/lib/reviews/google-places";
 import {
   organizationJsonLd,
@@ -58,10 +57,16 @@ export const metadata: Metadata = {
  * positioning, the newborn photography experience, featured work,
  * services, safety, the studio, packages, reviews, why families choose
  * this studio (HeritageSection's Nepali-family-heritage positioning is
- * the real, non-invented answer to that question here), training, FAQ,
- * final CTA. The Service Area section is intentionally NOT rendered here
- * — Kathmandu/Lalitpur/Bhaktapur stay as their own indexable /areas/
- * pages (linked from the footer) rather than a large homepage section.
+ * the real, non-invented answer to that question here), FAQ, final CTA.
+ * The Service Area section is intentionally NOT rendered here —
+ * Kathmandu/Lalitpur/Bhaktapur stay as their own indexable /areas/ pages
+ * (linked from the footer) rather than a large homepage section.
+ *
+ * No homepage section promotes newborn photography training (the "For
+ * Photographers" / "Newborn Photography Training" section previously
+ * here) — the homepage stays focused on families searching for newborn
+ * photography, training's actual audience. Training remains fully live
+ * at /training/, linked from the header and footer.
  */
 export default async function HomePage() {
   // null in this environment — no GOOGLE_PLACES_API_KEY/PLACE_ID
@@ -106,7 +111,6 @@ export default async function HomePage() {
         }
       />
       <HeritageSection />
-      <TrainingSection />
       <FaqPreview />
       <FinalCta />
     </>

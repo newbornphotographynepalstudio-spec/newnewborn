@@ -59,21 +59,15 @@ export function Footer() {
       <div className="border-t border-taupe/15">
         <Container
           size="wide"
-          className="flex flex-col gap-3 pt-8 pb-24 text-caption text-taupe sm:flex-row sm:items-center sm:justify-between sm:pb-8"
+          className="flex flex-col gap-3 py-8 text-caption text-taupe sm:flex-row sm:items-center sm:justify-between"
         >
           <p>&copy; {year} Newborn Photography Nepal by Navin. All rights reserved.</p>
           <div className="flex flex-wrap items-center gap-3 sm:mr-24 lg:mr-28">
-            {/* Below `sm` this row wraps onto multiple lines instead of
-                sitting in a single right-aligned line, so the fix there
-                is different: extra bottom padding on the container
-                (pb-24 vs the original pb-8) makes sure the *last* wrapped
-                line still clears the fixed WhatsAppButton's ~80px
-                footprint — the sm:mr-* trick only handles the single-line
-                layout `sm:flex-row` produces at 640px+, so it's paired
-                with `sm:pb-8` to drop the extra padding once that layout
-                (and its own horizontal fix) takes over. Found by checking
-                every breakpoint, not just the ones fixed earlier —
-                320/375/430px still overlapped after that first fix. */}
+            {/* The sm:mr-* offset only clears the fixed WhatsAppButton for
+                this row's own single-line layout at 640px+ — it no longer
+                needs to reserve bottom clearance itself since the credit
+                strip below is now the page's last content and carries
+                that instead. */}
             <span>Serving</span>
             {footerAreaLinks.map((item, index) => (
               <span key={item.href} className="flex items-center gap-3">
@@ -88,6 +82,32 @@ export function Footer() {
               All areas
             </Link>
           </div>
+        </Container>
+      </div>
+
+      <div className="border-t border-taupe/10">
+        <Container
+          size="wide"
+          className="pt-4 pb-24 text-center text-caption text-taupe/70 sm:pb-4"
+        >
+          {/* This is now the last content on every page, so it — not the
+              bar above — carries the clearance for the fixed
+              WhatsAppButton's ~76px footprint (h-14 + bottom-5) below
+              `sm`, where the button sits right-5/bottom-5 with nothing
+              beside it to push it aside. At `sm`+ the button moves to
+              right-6/bottom-6 but this line is short enough not to reach
+              under it at those widths, so pb-4 is enough. Verified against
+              the WhatsApp button at 320/375/390/430/1440px — the same
+              overlap bug found twice before in this footer. */}
+          Designed &amp; crafted by{" "}
+          <a
+            href="https://www.aayushmainali.me/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-plum hover:underline underline-offset-4"
+          >
+            Aayush Mainali
+          </a>
         </Container>
       </div>
     </footer>

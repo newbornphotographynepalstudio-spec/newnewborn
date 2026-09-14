@@ -39,6 +39,10 @@ export async function listInquiries(): Promise<InquiryListResult> {
         familyMembers: data.familyMembers,
         message: data.message,
         contactPreference: data.contactPreference ?? "phone",
+        // Records written before `consent` was stored explicitly can
+        // only exist because the same consent-required check already
+        // passed at submission time — default true, not invented.
+        consent: data.consent ?? true,
         status: data.status ?? "new",
         source: data.source ?? "website",
       };
@@ -66,6 +70,7 @@ export async function getInquiry(id: string): Promise<Inquiry | null> {
       familyMembers: data.familyMembers,
       message: data.message,
       contactPreference: data.contactPreference ?? "phone",
+      consent: data.consent ?? true,
       status: data.status ?? "new",
       source: data.source ?? "website",
     };
