@@ -1,3 +1,4 @@
+import { googleReviewsUrl } from "@/lib/data/reviews";
 import { siteConfig } from "@/lib/seo/site";
 
 /**
@@ -14,6 +15,12 @@ export function organizationJsonLd() {
     name: siteConfig.name,
     url: siteConfig.url,
     logo: new URL("/brand/logo.jpg", siteConfig.url).toString(),
+    // The real Google Business Profile review link — an identity
+    // reference (this Organization also exists at this URL), not review/
+    // rating schema. No aggregateRating/reviewCount is added here or
+    // anywhere else: no genuine review data has been supplied to this
+    // codebase, and that field would have to be invented to populate it.
+    sameAs: [googleReviewsUrl],
   };
 }
 
