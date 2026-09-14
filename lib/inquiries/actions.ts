@@ -64,7 +64,7 @@ export async function submitInquiry(
   const tokenValue = typeof turnstileToken === "string" ? turnstileToken : null;
   const humanVerified = await verifyTurnstileToken(tokenValue);
   if (!humanVerified) {
-    return { status: "error", message: "We couldn't verify this submission — please try again." };
+    return { status: "error", message: "We couldn't verify this submission. Please try again." };
   }
 
   const sessionType = sessionTypeRaw as SessionType;
@@ -111,14 +111,14 @@ export async function submitInquiry(
 
     return {
       status: "success",
-      message: "Thank you — your enquiry has been received.",
+      message: "Thank you. Your enquiry has been received.",
     };
   } catch (error) {
     console.error("submitInquiry failed:", error);
     return {
       status: "error",
       message:
-        "We couldn't send your enquiry right now. Please don't worry — you can reach us directly on WhatsApp or by phone, and we'll help you arrange your session.",
+        "We couldn't send your enquiry right now. Please don't worry, you can reach us directly on WhatsApp or by phone, and we'll help you arrange your session.",
     };
   }
 }
@@ -141,7 +141,7 @@ export async function updateInquiryStatus(
 ): Promise<UpdateStatusState> {
   const session = await verifyAdminSession();
   if (!session) {
-    return { status: "error", message: "Your session has expired — please sign in again." };
+    return { status: "error", message: "Your session has expired. Please sign in again." };
   }
 
   const id = readString(formData, "id");
@@ -162,6 +162,6 @@ export async function updateInquiryStatus(
     return { status: "success", message: "Status updated." };
   } catch (error) {
     console.error("updateInquiryStatus failed:", error);
-    return { status: "error", message: "Couldn't update the status — please try again." };
+    return { status: "error", message: "Couldn't update the status. Please try again." };
   }
 }

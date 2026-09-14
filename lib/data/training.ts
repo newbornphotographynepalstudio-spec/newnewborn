@@ -51,7 +51,7 @@ export const trainingCourses: TrainingCourse[] = [
     included: ["Certificate of completion", "Course notes", "7 days of WhatsApp support", "Live session participation"],
     modules: [
       {
-        title: "Day 1 — Introduction",
+        title: "Day 1: Introduction",
         points: [
           "Newborn age windows and why timing matters (5–14 days)",
           "Safety principles and studio hygiene",
@@ -59,7 +59,7 @@ export const trainingCourses: TrainingCourse[] = [
         ],
       },
       {
-        title: "Day 2 — Wrapping",
+        title: "Day 2: Wrapping",
         points: [
           "Wrap types and safe wrapping technique",
           "Popular wrapping styles and transitioning between them",
@@ -67,7 +67,7 @@ export const trainingCourses: TrainingCourse[] = [
         ],
       },
       {
-        title: "Day 3 — Basic Posing",
+        title: "Day 3: Basic Posing",
         points: [
           "Wrapped poses and bucket poses",
           "Beanbag setup and parent-assisted posing",
@@ -75,7 +75,7 @@ export const trainingCourses: TrainingCourse[] = [
         ],
       },
       {
-        title: "Day 4 — Handling & Comforting",
+        title: "Day 4: Handling & Comforting",
         points: [
           "Reading a baby's cues and settling techniques",
           "White noise and temperature management",
@@ -83,7 +83,7 @@ export const trainingCourses: TrainingCourse[] = [
         ],
       },
       {
-        title: "Day 5 — Live Session",
+        title: "Day 5: Live Session",
         points: [
           "Observe and assist during one real newborn session",
           "Practice wrapping and posing support",
@@ -106,7 +106,7 @@ export const trainingCourses: TrainingCourse[] = [
       "Editing presets",
       "Workflow PDFs and shooting checklists",
       "30 days of WhatsApp support",
-      "3 live sessions — observe, assist, then lead",
+      "3 live sessions: observe, assist, then lead",
     ],
     modules: [
       {
@@ -198,19 +198,19 @@ export const trainingFaqs: FaqItem[] = [
     id: "training-experience",
     question: "Do I need photography experience to join?",
     answer:
-      "No — the Foundation Course is built for complete beginners as well as hobbyists and photographers moving into newborn work for the first time.",
+      "No. The Foundation Course is built for complete beginners as well as hobbyists and photographers moving into newborn work for the first time.",
   },
   {
     id: "training-hands-on",
     question: "Is the training hands-on?",
     answer:
-      "Yes. Every course includes live session participation — observing and assisting during a real newborn session, not just watching demonstrations.",
+      "Yes. Every course includes live session participation: observing and assisting during a real newborn session, not just watching demonstrations.",
   },
   {
     id: "training-which-course",
     question: "Which course is right for me?",
     answer:
-      "It depends on where you're starting from — complete beginners typically start with the Foundation Course, working photographers with the Professional Course, and those building a studio business with the Master Certification. Mention your experience when you enquire and this can be talked through.",
+      "It depends on where you're starting from. Complete beginners typically start with the Foundation Course, working photographers with the Professional Course, and those building a studio business with the Master Certification. Mention your experience when you enquire and this can be talked through.",
   },
   {
     id: "training-next-steps",

@@ -64,8 +64,8 @@ export function PortfolioCategoryLayout({
           <div className="mx-auto max-w-xl border border-taupe/25 bg-white px-8 py-10 text-center">
             <p className="text-small leading-relaxed text-charcoal/75">
               A dedicated {category.name.toLowerCase()} gallery is being
-              curated. In the meantime, real sessions from the studio — the
-              same space, lighting and team — are in the newborn and cake
+              curated. In the meantime, real sessions from the studio, the
+              same space, lighting and team, are in the newborn and cake
               smash portfolios.
             </p>
             <Cluster gap="sm" align="center" justify="center" className="mt-5">

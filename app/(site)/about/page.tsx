@@ -26,7 +26,7 @@ export default function AboutPage() {
       <PageHero
         eyebrow="About"
         title="Newborn Photography Nepal"
-        description="A photography studio in Kathmandu Valley built around one thing — newborn photography done carefully, safely, and at your baby's pace."
+        description="A photography studio in Kathmandu Valley built around one thing: newborn photography done carefully, safely, and at your baby's pace."
       >
         <Cluster gap="sm" className="mt-8">
           <Button href={bookASessionCta.href}>{bookASessionCta.label}</Button>
@@ -59,7 +59,7 @@ export default function AboutPage() {
           </p>
           <p className="text-body-lg leading-relaxed text-charcoal/85">
             Maternity, baby, cake smash and family sessions all sit
-            alongside that core focus — the same studio, the same
+            alongside that core focus: the same studio, the same
             unhurried approach, for the milestones that come before and
             after a newborn session.
           </p>

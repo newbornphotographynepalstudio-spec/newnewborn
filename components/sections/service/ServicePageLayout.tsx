@@ -97,7 +97,7 @@ export function ServicePageLayout({
           <div>
             <p className="text-eyebrow font-medium tracking-eyebrow text-taupe uppercase">Safety</p>
             <p className="mt-2 max-w-lg text-body text-charcoal/80">
-              Every session is planned around your baby&apos;s comfort — baby-led
+              Every session is planned around your baby&apos;s comfort: baby-led
               posing, careful handling, and a controlled studio environment.
             </p>
           </div>
@@ -131,8 +131,8 @@ export function ServicePageLayout({
             <div className="mx-auto max-w-xl border border-taupe/25 bg-blush/40 px-8 py-10 text-center">
               <p className="text-small leading-relaxed text-charcoal/75">
                 A dedicated {content.name.toLowerCase()} gallery is being
-                curated. In the meantime, real sessions from the studio —
-                the same space, lighting and team — are in the portfolio.
+                curated. In the meantime, real sessions from the studio,
+                the same space, lighting and team, are in the portfolio.
               </p>
               <Button href={routes.portfolio} variant="text" className="mt-4">
                 View the Portfolio
@@ -166,7 +166,7 @@ export function ServicePageLayout({
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-h1 text-white">Ready to book your session?</h2>
           <p className="mx-auto mt-4 max-w-prose text-body-lg leading-relaxed text-white/80">
-            Reach out to check availability — we&apos;ll help you find the
+            Reach out to check availability. We&apos;ll help you find the
             right time for your {content.name.toLowerCase()} session.
           </p>
           <Cluster gap="sm" align="center" justify="center" className="mt-8">

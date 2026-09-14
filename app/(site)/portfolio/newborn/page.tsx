@@ -19,7 +19,7 @@ const [rowOne1, rowOne2, rowTwo1, rowTwo2] = rest;
 export const metadata: Metadata = {
   title: "Newborn Portfolio",
   description:
-    "A newborn photography portfolio from Newborn Photography Nepal — real sessions photographed in a Kathmandu studio, styled with quiet care.",
+    "A newborn photography portfolio from Newborn Photography Nepal: real sessions photographed in a Kathmandu studio, styled with quiet care.",
   alternates: { canonical: routes.portfolioNewborn },
 };
 
@@ -38,7 +38,7 @@ export default function NewbornPortfolioPage() {
       <PageHero
         eyebrow="Portfolio"
         title="Newborn Photography Portfolio"
-        description="A look at real newborn sessions — no stock photography, every image from an actual session in the studio."
+        description="A look at real newborn sessions: no stock photography, every image from an actual session in the studio."
       >
         <Cluster gap="sm" className="mt-8">
           <Button href={`${bookASessionCta.href}?type=newborn`}>{bookASessionCta.label}</Button>
@@ -144,7 +144,7 @@ export default function NewbornPortfolioPage() {
               <h2 className="mt-3 text-h2">A newborn session is a family session too</h2>
               <p className="mt-5 max-w-prose text-body-lg leading-relaxed text-charcoal/80">
                 Many families bring grandparents, in traditional dress or
-                otherwise, into part of the session — a few portraits
+                otherwise, into part of the session: a few portraits
                 alongside the newborn images, not a separate booking. It
                 often becomes one of the images a family keeps longest.
               </p>
@@ -159,7 +159,7 @@ export default function NewbornPortfolioPage() {
             <p className="text-eyebrow font-medium tracking-eyebrow text-taupe uppercase">Safety</p>
             <p className="mt-2 max-w-lg text-body text-charcoal/80">
               Every pose above was baby-led, gently supported, and never
-              forced — see the full approach to newborn safety.
+              forced. See the full approach to newborn safety.
             </p>
           </div>
           <Button href={routes.safety} variant="secondary" size="sm" className="shrink-0">
@@ -173,7 +173,7 @@ export default function NewbornPortfolioPage() {
           <p className="text-eyebrow font-medium tracking-eyebrow text-taupe uppercase">Studio</p>
           <h2 className="mt-3 text-h3">Photographed in a calm Kathmandu studio</h2>
           <p className="mt-3 text-body leading-relaxed text-charcoal/80">
-            Every session above was photographed in the studio — a
+            Every session above was photographed in the studio: a
             private, newborn-friendly space kept warm and quiet.
           </p>
           <Button href={routes.studio} variant="text" className="mt-4">

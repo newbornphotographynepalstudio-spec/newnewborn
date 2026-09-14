@@ -21,7 +21,7 @@ const bookingPhoto = cakeSmashGallery.find((img) => img.id === "cakesmash-balloo
 export const metadata: Metadata = {
   title: "Book a Session",
   description:
-    "Book a newborn, maternity, baby, cake smash, family or training enquiry with Newborn Photography Nepal — send your details and we'll be in touch.",
+    "Book a newborn, maternity, baby, cake smash, family or training enquiry with Newborn Photography Nepal. Send your details and we'll be in touch.",
   alternates: { canonical: routes.bookASession },
 };
 
@@ -48,7 +48,7 @@ export default async function BookASessionPage({
               Send your details below and we&apos;ll get back to you
               directly to confirm availability, current pricing and
               anything else you&apos;d like to know. This isn&apos;t an
-              instant booking — it starts a conversation with the studio.
+              instant booking. It starts a conversation with the studio.
             </p>
             <p className="mt-5 max-w-prose text-body leading-relaxed text-charcoal/75">
               Newborn sessions are best enquired about during pregnancy,

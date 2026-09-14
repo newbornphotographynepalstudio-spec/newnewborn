@@ -21,7 +21,7 @@ export const newbornGallery: MediaAsset[] = [
     width: 1600,
     height: 1600,
     orientation: "square",
-    alt: "Three generations — grandmother, mother and newborn baby — dressed in traditional Nepali jewelry and clothing for a family portrait, with a floral backdrop.",
+    alt: "Three generations, grandmother, mother and newborn baby, dressed in traditional Nepali jewelry and clothing for a family portrait, with a floral backdrop.",
     title: "A family portrait, three generations",
     category: "heritage",
     service: "newborn",

@@ -47,7 +47,7 @@ export function FeaturedWork() {
         </p>
         <h2 className="mt-3 text-h2">From recent newborn sessions</h2>
         <p className="mx-auto mt-4 max-w-prose text-body-lg leading-relaxed text-charcoal/80">
-          Every session is photographed with the same care — quiet styling,
+          Every session is photographed with the same care: quiet styling,
           natural expressions, and enough time for your baby to settle.
         </p>
         <Button href={routes.portfolioNewborn} variant="text" className="mt-6">

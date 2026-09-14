@@ -39,8 +39,8 @@ export function HeritageSection() {
             <p className="mt-6 max-w-prose text-body-lg leading-relaxed text-white/80">
               Nepali families carry generations of tradition into how they
               welcome a newborn. This studio&apos;s newborn sessions make room
-              for that heritage — styling, keepsakes and quiet family
-              moments — alongside timeless portraiture.
+              for that heritage: styling, keepsakes and quiet family
+              moments, alongside timeless portraiture.
             </p>
           </Reveal>
         </div>

@@ -6,13 +6,13 @@ const moreFaqs: FaqItem[] = [
     id: "reschedule",
     question: "Can we reschedule if our baby arrives early or late?",
     answer:
-      "Yes — newborn sessions are naturally flexible around your due date. Reach out as soon as you know your baby's arrival date so the session can be adjusted.",
+      "Yes. Newborn sessions are naturally flexible around your due date. Reach out as soon as you know your baby's arrival date so the session can be adjusted.",
   },
   {
     id: "home-sessions",
     question: "Do you offer home sessions?",
     answer:
-      "Home sessions are available where offered — mention this when you get in touch so it can be discussed for your location.",
+      "Home sessions are available where offered. Mention this when you get in touch so it can be discussed for your location.",
   },
   {
     id: "session-length",
@@ -29,7 +29,7 @@ const moreFaqs: FaqItem[] = [
     id: "albums",
     question: "Do you offer albums and prints?",
     answer:
-      "Yes — premium albums, frames and prints are available in addition to the digital gallery.",
+      "Yes. Premium albums, frames and prints are available in addition to the digital gallery.",
   },
   {
     id: "booking-notice",

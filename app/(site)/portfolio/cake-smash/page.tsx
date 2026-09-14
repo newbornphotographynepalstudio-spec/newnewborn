@@ -18,7 +18,7 @@ const [rowOne1, rowOne2, rowTwo1, rowTwo2] = rest;
 export const metadata: Metadata = {
   title: "Cake Smash Portfolio",
   description:
-    "A cake smash photography portfolio from Newborn Photography Nepal — real first-birthday sessions photographed in a Kathmandu studio.",
+    "A cake smash photography portfolio from Newborn Photography Nepal: real first-birthday sessions photographed in a Kathmandu studio.",
   alternates: { canonical: routes.portfolioCakeSmash },
 };
 
@@ -37,7 +37,7 @@ export default function CakeSmashPortfolioPage() {
       <PageHero
         eyebrow="Portfolio"
         title="Cake Smash Photography Portfolio"
-        description="First-birthday sessions as they actually happened — icing, mess and all."
+        description="First-birthday sessions as they actually happened: icing, mess and all."
       >
         <Cluster gap="sm" className="mt-8">
           <Button href={`${bookASessionCta.href}?type=cake-smash`}>{bookASessionCta.label}</Button>
@@ -127,8 +127,8 @@ export default function CakeSmashPortfolioPage() {
           </p>
           <h2 className="mt-3 text-h2">Playful, not chaotic</h2>
           <p className="mx-auto mt-5 max-w-prose text-body-lg leading-relaxed text-charcoal/80">
-            A cake smash set is planned — backdrop, cake and props chosen
-            beforehand — but what happens once the cake arrives is
+            A cake smash set is planned: backdrop, cake and props chosen
+            beforehand. But what happens once the cake arrives is
             entirely up to your child. The photography keeps up with
             that, rather than trying to direct it.
           </p>
@@ -161,8 +161,8 @@ export default function CakeSmashPortfolioPage() {
         <div className="mx-auto max-w-xl text-center">
           <h2 className="text-h2 text-white">Ready to book a cake smash session?</h2>
           <p className="mt-4 text-body-lg leading-relaxed text-white/80">
-            Most families book around their child&apos;s first birthday —
-            reach out to check available dates.
+            Most families book around their child&apos;s first birthday.
+            Reach out to check available dates.
           </p>
           <Cluster gap="sm" align="center" justify="center" className="mt-8">
             <Button href={`${bookASessionCta.href}?type=cake-smash`} className="!bg-white !text-plum hover:!bg-blush">

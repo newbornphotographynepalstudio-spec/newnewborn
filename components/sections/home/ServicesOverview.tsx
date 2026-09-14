@@ -21,7 +21,7 @@ export function ServicesOverview() {
       <SectionHeading
         eyebrow="Services"
         title="Photography for every stage"
-        description="From your baby's first days to family milestones — one studio, five kinds of sessions."
+        description="From your baby's first days to family milestones: one studio, five kinds of sessions."
       />
 
       <div className="mt-12 border-t border-taupe/20">

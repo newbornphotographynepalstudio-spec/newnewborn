@@ -34,6 +34,6 @@ export const homeFaqPreview: FaqItem[] = [
     id: "other-sessions",
     question: "Do you offer maternity and family photography?",
     answer:
-      "Yes — alongside newborn photography, maternity, baby, cake smash and family sessions are all offered.",
+      "Yes. Alongside newborn photography, maternity, baby, cake smash and family sessions are all offered.",
   },
 ];

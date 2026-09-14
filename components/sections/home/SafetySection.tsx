@@ -6,7 +6,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { routes } from "@/lib/navigation/routes";
 
 const safetyPoints = [
-  "Baby-led posing — nothing is ever forced",
+  "Baby-led posing: nothing is ever forced",
   "Trained, careful handling throughout the session",
   "A controlled, warm studio environment",
   "Clean equipment, props and set-ups",

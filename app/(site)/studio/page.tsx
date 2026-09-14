@@ -18,7 +18,7 @@ const studioPhoto = newbornGallery.find((img) => img.id === "newborn-robe-chair"
 export const metadata: Metadata = {
   title: "Studio",
   description:
-    "Inside the Newborn Photography Nepal studio in Kathmandu Valley — a private, newborn-friendly space with controlled lighting, built for a calm session.",
+    "Inside the Newborn Photography Nepal studio in Kathmandu Valley: a private, newborn-friendly space with controlled lighting, built for a calm session.",
   alternates: { canonical: routes.studio },
 };
 
@@ -26,7 +26,7 @@ const features = [
   {
     title: "A private space",
     description:
-      "Sessions are one family at a time — no other clients coming or going, no waiting room.",
+      "Sessions are one family at a time, no other clients coming or going, no waiting room.",
   },
   {
     title: "Controlled lighting",
@@ -91,7 +91,7 @@ export default function StudioPage() {
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-h3">Not sure a studio session is right for you?</h2>
           <p className="mt-3 text-body leading-relaxed text-charcoal/80">
-            Home sessions are available where offered — get in touch and we
+            Home sessions are available where offered. Get in touch and we
             can talk through what would work best for your family.
           </p>
           <Button href={routes.contact} variant="text" className="mt-4">

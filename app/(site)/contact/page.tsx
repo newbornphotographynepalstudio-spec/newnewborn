@@ -37,7 +37,7 @@ export default function ContactPage() {
       <PageHero
         eyebrow="Contact"
         title="Get in touch"
-        description="Reach out directly, or send full session details through the booking form — whichever is easier."
+        description="Reach out directly, or send full session details through the booking form, whichever is easier."
       />
 
       <Section>

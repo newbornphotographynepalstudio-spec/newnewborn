@@ -57,7 +57,7 @@ export function HomeHero() {
                 </h1>
                 <p className="mt-2 max-w-xl text-small sm:mt-4 sm:text-body-lg leading-relaxed text-white/85">
                   Editorial newborn portraits in a calm, safety-led studio
-                  in Kathmandu — unrushed sessions planned around your
+                  in Kathmandu, unrushed sessions planned around your
                   baby&apos;s comfort, not a fixed shot list.
                 </p>
                 <Cluster gap="sm" className="mt-4 sm:mt-8">

@@ -56,7 +56,7 @@ export default async function AdminBookingsPage() {
                 <tr key={inquiry.id} className="border-b border-taupe/10 last:border-b-0 hover:bg-blush/40">
                   <td className="px-4 py-3">
                     <Link href={`/admin/bookings/${inquiry.id}`} className="font-medium text-plum hover:underline">
-                      {inquiry.customer.name || "—"}
+                      {inquiry.customer.name || "-"}
                     </Link>
                   </td>
                   <td className="px-4 py-3 text-charcoal/80">
@@ -64,8 +64,8 @@ export default async function AdminBookingsPage() {
                     <div className="text-caption text-taupe">{inquiry.customer.email}</div>
                   </td>
                   <td className="px-4 py-3 text-charcoal/80">{SESSION_TYPE_LABELS[inquiry.session.type]}</td>
-                  <td className="px-4 py-3 text-charcoal/80">{inquiry.session.package || "—"}</td>
-                  <td className="px-4 py-3 text-charcoal/80">{inquiry.session.preferredDate || "—"}</td>
+                  <td className="px-4 py-3 text-charcoal/80">{inquiry.session.package || "-"}</td>
+                  <td className="px-4 py-3 text-charcoal/80">{inquiry.session.preferredDate || "-"}</td>
                   <td className="px-4 py-3 text-charcoal/60">
                     {new Date(inquiry.createdAt).toLocaleDateString()}
                   </td>

@@ -11,7 +11,7 @@ import { bookASessionCta, routes } from "@/lib/navigation/routes";
 export const metadata: Metadata = {
   title: "Newborn Safety",
   description:
-    "How newborn safety is built into every session — baby-led posing, trained handling, a controlled studio environment, and parents present throughout.",
+    "How newborn safety is built into every session: baby-led posing, trained handling, a controlled studio environment, and parents present throughout.",
   alternates: { canonical: routes.safety },
 };
 
@@ -39,7 +39,7 @@ const principles = [
   {
     title: "Parents present throughout",
     description:
-      "You're in the room for the entire session — able to step in, ask for a break, or simply watch from close by.",
+      "You're in the room for the entire session, able to step in, ask for a break, or simply watch from close by.",
   },
 ];
 
@@ -49,7 +49,7 @@ export default function SafetyPage() {
       <PageHero
         eyebrow="Safety"
         title="Newborn safety comes first"
-        description="Every session is planned and run around your baby's comfort — not the other way around. Here's what that actually means in the studio."
+        description="Every session is planned and run around your baby's comfort, not the other way around. Here's what that actually means in the studio."
       >
         <Cluster gap="sm" className="mt-8">
           <Button href={bookASessionCta.href}>{bookASessionCta.label}</Button>
@@ -77,7 +77,7 @@ export default function SafetyPage() {
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-body-lg leading-relaxed text-charcoal/85">
             None of this replaces your own judgment as a parent. If anything
-            about a session doesn&apos;t feel right, say so — the plan changes,
+            about a session doesn&apos;t feel right, say so. The plan changes,
             not your baby.
           </p>
         </div>

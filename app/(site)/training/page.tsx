@@ -13,7 +13,7 @@ import { routes } from "@/lib/navigation/routes";
 export const metadata: Metadata = {
   title: "Newborn Photography Training in Nepal",
   description:
-    "Newborn photography training in Nepal — hands-on courses covering safety, wrapping, posing, lighting and studio workflow, from beginner to professional.",
+    "Newborn photography training in Nepal: hands-on courses covering safety, wrapping, posing, lighting and studio workflow, from beginner to professional.",
   alternates: { canonical: routes.training },
 };
 
@@ -41,7 +41,7 @@ const learningThemes = [
   {
     title: "Editing & business",
     description:
-      "Retouching workflow through to pricing, branding and marketing — covered in the Professional and Master courses.",
+      "Retouching workflow through to pricing, branding and marketing, covered in the Professional and Master courses.",
   },
 ];
 
@@ -58,9 +58,9 @@ const nextSteps = [
 export default function TrainingPage() {
   return (
     <>
-      <PageHero eyebrow="Newborn Photography Training — Kathmandu, Nepal" title="Learn newborn photography with safety, patience and intention.">
+      <PageHero eyebrow="Newborn Photography Training, Kathmandu, Nepal" title="Learn newborn photography with safety, patience and intention.">
         <p className="mt-5 max-w-2xl text-body-lg leading-relaxed text-charcoal/80">
-          Hands-on training for photographers in Nepal — from a first
+          Hands-on training for photographers in Nepal, from a first
           introduction to newborn handling through to running a
           professional newborn photography business.
         </p>
@@ -102,7 +102,7 @@ export default function TrainingPage() {
           </p>
           <h2 className="mt-3 text-h2">You learn by being in the room</h2>
           <p className="mx-auto mt-5 max-w-prose text-body-lg leading-relaxed text-charcoal/80">
-            Every course includes live session participation — starting by
+            Every course includes live session participation, starting by
             observing a real newborn session, moving on to assisting with
             wrapping and posing, and in the longer courses, leading a
             session under supervision. Reading, watching and doing are
@@ -115,7 +115,7 @@ export default function TrainingPage() {
         <SectionHeading
           eyebrow="Training Courses"
           title="Three courses, depending on where you're starting"
-          description="No price is listed here — every course ends in a conversation about the right fit, current pricing and available dates."
+          description="No price is listed here. Every course ends in a conversation about the right fit, current pricing and available dates."
         />
         <Stack gap="3xl" className="mt-16">
           {trainingCourses.map((course, index) => (
@@ -129,7 +129,7 @@ export default function TrainingPage() {
                   <Stack gap="2xs" className="mt-4">
                     {course.audience.map((a) => (
                       <p key={a} className="text-small text-charcoal/70">
-                        — {a}
+                        - {a}
                       </p>
                     ))}
                   </Stack>
@@ -186,7 +186,7 @@ export default function TrainingPage() {
           <h2 className="text-h2 text-white">Ready to start training?</h2>
           <p className="mt-4 text-body-lg leading-relaxed text-white/80">
             Enquire with your experience level and the course you&apos;re
-            considering — we&apos;ll take it from there.
+            considering. We&apos;ll take it from there.
           </p>
           <Button href={`${routes.bookASession}?type=training`} className="mt-8 !bg-white !text-plum hover:!bg-blush">
             Enquire About Training

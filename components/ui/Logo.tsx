@@ -39,7 +39,7 @@ export function Logo({
   return (
     <Link
       href="/"
-      aria-label="Newborn Photography Nepal — home"
+      aria-label="Newborn Photography Nepal, home"
       className={`inline-block shrink-0 ${className}`}
     >
       <Image

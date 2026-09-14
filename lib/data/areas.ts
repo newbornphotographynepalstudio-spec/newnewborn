@@ -19,11 +19,11 @@ export const areas: Record<AreaSlug, AreaContent> = {
     href: routes.areasKathmandu,
     metaTitle: "Newborn Photography in Kathmandu",
     metaDescription:
-      "Newborn, maternity, baby and family photography for families in Kathmandu — studio sessions with home sessions available where offered.",
+      "Newborn, maternity, baby and family photography for families in Kathmandu: studio sessions with home sessions available where offered.",
     h1: "Newborn Photography in Kathmandu",
     intro: [
       "Families across Kathmandu book newborn, maternity, baby, cake smash and family sessions at the studio, based in Kathmandu Valley.",
-      "Sessions are primarily studio-based, with home sessions available where offered — reach out to check what's possible for your address and timing.",
+      "Sessions are primarily studio-based, with home sessions available where offered. Reach out to check what's possible for your address and timing.",
     ],
   },
   lalitpur: {
@@ -32,11 +32,11 @@ export const areas: Record<AreaSlug, AreaContent> = {
     href: routes.areasLalitpur,
     metaTitle: "Newborn Photography in Lalitpur",
     metaDescription:
-      "Newborn, maternity, baby and family photography for families in Lalitpur (Patan) — studio sessions with home sessions available where offered.",
+      "Newborn, maternity, baby and family photography for families in Lalitpur (Patan): studio sessions with home sessions available where offered.",
     h1: "Newborn Photography in Lalitpur",
     intro: [
       "Families from Lalitpur (Patan) and the surrounding area travel to the studio in Kathmandu Valley for newborn, maternity, baby, cake smash and family sessions.",
-      "If a home session is a better fit for your family, let us know when you get in touch — it may be possible depending on timing and location.",
+      "If a home session is a better fit for your family, let us know when you get in touch. It may be possible depending on timing and location.",
     ],
   },
   bhaktapur: {
@@ -45,7 +45,7 @@ export const areas: Record<AreaSlug, AreaContent> = {
     href: routes.areasBhaktapur,
     metaTitle: "Newborn Photography in Bhaktapur",
     metaDescription:
-      "Newborn, maternity, baby and family photography for families in Bhaktapur — studio sessions with home sessions available where offered.",
+      "Newborn, maternity, baby and family photography for families in Bhaktapur: studio sessions with home sessions available where offered.",
     h1: "Newborn Photography in Bhaktapur",
     intro: [
       "Families from Bhaktapur are welcome at the studio in Kathmandu Valley for newborn, maternity, baby, cake smash and family sessions.",

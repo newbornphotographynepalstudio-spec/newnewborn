@@ -26,7 +26,7 @@ export function Footer() {
         <Stack gap="sm" className="sm:col-span-2 lg:col-span-1">
           <Logo />
           <p className="max-w-xs text-small leading-relaxed text-taupe">
-            Newborn photography in Kathmandu, Nepal — with maternity, baby,
+            Newborn photography in Kathmandu, Nepal, with maternity, baby,
             cake smash and family sessions.
           </p>
           <div className="text-small text-charcoal">
@@ -77,7 +77,7 @@ export function Footer() {
                 {index < footerAreaLinks.length - 1 ? <span>&middot;</span> : null}
               </span>
             ))}
-            <span>&mdash;</span>
+            <span>&middot;</span>
             <Link href={routes.areas} className="hover:text-plum">
               All areas
             </Link>

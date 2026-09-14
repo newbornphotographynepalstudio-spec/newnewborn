@@ -23,7 +23,7 @@ export default function BlogPage() {
       <PageHero
         eyebrow="Blog"
         title="Articles are on their way"
-        description="This is where session-prep guides and photography notes will be published. Nothing is live yet — here's what's planned first."
+        description="This is where session-prep guides and photography notes will be published. Nothing is live yet, here's what's planned first."
       />
 
       <Section>

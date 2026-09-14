@@ -16,7 +16,7 @@ import { bookASessionCta, contactLink, routes } from "@/lib/navigation/routes";
 export const metadata: Metadata = {
   title: "Newborn Photography Packages & Pricing",
   description:
-    "Newborn photography packages and pricing in Nepal — Mini, Premium and Luxury newborn session collections from Newborn Photography Nepal, Kathmandu.",
+    "Newborn photography packages and pricing in Nepal: Mini, Premium and Luxury newborn session collections from Newborn Photography Nepal, Kathmandu.",
   alternates: { canonical: routes.packages },
 };
 
@@ -46,7 +46,7 @@ export default function PackagesPage() {
             </h1>
             <p className="mt-5 max-w-xl text-body-lg leading-relaxed text-charcoal/80">
               Choose a short essential sitting, an unrushed premium session,
-              or the complete luxury experience — real pricing, shown here
+              or the complete luxury experience. Real pricing, shown here
               in full.
             </p>
             <Cluster gap="sm" className="mt-8 items-center">
@@ -107,7 +107,7 @@ export default function PackagesPage() {
             <p className="mt-5 text-body-lg leading-relaxed text-charcoal/80">
               Mini keeps things quick and simple for families who want a
               handful of beautiful portraits without a long session. Premium
-              is the studio&apos;s most-booked collection — an unrushed
+              is the studio&apos;s most-booked collection: an unrushed
               sitting with more outfits, more images and a cinematic reel.
               Luxury is the complete experience, built for families who want
               every core moment covered and a premium printed keepsake to
@@ -190,7 +190,7 @@ export default function PackagesPage() {
           <div className="lg:col-span-7">
             <h2 className="text-h3">Not sure which collection is right for you?</h2>
             <p className="mt-3 max-w-prose text-body leading-relaxed text-charcoal/80">
-              Every family is different — talk to us about your session and
+              Every family is different. Talk to us about your session and
               we&apos;ll help you choose.
             </p>
             <Cluster gap="sm" className="mt-6">
@@ -225,7 +225,7 @@ export default function PackagesPage() {
         <SectionHeading
           eyebrow="Other Sessions"
           title="Maternity, baby, cake smash and family"
-          description="Packages for these sessions aren't published yet — pricing is shared when you get in touch."
+          description="Packages for these sessions aren't published yet. Pricing is shared when you get in touch."
         />
         <div className="mt-10 grid grid-cols-1 gap-x-8 gap-y-6 border-t border-taupe/20 pt-8 sm:grid-cols-2 lg:grid-cols-4">
           {otherServices.map((service) => (
@@ -245,7 +245,7 @@ export default function PackagesPage() {
           <h2 className="text-h3">Albums, frames and prints</h2>
           <p className="mt-3 text-body leading-relaxed text-charcoal/80">
             The Premium and Luxury newborn packages already include a
-            frame or album — additional albums, frames and prints can also
+            frame or album. Additional albums, frames and prints can also
             be added to any session, discussed when you book.
           </p>
         </div>

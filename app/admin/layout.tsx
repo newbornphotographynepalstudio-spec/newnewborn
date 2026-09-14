@@ -21,7 +21,7 @@ export default function AdminLayout({
       <header className="border-b border-taupe/20 bg-white">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-gutter">
           <p className="font-display text-h4 text-plum">
-            Newborn Photography Nepal — Admin
+            Newborn Photography Nepal: Admin
           </p>
         </div>
       </header>
