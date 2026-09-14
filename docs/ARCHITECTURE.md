@@ -323,48 +323,60 @@ it matches what's actually stored, not an aspirational schema.
 
 ### Storage
 
-**Implemented** (Phase 12) — `lib/media/library-actions.ts` uploads to
-`media/{category}/{timestamp}-{filename}` via the Admin SDK; metadata
-(title, alt, category, featured, published, order) lives in the `media`
-Firestore collection (above). `storage.rules` allows public **read**
-only under `/media/**` (these are the studio's own published
-photography, meant to be visible to every visitor — not a security
-weakness the way it would be for customer data) and denies **write**
-unconditionally for every client, since every real write happens
-server-side through the Admin SDK, which bypasses these rules entirely.
+**Implemented on Supabase Storage, not Firebase Storage.** This
+project stays on the Firebase **Spark (free) plan**, which does not
+include Storage at all — confirmed live in Phase 12 (an actual write
+attempt returned a clean `404 The specified bucket does not exist`,
+i.e. Storage has never been initialized for this project, by design,
+not by accident). Per explicit owner instruction (Phase 13), Firebase
+Storage is not to be enabled or built around; Supabase Storage is the
+permanent choice for this capability, not a temporary workaround.
 
-**Storage is not yet enabled on the live Firebase project** — checked
-live in Phase 12 (an actual Storage write attempt returned a clean
-`404 The specified bucket does not exist`, not a billing/permission
-error), so this remains one manual step: Firebase Console → Storage →
-Get Started. No code change is needed afterward. The updated
-`storage.rules` above is committed to this repo but **not yet
-deployed** — deploying it requires `firebase deploy --only storage`
-run by someone with IAM permissions on the project (the service
-account this app uses doesn't have `serviceusage.serviceUsageConsumer`,
-confirmed by a real deploy attempt in Phase 12), or pasting the rules
-into the Console's Storage → Rules editor directly.
+- **Bucket**: `media`, public-read, created programmatically in Phase
+  14.1 (`supabase.storage.createBucket("media", { public: true,
+  allowedMimeTypes: [...], fileSizeLimit: "20MB" })`) once
+  `SUPABASE_SERVICE_ROLE_KEY` became available. Restricted to
+  JPEG/PNG/WebP.
+- **Client**: `lib/supabase/admin.ts` — a server-only, service-role
+  Supabase client, isolated to Storage operations only (this is not a
+  second application database; Firestore/Auth remain entirely on
+  Firebase). `SUPABASE_SERVICE_ROLE_KEY` must never be exposed to the
+  browser or prefixed `NEXT_PUBLIC_`.
+- **Write path**: `lib/media/library-actions.ts` uploads to
+  `{category}/{timestamp}-{filename}` via this admin client; metadata
+  (title, alt, category, featured, published, order, real width/height
+  parsed by `lib/media/image-dimensions.ts`) lives in the `media`
+  Firestore collection (above). All writes require
+  `verifyAdminSession()` — authorization is enforced by this app's own
+  session check, not by a Supabase Storage RLS policy, which is why the
+  service-role key (not the public/publishable key) is required for
+  every write.
+- **Read path**: public, unauthenticated, via the bucket's public URL
+  (`getPublicUrl()`) — no Supabase credential needed to view a photo,
+  same as any other public image on the site.
+- **Verified live end-to-end** (Phase 14.1): a real image uploaded
+  through `/admin/media/` → appeared in Supabase Storage → correct
+  Firestore metadata (including real parsed dimensions) → public URL
+  returned 200 with the right content-type → appeared on
+  `/portfolio/newborn/` → edited (alt text) → deleted through the real
+  admin UI → confirmed gone from both Supabase Storage and Firestore.
+  No residue left behind.
+- **A separate, pre-existing bucket named `portfolio`** was found in
+  the same Supabase project during this check — public, containing 43
+  real-looking photos (`newborn-*.webp`, `maternity-*.webp`,
+  `cakesmash-*.webp`) uploaded 2026-06-22. **Nothing in this codebase
+  references it**, and it doesn't correspond to any `media` Firestore
+  document. It was left completely untouched rather than repurposed or
+  deleted — its origin is unconfirmed and it may be in active use
+  elsewhere; the owner should verify what it is before anyone acts on
+  it.
 
-**Firebase Storage vs. Supabase**: the owner made a Supabase project
-available as a possible alternative. It was deliberately not connected.
-The 404 above shows the blocker is "Storage has never been initialized
-for this project," not "Firebase Storage is unsuitable for this
-workload" — nothing about this site's actual needs (a few dozen to a
-few hundred photography images, admin-only uploads, public reads)
-exceeds Storage's free-tier quotas or requires a capability Storage
-lacks. Introducing Supabase alongside Firebase would mean two backends,
-two credential sets, and two places authorization logic could drift,
-for no capability gain. If Storage genuinely turns out to be
-unsuitable after being enabled and tested, that would be the moment to
-revisit Supabase — not before.
-
-Planned layout going forward: originals stay in Storage as uploaded
-(never resized server-side — `next/image`'s on-demand optimization,
-already configured for `firebasestorage.googleapis.com` in
-`next.config.ts`, means visitors never receive the original file
-regardless of its size); `uploadMedia` still rejects anything over 20MB
-so an admin doesn't accidentally upload a raw 40MB camera file when a
-web-ready export was intended.
+Originals stay in Storage as uploaded (never resized server-side —
+`next/image`'s on-demand optimization, configured for
+`*.supabase.co` in `next.config.ts`, means visitors never receive the
+original file regardless of its size); `uploadMedia` still rejects
+anything over 20MB so an admin doesn't accidentally upload a raw 40MB
+camera file when a web-ready export was intended.
 
 ## Image / photography architecture
 
@@ -372,16 +384,18 @@ This is a photography-led site — image performance is a top priority, and
 **no stock photography is used anywhere**; every image slot stays a
 placeholder until Navin supplies real photography.
 
-- Storage: Firebase Storage holds the source of truth for uploaded images.
+- Storage: newly-uploaded photography lives in Supabase Storage (see
+  "Storage" above); the site's original, already-approved galleries stay
+  as static files under `public/`.
 - Delivery: pages never link to a Storage URL directly in markup — they go
   through `next/image`, configured (`next.config.ts` →
-  `images.remotePatterns`) to allow `firebasestorage.googleapis.com`, which
+  `images.remotePatterns`) to allow `*.supabase.co`, which
   handles responsive `sizes`, lazy loading, and automatic WebP/AVIF
   negotiation.
-- Metadata: the planned `mediaAssets` Firestore collection carries, per
-  image — alt text, title, caption, description, and original filename —
-  so every image has real ALT text and SEO metadata instead of a generic
-  placeholder string.
+- Metadata: the `media` Firestore collection carries, per
+  image — alt text, title, caption, category, and real parsed
+  width/height — so every uploaded image has real ALT text and SEO
+  metadata instead of a generic placeholder string.
 - Full-resolution originals are never rendered in normal page views; only
   optimized/responsive derivatives are.
 - Blur placeholders are used where practical (Next's built-in
