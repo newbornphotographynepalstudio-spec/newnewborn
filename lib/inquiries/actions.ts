@@ -5,6 +5,7 @@ import { FieldValue } from "firebase-admin/firestore";
 
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import { verifyAdminSession } from "@/lib/firebase/session";
+import { auditActorFromSession, writeAuditLog } from "@/lib/audit/log";
 import {
   CONTACT_PREFERENCES,
   INQUIRY_STATUSES,
@@ -159,9 +160,61 @@ export async function updateInquiryStatus(
     });
     revalidatePath(`/admin/bookings/${id}`);
     revalidatePath("/admin/bookings");
+    await writeAuditLog({
+      ...auditActorFromSession(session),
+      action: "inquiry.status_updated",
+      entityType: "inquiry",
+      entityId: id,
+      details: `Status changed to "${nextStatus}"`,
+    });
     return { status: "success", message: "Status updated." };
   } catch (error) {
     console.error("updateInquiryStatus failed:", error);
     return { status: "error", message: "Couldn't update the status. Please try again." };
+  }
+}
+
+export type NotesFormState = { status: "idle" | "success" | "error"; message?: string };
+
+/** Admin-only: saves internal notes and an optional follow-up reminder
+ * date on one enquiry. Same independent session check as
+ * updateInquiryStatus, for the same reason. Never touched by the public
+ * submission path. */
+export async function saveInquiryNotes(
+  _prevState: NotesFormState,
+  formData: FormData
+): Promise<NotesFormState> {
+  const session = await verifyAdminSession();
+  if (!session) {
+    return { status: "error", message: "Your session has expired. Please sign in again." };
+  }
+
+  const id = readString(formData, "id");
+  if (!id) {
+    return { status: "error", message: "Missing enquiry id." };
+  }
+
+  const adminNotes = readString(formData, "adminNotes");
+  const followUpDate = readString(formData, "followUpDate");
+
+  try {
+    const db = getAdminFirestore();
+    await db.collection("inquiries").doc(id).update({
+      adminNotes: adminNotes || FieldValue.delete(),
+      followUpDate: followUpDate || FieldValue.delete(),
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+    revalidatePath(`/admin/bookings/${id}`);
+    await writeAuditLog({
+      ...auditActorFromSession(session),
+      action: "inquiry.notes_updated",
+      entityType: "inquiry",
+      entityId: id,
+      details: followUpDate ? `Notes saved, follow-up set for ${followUpDate}` : "Notes saved",
+    });
+    return { status: "success", message: "Saved." };
+  } catch (error) {
+    console.error("saveInquiryNotes failed:", error);
+    return { status: "error", message: "Couldn't save. Please try again." };
   }
 }

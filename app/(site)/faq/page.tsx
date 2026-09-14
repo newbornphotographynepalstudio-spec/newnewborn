@@ -5,7 +5,7 @@ import { Section } from "@/components/primitives/Section";
 import { Button } from "@/components/ui/Button";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
 import { PageHero } from "@/components/ui/PageHero";
-import { fullFaqList } from "@/lib/data/faq-full";
+import { getFaqs } from "@/lib/faq/data";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
 
 export const metadata: Metadata = {
@@ -15,7 +15,8 @@ export const metadata: Metadata = {
   alternates: { canonical: routes.faq },
 };
 
-export default function FaqPage() {
+export default async function FaqPage() {
+  const faqs = await getFaqs();
   return (
     <>
       <PageHero
@@ -25,7 +26,7 @@ export default function FaqPage() {
       />
 
       <Section containerSize="prose">
-        <FaqAccordion items={fullFaqList} />
+        <FaqAccordion items={faqs} />
         <div className="mt-10 text-center">
           <p className="text-body text-charcoal/75">Still have a question?</p>
           <Cluster gap="sm" align="center" justify="center" className="mt-4">

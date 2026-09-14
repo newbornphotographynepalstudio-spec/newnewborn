@@ -55,6 +55,12 @@ export type Inquiry = {
   consent: boolean;
   status: InquiryStatus;
   source: string;
+  /** Admin-only freeform notes — never shown to the customer, never
+   * written by the public submission path. */
+  adminNotes?: string;
+  /** Admin-set reminder date (YYYY-MM-DD) for when to follow up on this
+   * enquiry, e.g. "call back after the due date." Optional. */
+  followUpDate?: string;
 };
 
 export const STATUS_LABELS: Record<InquiryStatus, string> = {

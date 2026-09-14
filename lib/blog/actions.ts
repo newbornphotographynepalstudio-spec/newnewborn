@@ -5,6 +5,7 @@ import { FieldValue } from "firebase-admin/firestore";
 
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import { verifyAdminSession } from "@/lib/firebase/session";
+import { auditActorFromSession, writeAuditLog } from "@/lib/audit/log";
 import { isSlugTaken } from "@/lib/blog/admin-data";
 import { DEFAULT_AUTHOR } from "@/lib/blog/types";
 import { routes } from "@/lib/navigation/routes";
@@ -91,6 +92,13 @@ export async function savePost(_prevState: PostFormState, formData: FormData): P
       postId = ref.id;
     }
     revalidateBlogPaths(slug);
+    await writeAuditLog({
+      ...auditActorFromSession(session),
+      action: id ? "post.updated" : "post.created",
+      entityType: "post",
+      entityId: postId,
+      details: `"${title}" (${status})`,
+    });
     return { status: "success", message: "Post saved.", postId };
   } catch (error) {
     console.error("savePost failed:", error);
@@ -107,6 +115,12 @@ export async function deletePost(id: string): Promise<PostFormState> {
     const db = getAdminFirestore();
     await db.collection("posts").doc(id).delete();
     revalidateBlogPaths();
+    await writeAuditLog({
+      ...auditActorFromSession(session),
+      action: "post.deleted",
+      entityType: "post",
+      entityId: id,
+    });
     return { status: "success", message: "Post deleted." };
   } catch (error) {
     console.error("deletePost failed:", error);

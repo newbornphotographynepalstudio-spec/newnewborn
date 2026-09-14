@@ -214,30 +214,32 @@ below gets an explicit rule only once it's actually implemented — chosen
 by real access pattern rather than mirroring every noun in the business
 domain 1:1.
 
-**`inquiries`, `packages`, `posts` and `settings` are implemented**
-(Phases 4 and 11) — every other collection below is still planned, not
-yet created. See "Booking / inquiry system" further down for the
+**`inquiries`, `packages`, `posts`, `settings`, `faqs`, `media` and
+`auditLogs` are implemented** (Phases 4, 11 and 12) — every other
+collection below is still planned, not yet created, mostly deliberately
+(see each row). See "Booking / inquiry system" further down for the
 `inquiries` data model, write path and security rules.
 
 | Collection | Notes |
 |---|---|
-| `admins` | Admin user records (role, display name); auth identity itself lives in Firebase Auth. Not yet needed — there is exactly one admin account, gated by the `admin` custom claim, not a Firestore-backed role table. |
-| `inquiries` | **Implemented.** One document per booking/training enquiry from `/book-a-session/`. A single collection with a `status` field (new/contacted/booked/closed) models the lifecycle without needing to migrate a document between two collections. |
+| `admins` | Admin user records (role, display name); auth identity itself lives in Firebase Auth. Not yet needed — there is exactly one admin account (superadmin), gated by the binary `admin` custom claim, not a Firestore-backed role table. The data model doesn't block adding one later: a second admin would just be a second Firebase Auth user with the same claim set via the same `setCustomUserClaims` call, no schema change required. |
+| `inquiries` | **Implemented.** One document per booking/training enquiry from `/book-a-session/`. A single collection with a `status` field (new/contacted/booked/closed) models the lifecycle without needing to migrate a document between two collections. Phase 12 added optional `adminNotes` and `followUpDate` fields directly on the same document rather than separate `clients`/`notes`/`followUps` collections — this business's actual relationship is 1:1 (one enquiry, one family, one set of notes), so a separate collection would only add joins without adding capability. |
 | `packages` | **Implemented** (Phase 11) — `lib/packages/data.ts` / `admin-data.ts` / `actions.ts`. Admin-editable via `/admin/packages/`; public `/packages/` and the homepage preview read from here, falling back to the original approved hardcoded pricing (`lib/data/packages.ts`) if the collection is empty or unreachable. Seeded with the exact original figures on first setup, never invented. |
 | `posts` | **Implemented** (Phase 11) — `lib/blog/data.ts` / `admin-data.ts` / `actions.ts`. Admin-editable via `/admin/blog/`; `/blog/` and `/blog/[slug]/` read only `status == "published"` posts, sorted in memory (not a Firestore `orderBy`, to avoid requiring a composite index at this post volume). Draft posts are never shown publicly. |
-| `settings` (single `site` document) | **Implemented** (Phase 11), partially — currently holds `socialLinks` only (`lib/settings/data.ts`). Admin-editable via `/admin/settings/`, which also surfaces live, read-only system status (Firestore/Storage/Google Places configuration) computed on each load, never stored. |
+| `settings` (single `site` document) | **Implemented** (Phase 11), partially — currently holds `socialLinks` only (`lib/settings/data.ts`). Admin-editable via `/admin/settings/`, which also surfaces live, read-only system status (Firestore/Storage/Google Places configuration) computed on each load, never stored. Deliberately the *only* settings document — General/Contact/Business Info were evaluated in Phase 12 and kept code-controlled (`lib/data/contact.ts`): stable business facts that change rarely enough that a code review on change is a feature, not friction, and splitting them into more Firestore documents would just be more places for the one real source of truth to drift. |
+| `faqs` | **Implemented** (Phase 12) — `lib/faq/data.ts` / `admin-data.ts` / `actions.ts`. Admin-editable via `/admin/faqs/`; the homepage preview is always the first 5 (by `order`) of the same collection the full `/faq/` page reads, never a separately-maintained subset that can drift. Seeded with the original 11 approved questions. |
+| `media` | **Implemented** (Phase 12) — `lib/media/library-data.ts` / `library-actions.ts`. Admin-editable via `/admin/media/` (upload to Firebase Storage under `media/{category}/…`, metadata in this collection). **Not yet wired into any public page** — the existing approved static galleries (`lib/media/newborn-gallery.ts`, `lib/media/cake-smash-gallery.ts`) remain the only source public pages read from, so this collection is additive infrastructure for new photography, not a replacement. `getPublishedMediaByCategory()` exists and is ready for that wiring once there's real uploaded content to show and each of the 5 category pages + homepage + blog picker has been reverified against it. |
+| `auditLogs` | **Implemented** (Phase 12) — `lib/audit/log.ts` / `data.ts`. Every mutating admin Server Action (`updateInquiryStatus`, `saveInquiryNotes`, `savePackage`/`deletePackage`, `savePost`/`deletePost`, `saveSocialLinks`, `saveFaq`/`deleteFaq`, `uploadMedia`/`updateMediaMetadata`/`deleteMedia`) writes one entry: actor uid/email, action, entity type/id, a short non-secret detail string. Logging is best-effort (wrapped so a logging failure never blocks the real mutation) and read-only from `/admin/security/`. No secrets, tokens, or passwords are ever written to an entry. |
 | `services` | Newborn / maternity / baby / cake smash / family — service page content. Still code-controlled (`lib/data/service-pages.ts`); not migrated, since the copy is tightly tied to hand-written, service-specific FAQ and editorial content. |
-| `portfolioGalleries` (+ `portfolioImages` subcollection) | Still code-controlled (`lib/media/newborn-gallery.ts`, `lib/media/cake-smash-gallery.ts`). Blocked on Firebase Storage being enabled for real uploads — see "Storage" below. `/admin/portfolio/` currently shows this data read-only. |
+| `portfolioGalleries` (+ `portfolioImages` subcollection) | Still code-controlled (`lib/media/newborn-gallery.ts`, `lib/media/cake-smash-gallery.ts`). `media` (above) is the CMS-backed replacement path for *new* photography; these stay as the authoritative source for the existing, already-approved selection until they're deliberately merged. `/admin/portfolio/` shows this data read-only and links to `/admin/media/` for uploads. |
 | `blogCategories`, `authors` | Not implemented — `posts` currently stores `author` as a plain string rather than a reference, since there is one author. Revisit if/when there's more than one contributor. |
-| `testimonials`, `faqs` | Simple flat collections. Still code-controlled; FAQ content is stable, low-churn copy. |
+| `testimonials` | Not implemented, deliberately. Google Reviews (`lib/reviews/google-places.ts`, `lib/data/reviews.ts`) is the only genuine testimonial source this project uses; a separate hand-entered testimonials collection would either duplicate that or risk becoming a place to put unverifiable quotes, which every phase of this project has refused to do. |
 | `pages` | Editable copy for otherwise-static routes (About, Safety, Studio, etc.). Deliberately still code-controlled — see "What's deliberately deferred." |
 | `seoSettings` | Per-page SEO overrides, keyed by route. `packages` and `posts` documents already carry their own `seoTitle`/`seoDescription` fields directly rather than a separate keyed-by-route collection; a dedicated `seoSettings` collection is only worth adding if per-page overrides are needed for routes that aren't already CMS-backed. |
-| `mediaAssets` | Media Library metadata (alt/title/caption/description/filename) — see Image architecture. Blocked on Storage, same as `portfolioGalleries`. |
-| `redirects` | Admin-managed 301s beyond the ones hardcoded in `next.config.ts`. |
-| `contactInformation` | Studio phone/email/WhatsApp — still code-controlled (`lib/data/contact.ts`); these are stable business facts that change rarely enough that a code review on change is a feature, not friction. |
-| `training`, `trainingModules` | Training offering + its modules/curriculum as a subcollection or normalized reference, avoiding one large document. Still code-controlled. |
+| `redirects` | Admin-managed 301s beyond the ones hardcoded in `next.config.ts`. Not implemented — the one existing redirect (`/workshop/` → `/training/`) is low-churn enough that a code change (with its own review/deploy safety) is preferable to a runtime-editable redirect table that could silently break a URL. |
+| `contactInformation` | Studio phone/email/WhatsApp — still code-controlled (`lib/data/contact.ts`); see the `settings` row above. |
+| `training`, `trainingModules`, workshop registrations/participants | Training offering + its modules/curriculum: still code-controlled (`lib/data/training.ts`). Training enquiries already flow through `inquiries` (`session.type === "training"`) — a separate `registrations`/`participants` model was evaluated in Phase 12 and not built, since it would duplicate data `inquiries` already holds without adding a workflow this business currently uses (no dates/curriculum/pricing are published anywhere, on this site or the reference site it was modeled from — "every tier ends in a conversation," by design). |
 | `areas` | Kathmandu / Lalitpur / Bhaktapur area-page content. Still code-controlled. |
-| `auditLogs` | Append-only record of privileged admin actions (who, what, when). |
 
 ### Realtime Database — deliberately not used
 
@@ -321,10 +323,48 @@ it matches what's actually stored, not an aspirational schema.
 
 ### Storage
 
-Deny-all by default (`storage.rules`) until the Media Library upload path
-is implemented. Planned layout: originals in an admin-only-write path,
-with derived/optimized sizes served through `next/image` rather than the
-originals (see Image architecture).
+**Implemented** (Phase 12) — `lib/media/library-actions.ts` uploads to
+`media/{category}/{timestamp}-{filename}` via the Admin SDK; metadata
+(title, alt, category, featured, published, order) lives in the `media`
+Firestore collection (above). `storage.rules` allows public **read**
+only under `/media/**` (these are the studio's own published
+photography, meant to be visible to every visitor — not a security
+weakness the way it would be for customer data) and denies **write**
+unconditionally for every client, since every real write happens
+server-side through the Admin SDK, which bypasses these rules entirely.
+
+**Storage is not yet enabled on the live Firebase project** — checked
+live in Phase 12 (an actual Storage write attempt returned a clean
+`404 The specified bucket does not exist`, not a billing/permission
+error), so this remains one manual step: Firebase Console → Storage →
+Get Started. No code change is needed afterward. The updated
+`storage.rules` above is committed to this repo but **not yet
+deployed** — deploying it requires `firebase deploy --only storage`
+run by someone with IAM permissions on the project (the service
+account this app uses doesn't have `serviceusage.serviceUsageConsumer`,
+confirmed by a real deploy attempt in Phase 12), or pasting the rules
+into the Console's Storage → Rules editor directly.
+
+**Firebase Storage vs. Supabase**: the owner made a Supabase project
+available as a possible alternative. It was deliberately not connected.
+The 404 above shows the blocker is "Storage has never been initialized
+for this project," not "Firebase Storage is unsuitable for this
+workload" — nothing about this site's actual needs (a few dozen to a
+few hundred photography images, admin-only uploads, public reads)
+exceeds Storage's free-tier quotas or requires a capability Storage
+lacks. Introducing Supabase alongside Firebase would mean two backends,
+two credential sets, and two places authorization logic could drift,
+for no capability gain. If Storage genuinely turns out to be
+unsuitable after being enabled and tested, that would be the moment to
+revisit Supabase — not before.
+
+Planned layout going forward: originals stay in Storage as uploaded
+(never resized server-side — `next/image`'s on-demand optimization,
+already configured for `firebasestorage.googleapis.com` in
+`next.config.ts`, means visitors never receive the original file
+regardless of its size); `uploadMedia` still rejects anything over 20MB
+so an admin doesn't accidentally upload a raw 40MB camera file when a
+web-ready export was intended.
 
 ## Image / photography architecture
 

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import { verifyAdminSession } from "@/lib/firebase/session";
+import { auditActorFromSession, writeAuditLog } from "@/lib/audit/log";
 import { routes } from "@/lib/navigation/routes";
 import type { SocialLinkEntry } from "@/lib/settings/data";
 
@@ -33,6 +34,13 @@ export async function saveSocialLinks(
     await db.collection("settings").doc("site").set({ socialLinks }, { merge: true });
     revalidatePath(routes.home);
     revalidatePath("/admin/settings");
+    await writeAuditLog({
+      ...auditActorFromSession(session),
+      action: "settings.social_links_updated",
+      entityType: "settings",
+      entityId: "site",
+      details: `${socialLinks.length} link(s) set`,
+    });
     return { status: "success", message: "Settings saved." };
   } catch (error) {
     console.error("saveSocialLinks failed:", error);

@@ -45,6 +45,8 @@ export async function listInquiries(): Promise<InquiryListResult> {
         consent: data.consent ?? true,
         status: data.status ?? "new",
         source: data.source ?? "website",
+        adminNotes: data.adminNotes,
+        followUpDate: data.followUpDate,
       };
     });
     return { configured: true, inquiries };
@@ -73,6 +75,8 @@ export async function getInquiry(id: string): Promise<Inquiry | null> {
       consent: data.consent ?? true,
       status: data.status ?? "new",
       source: data.source ?? "website",
+      adminNotes: data.adminNotes,
+      followUpDate: data.followUpDate,
     };
   } catch (error) {
     console.error("getInquiry failed (Firebase Admin not configured?):", error);

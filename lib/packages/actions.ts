@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import { verifyAdminSession } from "@/lib/firebase/session";
+import { auditActorFromSession, writeAuditLog } from "@/lib/audit/log";
 import { routes } from "@/lib/navigation/routes";
 
 export type PackageFormState = { status: "idle" | "success" | "error"; message?: string };
@@ -75,12 +76,21 @@ export async function savePackage(
 
   try {
     const db = getAdminFirestore();
+    let packageId = id;
     if (id) {
       await db.collection("packages").doc(id).set(data, { merge: true });
     } else {
-      await db.collection("packages").add(data);
+      const ref = await db.collection("packages").add(data);
+      packageId = ref.id;
     }
     revalidatePublicPackagePages();
+    await writeAuditLog({
+      ...auditActorFromSession(session),
+      action: id ? "package.updated" : "package.created",
+      entityType: "package",
+      entityId: packageId,
+      details: name,
+    });
     return { status: "success", message: "Package saved." };
   } catch (error) {
     console.error("savePackage failed:", error);
@@ -97,6 +107,12 @@ export async function deletePackage(id: string): Promise<PackageFormState> {
     const db = getAdminFirestore();
     await db.collection("packages").doc(id).delete();
     revalidatePublicPackagePages();
+    await writeAuditLog({
+      ...auditActorFromSession(session),
+      action: "package.deleted",
+      entityType: "package",
+      entityId: id,
+    });
     return { status: "success", message: "Package deleted." };
   } catch (error) {
     console.error("deletePackage failed:", error);

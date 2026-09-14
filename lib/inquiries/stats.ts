@@ -10,6 +10,7 @@ export type InquiryStats = {
   contactedCount: number;
   bookedCount: number;
   closedCount: number;
+  dueFollowUpCount: number;
   recent: Inquiry[];
 };
 
@@ -20,6 +21,7 @@ const EMPTY_STATS: InquiryStats = {
   contactedCount: 0,
   bookedCount: 0,
   closedCount: 0,
+  dueFollowUpCount: 0,
   recent: [],
 };
 
@@ -35,6 +37,8 @@ export async function getInquiryStats(): Promise<InquiryStats> {
     const stats = { ...EMPTY_STATS, configured: true, total: snapshot.size };
     const recent: Inquiry[] = [];
 
+    const today = new Date().toISOString().slice(0, 10);
+
     snapshot.docs.forEach((doc, index) => {
       const data = doc.data();
       const status = data.status ?? "new";
@@ -42,6 +46,10 @@ export async function getInquiryStats(): Promise<InquiryStats> {
       else if (status === "contacted") stats.contactedCount += 1;
       else if (status === "booked") stats.bookedCount += 1;
       else if (status === "closed") stats.closedCount += 1;
+
+      if (typeof data.followUpDate === "string" && data.followUpDate <= today) {
+        stats.dueFollowUpCount += 1;
+      }
 
       if (index < 5) {
         recent.push({
@@ -57,6 +65,8 @@ export async function getInquiryStats(): Promise<InquiryStats> {
           consent: data.consent ?? true,
           status: data.status ?? "new",
           source: data.source ?? "website",
+          adminNotes: data.adminNotes,
+          followUpDate: data.followUpDate,
         });
       }
     });

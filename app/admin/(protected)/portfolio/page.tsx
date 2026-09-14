@@ -1,8 +1,8 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 
 import { newbornGallery } from "@/lib/media/newborn-gallery";
 import { cakeSmashGallery } from "@/lib/media/cake-smash-gallery";
-import { getSystemDiagnostics } from "@/lib/settings/diagnostics";
 
 export const metadata: Metadata = {
   title: "Portfolio Photos",
@@ -10,8 +10,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminPortfolioPage() {
-  const diagnostics = await getSystemDiagnostics();
-
   return (
     <div className="mx-auto max-w-6xl px-gutter py-2xl">
       <h1 className="text-h2 text-plum">Portfolio Photos</h1>
@@ -19,24 +17,21 @@ export default async function AdminPortfolioPage() {
         Every approved photo currently used on the public site.
       </p>
 
-      {!diagnostics.storageEnabled ? (
-        <div className="mt-lg border border-dashed border-taupe/40 bg-white p-lg text-small text-taupe">
-          <p className="font-medium text-charcoal">Uploading new photos from here isn&apos;t available yet.</p>
-          <p className="mt-2">
-            Firebase Storage isn&apos;t enabled on this project (checked live: no storage bucket
-            exists). To turn on photo uploads: Firebase Console → Storage → Get Started, using
-            the default security rules prompt. No code changes are needed once it&apos;s on, this
-            page is ready to be extended with an upload form.
-          </p>
-          <p className="mt-2">
-            The photos below are the studio&apos;s existing, already web-optimized photography,
-            stored as static files and shown exactly as approved. Their titles, alt text and
-            category come from the codebase, not a database, so editing them currently requires
-            a code change rather than this screen, until Storage-backed uploads replace this
-            static list.
-          </p>
-        </div>
-      ) : null}
+      <div className="mt-lg border border-dashed border-taupe/40 bg-white p-lg text-small text-taupe">
+        <p className="font-medium text-charcoal">
+          The photos below are the studio&apos;s existing, already web-optimized photography,
+          stored as static files and shown exactly as approved — never altered here.
+        </p>
+        <p className="mt-2">
+          To add new photography, use{" "}
+          <Link href="/admin/media" className="text-plum hover:underline">
+            Media Library
+          </Link>
+          . Uploaded photos aren&apos;t merged into the public portfolio pages yet, to avoid
+          disturbing this already-approved selection — see docs/ARCHITECTURE.md for the plan to
+          wire them in.
+        </p>
+      </div>
 
       <GalleryTable title="Newborn Gallery" images={newbornGallery} />
       <GalleryTable title="Cake Smash Gallery" images={cakeSmashGallery} />

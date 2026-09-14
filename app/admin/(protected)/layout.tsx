@@ -1,4 +1,5 @@
 import { requireAdminSession } from "@/lib/firebase/session";
+import { AdminNav } from "@/components/sections/admin/AdminNav";
 import { SignOutButton } from "@/components/sections/admin/SignOutButton";
 
 /**
@@ -20,7 +21,8 @@ export default async function ProtectedAdminLayout({
 
   return (
     <>
-      <div className="flex justify-end border-b border-taupe/10 bg-white px-gutter py-2">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-taupe/10 bg-white px-gutter py-3">
+        <AdminNav />
         <SignOutButton />
       </div>
       {children}

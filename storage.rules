@@ -1,12 +1,22 @@
 rules_version = '2';
 
-// Phase 1 foundation: deny-all by default. Media Library / gallery upload
-// paths and their public-read, admin-write rules are defined in Phase 2
-// once the storage layout (see docs/ARCHITECTURE.md) is implemented.
+// Deny-all by default (unchanged foundation). The one exception is
+// /media/** : these are the studio's own published photography, meant to
+// be visible to every website visitor, so public read is not a security
+// weakness here the way it would be for customer data. Write stays
+// unconditionally false for every client — every actual write happens
+// server-side through the Firebase Admin SDK (lib/media/library-actions.ts),
+// which bypasses these rules entirely, exactly like the existing
+// inquiries/packages/posts collections. No client, admin included, is
+// ever meant to write to Storage directly from the browser.
 service firebase.storage {
   match /b/{bucket}/o {
     match /{allPaths=**} {
       allow read, write: if false;
+    }
+    match /media/{allPaths=**} {
+      allow read: if true;
+      allow write: if false;
     }
   }
 }

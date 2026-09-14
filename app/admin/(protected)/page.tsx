@@ -14,8 +14,11 @@ const quickLinks = [
   { label: "Bookings & Inquiries", href: "/admin/bookings", description: "View and manage every enquiry." },
   { label: "Packages", href: "/admin/packages", description: "Edit pricing, inclusions and featured package." },
   { label: "Blog", href: "/admin/blog", description: "Write, publish and manage articles." },
+  { label: "FAQs", href: "/admin/faqs", description: "Edit questions shown on /faq/ and the homepage." },
+  { label: "Media Library", href: "/admin/media", description: "Upload and manage photos." },
   { label: "Portfolio Photos", href: "/admin/portfolio", description: "Edit captions, categories and featured status." },
   { label: "Site Settings", href: "/admin/settings", description: "SEO defaults, Google Reviews status, integrations." },
+  { label: "Security", href: "/admin/security", description: "Audit log of admin changes." },
 ];
 
 export default async function AdminDashboardPage() {
@@ -35,11 +38,12 @@ export default async function AdminDashboardPage() {
         </div>
       ) : (
         <>
-          <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-5">
             <StatCard label="Total Enquiries" value={stats.total} />
             <StatCard label="New" value={stats.newCount} tone="new" />
             <StatCard label="Contacted" value={stats.contactedCount} tone="contacted" />
             <StatCard label="Booked" value={stats.bookedCount} tone="booked" />
+            <StatCard label="Follow-ups Due" value={stats.dueFollowUpCount} tone={stats.dueFollowUpCount > 0 ? "new" : undefined} />
           </div>
 
           <div className="mt-12">

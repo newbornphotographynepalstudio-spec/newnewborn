@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
+import { NotesForm } from "@/components/sections/admin/NotesForm";
 import { StatusUpdateForm } from "@/components/sections/admin/StatusUpdateForm";
 import { getInquiry } from "@/lib/inquiries/admin-data";
 import { SESSION_TYPE_LABELS } from "@/lib/inquiries/types";
@@ -82,6 +83,13 @@ export default async function AdminBookingDetailPage({
           <p className="mt-3 text-body leading-relaxed text-charcoal/85">{inquiry.message}</p>
         </div>
       ) : null}
+
+      <div className="mt-8 border border-taupe/20 bg-white p-6">
+        <h2 className="text-caption font-medium tracking-eyebrow text-taupe uppercase">Notes &amp; Follow-up</h2>
+        <div className="mt-4">
+          <NotesForm id={inquiry.id} adminNotes={inquiry.adminNotes} followUpDate={inquiry.followUpDate} />
+        </div>
+      </div>
     </div>
   );
 }
