@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
@@ -77,8 +78,12 @@ export function PostForm({ post }: { post?: BlogPost }) {
           ))}
         </select>
         <p className="mt-1 text-caption text-charcoal/50">
-          Picks from the studio&apos;s existing approved photography — direct upload isn&apos;t
-          available until Firebase Storage is enabled.
+          Picks from the studio&apos;s existing approved photography. Photos uploaded to{" "}
+          <Link href="/admin/media" className="text-plum hover:underline">
+            Media Library
+          </Link>{" "}
+          aren&apos;t selectable here yet — this picker hasn&apos;t been wired up to that
+          collection.
         </p>
       </div>
 
