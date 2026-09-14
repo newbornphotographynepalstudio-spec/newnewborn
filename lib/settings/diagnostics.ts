@@ -10,8 +10,18 @@ export type SystemDiagnostics = {
   mediaStorageConfigured: boolean;
   mediaStorageConnected: boolean;
   googlePlacesConfigured: boolean;
+  /** A masked form of GOOGLE_PLACES_PLACE_ID (first/last few characters
+   * only) so the admin can visually confirm the right place is
+   * configured, without printing the full value into rendered HTML —
+   * present only when googlePlacesConfigured is true. */
+  googlePlacesIdMasked?: string;
   emailConfigured: boolean;
 };
+
+function maskMiddle(value: string): string {
+  if (value.length <= 10) return `${value.slice(0, 2)}…${value.slice(-2)}`;
+  return `${value.slice(0, 4)}…${value.slice(-4)}`;
+}
 
 /** Read-only, admin-only status checks — never returns or logs any secret
  * value, only booleans about whether each integration is reachable. Used
@@ -53,6 +63,10 @@ export async function getSystemDiagnostics(): Promise<SystemDiagnostics> {
   const googlePlacesConfigured = Boolean(
     process.env.GOOGLE_PLACES_API_KEY && process.env.GOOGLE_PLACES_PLACE_ID
   );
+  const googlePlacesIdMasked =
+    googlePlacesConfigured && process.env.GOOGLE_PLACES_PLACE_ID
+      ? maskMiddle(process.env.GOOGLE_PLACES_PLACE_ID)
+      : undefined;
 
   const emailConfigured = Boolean(process.env.RESEND_API_KEY);
 
@@ -62,6 +76,7 @@ export async function getSystemDiagnostics(): Promise<SystemDiagnostics> {
     mediaStorageConfigured,
     mediaStorageConnected,
     googlePlacesConfigured,
+    googlePlacesIdMasked,
     emailConfigured,
   };
 }

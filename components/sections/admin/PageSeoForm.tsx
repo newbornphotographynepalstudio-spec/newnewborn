@@ -8,7 +8,7 @@ import type { PageSeoOverride } from "@/lib/seo/page-overrides";
 
 const initialState: PageSeoFormState = { status: "idle" };
 
-export function PageSeoForm({ override }: { override?: PageSeoOverride }) {
+export function PageSeoForm({ override, initialPath }: { override?: PageSeoOverride; initialPath?: string }) {
   const [state, formAction, pending] = useActionState(savePageSeoOverride, initialState);
   const router = useRouter();
 
@@ -25,7 +25,14 @@ export function PageSeoForm({ override }: { override?: PageSeoOverride }) {
           the real path when editing, since the path itself can't change
           (it's the document's identity). */}
       {override ? <input type="hidden" name="path" value={override.path} /> : null}
-      <Field label="Page path" name={override ? "pathDisplay" : "path"} defaultValue={override?.path} placeholder="/about/" required={!override} disabled={!!override} />
+      <Field
+        label="Page path"
+        name={override ? "pathDisplay" : "path"}
+        defaultValue={override?.path ?? initialPath}
+        placeholder="/about/"
+        required={!override}
+        disabled={!!override}
+      />
 
       <Field label="SEO title" name="seoTitle" defaultValue={override?.seoTitle} />
       <div>

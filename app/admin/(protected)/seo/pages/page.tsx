@@ -1,8 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
-import { DeletePageSeoButton } from "@/components/sections/admin/DeletePageSeoButton";
-import { listPageSeoOverrides, pathToDocId } from "@/lib/seo/page-overrides";
+import { EffectiveSeoCard } from "@/components/sections/admin/EffectiveSeoCard";
+import { getEffectiveBlogRows, getEffectiveSeoRows } from "@/lib/seo/effective-seo";
 
 export const metadata: Metadata = {
   title: "Page SEO",
@@ -10,7 +10,8 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminPageSeoListPage() {
-  const result = await listPageSeoOverrides();
+  const [rows, blogRows] = await Promise.all([getEffectiveSeoRows(), getEffectiveBlogRows()]);
+  const overrideCount = rows.filter((r) => r.hasOverride).length;
 
   return (
     <div className="mx-auto max-w-4xl px-gutter py-2xl">
@@ -18,39 +19,46 @@ export default async function AdminPageSeoListPage() {
         <div>
           <h1 className="text-h2 text-plum">Page SEO</h1>
           <p className="mt-2xs text-small text-charcoal/70">
-            Per-page overrides. A page with no override here uses its own built-in title and
-            description, unchanged.
+            The actual title, description, canonical, robots, Open Graph, Twitter and schema being
+            served for every public page right now — not just a list of overrides. {overrideCount}{" "}
+            of {rows.length} page{rows.length === 1 ? "" : "s"} {overrideCount === 1 ? "has" : "have"}{" "}
+            an admin override active; every other page is using its own built-in default.
           </p>
         </div>
-        <Link href="/admin/seo/pages/new" className="rounded-sm bg-plum px-4 py-2 text-small font-medium text-white">
+        <Link href="/admin/seo/pages/new" className="shrink-0 rounded-sm bg-plum px-4 py-2 text-small font-medium text-white">
           Add Override
         </Link>
       </div>
 
-      {!result.configured ? (
-        <div className="mt-lg border border-dashed border-taupe/40 bg-white p-lg text-small text-taupe">
-          Firebase Admin credentials aren&apos;t configured in this environment yet.
-        </div>
-      ) : result.overrides.length === 0 ? (
-        <div className="mt-lg border border-dashed border-taupe/40 bg-white p-lg text-small text-taupe">
-          No page overrides yet. Every page is using its own default SEO metadata.
-        </div>
-      ) : (
-        <div className="mt-lg divide-y divide-taupe/15 border border-taupe/20 bg-white">
-          {result.overrides.map((override) => (
-            <div key={override.path} className="flex items-center justify-between gap-4 px-4 py-3">
-              <div>
-                <Link href={`/admin/seo/pages/${pathToDocId(override.path)}`} className="font-medium text-plum hover:underline">
-                  {override.path}
-                </Link>
-                {override.seoTitle ? <p className="text-caption text-charcoal/60">{override.seoTitle}</p> : null}
-                {override.noindex ? <span className="text-caption text-plum">noindex</span> : null}
+      <div className="mt-lg space-y-4">
+        {rows.map((row) => (
+          <EffectiveSeoCard key={row.path} row={row} />
+        ))}
+      </div>
+
+      {blogRows.length > 0 ? (
+        <div className="mt-2xl">
+          <h2 className="text-h4 text-plum">Blog Posts</h2>
+          <p className="mt-1 text-caption text-charcoal/60">
+            Each published post carries its own SEO title/description directly (edit from{" "}
+            <Link href="/admin/blog" className="text-plum hover:underline">
+              Blog
+            </Link>
+            ), separately from the page overrides above.
+          </p>
+          <div className="mt-4 divide-y divide-taupe/15 border border-taupe/20 bg-white">
+            {blogRows.map((row) => (
+              <div key={row.path} className="px-4 py-3">
+                <p className="font-medium text-plum">{row.label}</p>
+                <p className="font-mono text-caption text-charcoal/60">{row.path}</p>
+                <p className="mt-1 text-small text-charcoal/80">{row.title}</p>
+                <p className="text-caption text-charcoal/60">{row.description}</p>
+                <p className="mt-1 text-caption text-charcoal/50">Source: {row.source}</p>
               </div>
-              <DeletePageSeoButton docId={pathToDocId(override.path)} path={override.path} />
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

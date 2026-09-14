@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 
 import { newbornGallery } from "@/lib/media/newborn-gallery";
 import { cakeSmashGallery } from "@/lib/media/cake-smash-gallery";
+import { listMedia } from "@/lib/media/library-data";
+import { MEDIA_CATEGORIES } from "@/lib/media/library-types";
 
 export const metadata: Metadata = {
   title: "Portfolio Photos",
@@ -10,6 +12,9 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminPortfolioPage() {
+  const result = await listMedia();
+  const cmsAssets = result.configured ? result.assets : [];
+
   return (
     <div className="mx-auto max-w-6xl px-gutter py-2xl">
       <h1 className="text-h2 text-plum">Portfolio Photos</h1>
@@ -19,18 +24,27 @@ export default async function AdminPortfolioPage() {
 
       <div className="mt-lg border border-dashed border-taupe/40 bg-white p-lg text-small text-taupe">
         <p className="font-medium text-charcoal">
-          The photos below are the studio&apos;s existing, already web-optimized photography,
+          The tables below are the studio&apos;s original, already web-optimized photography,
           stored as static files and shown exactly as approved — never altered here.
         </p>
         <p className="mt-2">
-          To add new photography, use{" "}
+          Uploaded photos are managed separately in{" "}
           <Link href="/admin/media" className="text-plum hover:underline">
             Media Library
           </Link>
-          . Uploaded photos aren&apos;t merged into the public portfolio pages yet, to avoid
-          disturbing this already-approved selection — see docs/ARCHITECTURE.md for the plan to
-          wire them in.
+          . A photo uploaded there and assigned a category <strong>does</strong> appear on the
+          matching public portfolio page (below the sections shown here), and on the homepage
+          Featured Work section if marked Featured — additive to this approved selection, never
+          replacing it.
         </p>
+        {result.configured ? (
+          <p className="mt-3 text-caption text-charcoal/60">
+            Uploaded, published photos per portfolio category:{" "}
+            {MEDIA_CATEGORIES.filter((c) => c !== "other")
+              .map((c) => `${c}: ${cmsAssets.filter((a) => a.category === c && a.published).length}`)
+              .join(" · ")}
+          </p>
+        ) : null}
       </div>
 
       <GalleryTable title="Newborn Gallery" images={newbornGallery} />

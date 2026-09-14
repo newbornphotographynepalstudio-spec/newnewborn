@@ -8,7 +8,12 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function NewPageSeoOverridePage() {
+export default async function NewPageSeoOverridePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ path?: string }>;
+}) {
+  const { path } = await searchParams;
   return (
     <div className="mx-auto max-w-2xl px-gutter py-2xl">
       <Link href="/admin/seo/pages" className="text-small text-plum hover:underline">
@@ -16,7 +21,7 @@ export default function NewPageSeoOverridePage() {
       </Link>
       <h1 className="mt-4 text-h2 text-plum">Add Page SEO Override</h1>
       <div className="mt-8 border border-taupe/20 bg-white p-6">
-        <PageSeoForm />
+        <PageSeoForm initialPath={path} />
       </div>
     </div>
   );

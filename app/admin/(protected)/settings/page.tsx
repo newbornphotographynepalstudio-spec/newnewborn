@@ -87,7 +87,12 @@ export default async function AdminSettingsPage() {
             variables to show real Google reviews on the homepage (see docs/SETUP.md). The API
             key is never sent to the browser.
           </p>
-        ) : null}
+        ) : (
+          <p className="mt-4 text-caption text-charcoal/60">
+            Place ID: <span className="font-mono">{diagnostics.googlePlacesIdMasked}</span> (masked
+            — the full value and the API key are never shown here or sent to the browser).
+          </p>
+        )}
       </div>
 
       <div className="mt-lg border border-taupe/20 bg-white p-6">
