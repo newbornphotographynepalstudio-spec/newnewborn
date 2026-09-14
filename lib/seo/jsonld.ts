@@ -36,11 +36,18 @@ export function websiteJsonLd() {
 
 /**
  * ProfessionalService rather than a plain LocalBusiness, since that's
- * genuinely what this is. No `address` (no street address has been
- * supplied), no `telephone`, no `priceRange`, no `aggregateRating` — all
- * would be invented.
+ * genuinely what this is. No `address`, no `telephone`, no `priceRange`
+ * — all would be invented, since none of those facts have been supplied.
+ *
+ * `aggregateRating` is the one field this function *can* populate, but
+ * only when a caller passes real, freshly-fetched data (see
+ * lib/reviews/google-places.ts) — never a hardcoded value. Pass nothing
+ * (or a zero review count) and the field is omitted entirely, which is
+ * the correct behavior whenever live Google review data isn't connected
+ * — exactly the current state of this codebase, since no Google API
+ * credentials exist in this environment.
  */
-export function professionalServiceJsonLd() {
+export function professionalServiceJsonLd(aggregateRating?: { ratingValue: number; reviewCount: number }) {
   return {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
@@ -53,6 +60,15 @@ export function professionalServiceJsonLd() {
       { "@type": "City", name: "Lalitpur" },
       { "@type": "City", name: "Bhaktapur" },
     ],
+    ...(aggregateRating && aggregateRating.reviewCount > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: aggregateRating.ratingValue,
+            reviewCount: aggregateRating.reviewCount,
+          },
+        }
+      : {}),
   };
 }
 

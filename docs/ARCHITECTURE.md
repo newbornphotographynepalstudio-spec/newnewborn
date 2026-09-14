@@ -396,8 +396,16 @@ could drift out of sync.
 - Newborn session packages are real, published pricing (Phase 4,
   `lib/data/packages.ts`) — maternity/baby/cake-smash/family packages
   still aren't published, so those pages keep the "pricing on request"
-  treatment. Reviews still render an honest empty state (no invented
-  testimonials) — see `lib/data/reviews.ts`.
+  treatment. Reviews render an honest empty state (no invented
+  testimonials) — see `lib/data/reviews.ts`. The homepage *does* attempt
+  a real fetch from the Google Places API (New) at request time
+  (`lib/reviews/google-places.ts`) before falling back to that empty
+  state; this environment has no `GOOGLE_PLACES_API_KEY`/
+  `GOOGLE_PLACES_PLACE_ID` configured, so the fetch always short-circuits
+  and the empty state is what actually renders today — see
+  docs/SETUP.md, "Google Reviews", for exactly what's needed to change
+  that, and why the Business Profile API (which requires OAuth + a
+  separate Google approval process) isn't the path used here.
 - `/contact/` and `/book-a-session/` lead with `tel:`/`wa.me`/`mailto:`
   links (work with no backend) *and* `/book-a-session/` now also has a
   real, Firestore-backed enquiry form (see "Booking / inquiry system").

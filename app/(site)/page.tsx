@@ -13,6 +13,7 @@ import { SafetySection } from "@/components/sections/home/SafetySection";
 import { ServicesOverview } from "@/components/sections/home/ServicesOverview";
 import { StudioSection } from "@/components/sections/home/StudioSection";
 import { TrainingSection } from "@/components/sections/home/TrainingSection";
+import { fetchGoogleReviews } from "@/lib/reviews/google-places";
 import {
   organizationJsonLd,
   professionalServiceJsonLd,
@@ -62,8 +63,21 @@ export const metadata: Metadata = {
  * — Kathmandu/Lalitpur/Bhaktapur stay as their own indexable /areas/
  * pages (linked from the footer) rather than a large homepage section.
  */
-export default function HomePage() {
-  const jsonLd = [organizationJsonLd(), websiteJsonLd(), professionalServiceJsonLd()];
+export default async function HomePage() {
+  // null in this environment — no GOOGLE_PLACES_API_KEY/PLACE_ID
+  // configured, so this always falls back to the honest static empty
+  // state (see lib/reviews/google-places.ts and ReviewsSection).
+  const liveGoogleReviews = await fetchGoogleReviews();
+
+  const jsonLd = [
+    organizationJsonLd(),
+    websiteJsonLd(),
+    professionalServiceJsonLd(
+      liveGoogleReviews
+        ? { ratingValue: liveGoogleReviews.rating, reviewCount: liveGoogleReviews.userRatingCount }
+        : undefined
+    ),
+  ];
 
   return (
     <>
@@ -83,7 +97,14 @@ export default function HomePage() {
       <SafetySection />
       <StudioSection />
       <PackagesPreview />
-      <ReviewsSection />
+      <ReviewsSection
+        liveReviews={liveGoogleReviews?.reviews}
+        liveRating={
+          liveGoogleReviews
+            ? { rating: liveGoogleReviews.rating, userRatingCount: liveGoogleReviews.userRatingCount }
+            : undefined
+        }
+      />
       <HeritageSection />
       <TrainingSection />
       <FaqPreview />
