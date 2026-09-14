@@ -17,6 +17,14 @@ export const siteConfig = {
   // canonical/OG URLs; override with NEXT_PUBLIC_SITE_URL=http://localhost:3000
   // in .env.local for local development if that distinction matters to you.
   //
+  // `||`, not `??` — found live on a real Vercel build: a env var that's
+  // *set but blank* (e.g. added in the Vercel dashboard with an empty
+  // value) is `""`, not `undefined`, so `??` never falls through and
+  // every `new URL(path, siteConfig.url)` call downstream
+  // (lib/seo/build-metadata.ts, lib/seo/jsonld.ts, app/layout.tsx) threw
+  // "Invalid URL" with an empty base at build time. `||` treats an empty
+  // string the same as unset, which is the actual intent here.
+  //
   // https://www.newbornphotographynpl.com is the official, canonical
   // production domain (client-confirmed) — the www subdomain specifically,
   // not the bare domain, and not newbornphotographynepal.studio (an
@@ -25,6 +33,6 @@ export const siteConfig = {
   // non-www canonical. If the site is deployed under a different domain
   // in the meantime, set NEXT_PUBLIC_SITE_URL in that environment instead
   // of editing this fallback.
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.newbornphotographynpl.com",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.newbornphotographynpl.com",
   locale: "en_US",
 } as const;
