@@ -58,7 +58,7 @@ export default async function AdminSettingsPage() {
           </div>
           <div className="flex items-center justify-between">
             <dt className="text-small text-charcoal">Google Reviews (Places API)</dt>
-            <dd><StatusBadge ok={diagnostics.googlePlacesConfigured} yesLabel="Configured" noLabel="Not configured" /></dd>
+            <dd><StatusBadge ok={diagnostics.googlePlacesConfigured} yesLabel="Configured" noLabel="Disabled (intentional)" /></dd>
           </div>
         </dl>
         {!diagnostics.mediaStorageConfigured ? (
@@ -83,9 +83,10 @@ export default async function AdminSettingsPage() {
         ) : null}
         {!diagnostics.googlePlacesConfigured ? (
           <p className="mt-4 text-caption text-charcoal/60">
-            Set GOOGLE_PLACES_API_KEY and GOOGLE_PLACES_PLACE_ID as server-only environment
-            variables to show real Google reviews on the homepage (see docs/SETUP.md). The API
-            key is never sent to the browser.
+            Intentionally disabled — connecting live Google Reviews would require a Google Cloud
+            Billing account, which is out of scope for this project&apos;s budget. The homepage
+            correctly shows an honest empty state with a link to the real Google review page
+            instead. Nothing needs to be configured here.
           </p>
         ) : (
           <p className="mt-4 text-caption text-charcoal/60">

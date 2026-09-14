@@ -113,67 +113,28 @@ Admin SDK:
    freshly issued ID token — `/api/admin/session` reads the claim from
    the ID token at sign-in time.
 
-## Google Reviews
+## Google Reviews — intentionally disabled
 
-The homepage's reviews section (`components/sections/home/ReviewsSection.tsx`)
-is wired to fetch real reviews from the **Google Places API (New)** at
-request time (`lib/reviews/google-places.ts`), but is fully functional
-without it — with no credentials configured, it shows an honest empty
-state pointing at the real Google review link
-(`https://g.page/r/CQVMlzKA1Cv7EAE/review`, `lib/data/reviews.ts`) instead
-of any reviews. No review text, name, rating, or count is ever invented
-by this codebase; only genuinely-fetched data is displayed.
+**This project runs on a low budget and must not require a Google Cloud
+Billing account.** The homepage's reviews section
+(`components/sections/home/ReviewsSection.tsx`) is *able* to fetch real
+reviews from the Google Places API (New) at request time
+(`lib/reviews/google-places.ts`) if `GOOGLE_PLACES_API_KEY` and
+`GOOGLE_PLACES_PLACE_ID` are ever set, but that path is deliberately left
+unconfigured — do not set either variable.
 
-**Why not the Business Profile API (formerly Google My Business API)?**
-That API can also return reviews, but requires the business owner to
-complete Google's separate API-access application/approval process and
-authenticate via OAuth as the verified profile owner — it's not something
-that can be enabled by just turning on an API in a Cloud project, and
-isn't something this environment (or a typical `.env.local` setup) can
-complete. The **Places API (New)** Place Details endpoint is the
-practical path: it needs only an API key, no OAuth, no approval process,
-and this repo is already built to use it the moment credentials exist.
-Its tradeoff: it returns **at most 5 reviews**, chosen by Google (not
-sortable or filterable by this code).
+With no credentials configured (the current, intended state), the
+reviews section shows an honest empty state pointing at the real Google
+review link (`https://g.page/r/CQVMlzKA1Cv7EAE/review`,
+`lib/data/reviews.ts`) instead of any reviews. No review text, name,
+rating, or count is ever invented by this codebase; only genuinely-fetched
+data would ever be displayed, and only once explicitly turned on.
 
-To connect it:
-
-1. In the [Google Cloud Console](https://console.cloud.google.com/), create
-   or select a project (can be the same one Firebase uses, or a separate
-   one — either works).
-2. **Enable billing** on that project (Settings → Billing). This is
-   required by Google even though real-world usage here should stay
-   inside the free monthly allowance — the fetch is cached for 24 hours
-   (`next: { revalidate: 86400 }`), so it calls the API at most ~30
-   times/month, not once per page view.
-3. **APIs & Services → Library** → enable **"Places API (New)"**.
-4. **APIs & Services → Credentials** → Create Credentials → API key.
-   Restrict it immediately:
-   - **API restrictions** → restrict the key to "Places API (New)" only.
-   - This key is used server-only (`lib/reviews/google-places.ts` is
-     guarded by the `server-only` package) and must never be prefixed
-     `NEXT_PUBLIC_` or otherwise sent to the browser.
-5. **Find the Place ID** for "Newborn Photography Nepal" using Google's
-   [Place ID Finder](https://developers.google.com/maps/documentation/places/web-service/place-id)
-   (search the business by name, copy the Place ID shown).
-6. Set both in `.env.local` (and in Vercel's Production/Preview env vars
-   when deploying):
-   ```
-   GOOGLE_PLACES_API_KEY=<the restricted API key>
-   GOOGLE_PLACES_PLACE_ID=<the Place ID from step 5>
-   ```
-7. Restart the dev server (or redeploy). No code changes are needed —
-   `fetchGoogleReviews()` picks up both variables automatically, and the
-   homepage's `aggregateRating` structured data (`lib/seo/jsonld.ts`)
-   starts reflecting the real rating/review count returned by Google.
-
-**Cost note**: the `reviews` field falls under Google's "Enterprise +
-Atmosphere" Place Details pricing tier (currently ~$40 per 1,000
-requests beyond the free monthly allowance) — confirm current pricing at
-[Places API usage and billing](https://developers.google.com/maps/documentation/places/web-service/usage-and-billing)
-before enabling in a cost-sensitive environment. At the cached ~30
-requests/month this integration makes, it should not exceed the free tier
-in practice, but Google still requires a valid billing method on file.
+Enabling this later would require a Google Cloud Billing account (Places
+API reviews aren't available on the always-free tier) — out of scope
+for this project's budget. If that changes, `lib/reviews/google-places.ts`
+already documents exactly what setting both variables would do; nothing
+else in the codebase needs to change.
 
 ## Build, lint, type checking
 
