@@ -73,9 +73,9 @@ export default async function AdminSeoPage() {
       <div className="mt-lg border border-taupe/20 bg-white p-6">
         <h2 className="text-caption font-medium tracking-eyebrow text-taupe uppercase">Global SEO</h2>
         <p className="mt-2 text-caption text-charcoal/60">
-          Used site-wide as the default whenever a page doesn&apos;t set its own title/description
-          (every page currently does, so these defaults mainly show up in social previews and the
-          browser tab&apos;s title suffix). Leave a field blank to keep the original value.
+          Each field below shows whether it&apos;s currently a saved override or using its code
+          default, and exactly where that value actually shows up on the live site — see the note
+          under each field. Leave a field blank to keep using the code default.
         </p>
         <div className="mt-4">
           <GlobalSeoForm
