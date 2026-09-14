@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 
 import { DeletePostButton } from "@/components/sections/admin/DeletePostButton";
 import { listAllPosts } from "@/lib/blog/admin-data";
+import { formatDate } from "@/lib/utils/format-date";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -65,7 +66,7 @@ export default async function AdminBlogPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-charcoal/60">
-                    {new Date(post.updatedAt).toLocaleDateString()}
+                    {formatDate(post.updatedAt)}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <DeletePostButton id={post.id} title={post.title} />

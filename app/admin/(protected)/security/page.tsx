@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { listAuditLog } from "@/lib/audit/data";
+import { formatDateTime } from "@/lib/utils/format-date";
 
 export const metadata: Metadata = {
   title: "Security",
@@ -57,7 +58,7 @@ export default async function AdminSecurityPage() {
                 {result.entries.map((entry) => (
                   <tr key={entry.id} className="border-b border-taupe/10 last:border-b-0">
                     <td className="px-4 py-3 whitespace-nowrap text-charcoal/60">
-                      {new Date(entry.createdAt).toLocaleString()}
+                      {formatDateTime(entry.createdAt)}
                     </td>
                     <td className="px-4 py-3 text-charcoal/80">{entry.actorEmail}</td>
                     <td className="px-4 py-3 font-mono text-caption text-charcoal/80">{entry.action}</td>

@@ -6,6 +6,7 @@ import { NotesForm } from "@/components/sections/admin/NotesForm";
 import { StatusUpdateForm } from "@/components/sections/admin/StatusUpdateForm";
 import { getInquiry } from "@/lib/inquiries/admin-data";
 import { SESSION_TYPE_LABELS } from "@/lib/inquiries/types";
+import { formatDateTime } from "@/lib/utils/format-date";
 
 export const metadata: Metadata = {
   title: "Booking Detail",
@@ -42,7 +43,7 @@ export default async function AdminBookingDetailPage({
 
       <h1 className="mt-4 text-h2 text-plum">{inquiry.customer.name}</h1>
       <p className="mt-1 text-small text-taupe">
-        Submitted {new Date(inquiry.createdAt).toLocaleString()}
+        Submitted {formatDateTime(inquiry.createdAt)}
       </p>
 
       <div className="mt-8 border border-taupe/20 bg-white p-6">

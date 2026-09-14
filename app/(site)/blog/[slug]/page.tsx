@@ -8,6 +8,7 @@ import { getPublishedPostBySlug } from "@/lib/blog/data";
 import { findGalleryImage } from "@/lib/media/all-images";
 import { routes } from "@/lib/navigation/routes";
 import { blogPostingJsonLd, breadcrumbJsonLd } from "@/lib/seo/jsonld";
+import { formatDateLong } from "@/lib/utils/format-date";
 
 type Params = { slug: string };
 
@@ -78,11 +79,7 @@ export default async function BlogPostPage({
         {post.publishedAt ? (
           <p className="mt-8 border-t border-taupe/20 pt-4 text-caption text-taupe">
             By {post.author} ·{" "}
-            {new Date(post.publishedAt).toLocaleDateString(undefined, {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
+            {formatDateLong(post.publishedAt)}
           </p>
         ) : null}
       </Section>

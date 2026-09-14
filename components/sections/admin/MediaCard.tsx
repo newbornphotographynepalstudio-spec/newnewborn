@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { updateMediaMetadata, deleteMedia, type MediaFormState } from "@/lib/media/library-actions";
 import { MEDIA_CATEGORIES } from "@/lib/media/library-types";
 import type { MediaLibraryAsset } from "@/lib/media/library-types";
+import { formatDate } from "@/lib/utils/format-date";
 
 const initialState: MediaFormState = { status: "idle" };
 
@@ -60,7 +61,7 @@ export function MediaCard({ asset }: { asset: MediaLibraryAsset }) {
         </div>
         <div className="flex justify-between">
           <dt>Uploaded</dt>
-          <dd>{new Date(asset.createdAt).toLocaleDateString()}</dd>
+          <dd>{formatDate(asset.createdAt)}</dd>
         </div>
       </dl>
       <button

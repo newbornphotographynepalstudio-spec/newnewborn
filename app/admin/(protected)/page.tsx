@@ -6,6 +6,7 @@ import { getInquiryStats } from "@/lib/inquiries/stats";
 import { SESSION_TYPE_LABELS, STATUS_LABELS } from "@/lib/inquiries/types";
 import { listMedia } from "@/lib/media/library-data";
 import { getSystemDiagnostics } from "@/lib/settings/diagnostics";
+import { formatDate } from "@/lib/utils/format-date";
 
 const statusToneClass: Record<string, string> = {
   new: "bg-blush text-plum",
@@ -87,7 +88,7 @@ export default async function AdminDashboardPage() {
                           {SESSION_TYPE_LABELS[inquiry.session.type]}
                         </td>
                         <td className="px-4 py-3 text-charcoal/60">
-                          {new Date(inquiry.createdAt).toLocaleDateString()}
+                          {formatDate(inquiry.createdAt)}
                         </td>
                         <td className="px-4 py-3">
                           <span

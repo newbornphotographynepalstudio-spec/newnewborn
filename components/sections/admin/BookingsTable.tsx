@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { INQUIRY_STATUSES, SESSION_TYPE_LABELS, STATUS_LABELS, type Inquiry, type InquiryStatus } from "@/lib/inquiries/types";
+import { formatDate } from "@/lib/utils/format-date";
 
 const statusToneClass: Record<string, string> = {
   new: "bg-blush text-plum",
@@ -113,7 +114,7 @@ export function BookingsTable({ inquiries }: { inquiries: Inquiry[] }) {
                   <td className="px-4 py-3 text-charcoal/80">{inquiry.session.package || "-"}</td>
                   <td className="px-4 py-3 text-charcoal/80">{inquiry.session.preferredDate || "-"}</td>
                   <td className="px-4 py-3 text-charcoal/60">
-                    {new Date(inquiry.createdAt).toLocaleDateString()}
+                    {formatDate(inquiry.createdAt)}
                   </td>
                   <td className="px-4 py-3">
                     <span

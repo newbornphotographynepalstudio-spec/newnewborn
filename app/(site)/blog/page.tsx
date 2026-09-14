@@ -8,6 +8,7 @@ import { getPublishedPosts } from "@/lib/blog/data";
 import { findGalleryImage } from "@/lib/media/all-images";
 import { routes } from "@/lib/navigation/routes";
 import { buildPageMetadata } from "@/lib/seo/build-metadata";
+import { formatDateLong } from "@/lib/utils/format-date";
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata(routes.blog, {
@@ -53,11 +54,7 @@ export default async function BlogPage() {
                   ) : null}
                   {post.publishedAt ? (
                     <p className="mt-2 text-caption text-taupe">
-                      {new Date(post.publishedAt).toLocaleDateString(undefined, {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
+                      {formatDateLong(post.publishedAt)}
                     </p>
                   ) : null}
                 </Link>

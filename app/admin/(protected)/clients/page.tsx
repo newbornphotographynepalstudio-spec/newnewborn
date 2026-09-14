@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 import { deriveClients, sessionTypeLabels } from "@/lib/inquiries/clients";
+import { formatDate } from "@/lib/utils/format-date";
 
 export const metadata: Metadata = {
   title: "Clients",
@@ -56,13 +57,13 @@ export default async function AdminClientsPage() {
                           href={`/admin/bookings/${inquiry.id}`}
                           className="rounded-sm border border-taupe/30 px-2 py-1 text-caption text-plum hover:bg-blush/60"
                         >
-                          {new Date(inquiry.createdAt).toLocaleDateString()}
+                          {formatDate(inquiry.createdAt)}
                         </Link>
                       ))}
                     </div>
                   </td>
                   <td className="px-4 py-3 text-charcoal/60">
-                    {new Date(client.lastInquiryAt).toLocaleDateString()}
+                    {formatDate(client.lastInquiryAt)}
                   </td>
                 </tr>
               ))}
