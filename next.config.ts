@@ -5,6 +5,18 @@ const nextConfig: NextConfig = {
   // docs/ARCHITECTURE.md), so enforce it consistently.
   trailingSlash: true,
 
+  // firebase-admin (and its transitive google-gax/@grpc/grpc-js/
+  // google-auth-library deps) loads some of its own internal files via
+  // dynamic require()/fs reads rather than statically-analyzable imports.
+  // Vercel's Node File Trace can miss those when the package is bundled
+  // normally, producing a runtime-only "module not found"-style crash on
+  // every dynamic route that imports lib/firebase/admin.ts — reproduced
+  // identically across two separate fresh Vercel projects, never on
+  // localhost (next start runs against the full, untraced node_modules
+  // tree). Marking it external tells Next.js to copy the whole package
+  // into the function bundle instead of tracing/bundling it.
+  serverExternalPackages: ["firebase-admin"],
+
   images: {
     // Original files are never referenced directly in page markup, only
     // via next/image. Media Library uploads are served from Supabase
