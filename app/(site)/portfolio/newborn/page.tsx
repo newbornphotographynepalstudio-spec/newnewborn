@@ -3,8 +3,9 @@ import type { Metadata } from "next";
 import { Cluster } from "@/components/primitives/Cluster";
 import { EditorialGrid } from "@/components/primitives/EditorialGrid";
 import { Section } from "@/components/primitives/Section";
+import { LightboxImage } from "@/components/gallery/LightboxImage";
+import { LightboxRoot } from "@/components/gallery/LightboxRoot";
 import { Button } from "@/components/ui/Button";
-import { EditorialImage } from "@/components/ui/EditorialImage";
 import { PageHero } from "@/components/ui/PageHero";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -17,6 +18,13 @@ import { buildPageMetadata } from "@/lib/seo/build-metadata";
 const [featured, ...rest] = newbornGallery.filter((img) => img.id !== "newborn-family-heritage");
 const familyPortrait = newbornGallery.find((img) => img.id === "newborn-family-heritage")!;
 const [rowOne1, rowOne2, rowTwo1, rowTwo2] = rest;
+
+/** Visual order the photos actually appear on the page, so the
+ * lightbox's Next/Previous cycles in the same order as the gallery. */
+const lightboxImages = [featured, rowOne1, rowOne2, rowTwo1, rowTwo2, familyPortrait].map((img) => ({
+  src: img.src,
+  alt: img.alt,
+}));
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata(routes.portfolioNewborn, {
@@ -33,7 +41,7 @@ const jsonLd = breadcrumbJsonLd([
 
 export default async function NewbornPortfolioPage() {
   return (
-    <>
+    <LightboxRoot images={lightboxImages}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -53,7 +61,7 @@ export default async function NewbornPortfolioPage() {
 
       <Section>
         <Reveal>
-          <EditorialImage
+          <LightboxImage
             src={featured.src}
             alt={featured.alt}
             aspect={featured.desktopAspect}
@@ -71,7 +79,7 @@ export default async function NewbornPortfolioPage() {
         <EditorialGrid className="mt-12">
           <div className="col-span-12 lg:col-span-8">
             <Reveal>
-              <EditorialImage
+              <LightboxImage
                 src={rowOne1.src}
                 alt={rowOne1.alt}
                 aspect={rowOne1.desktopAspect}
@@ -84,7 +92,7 @@ export default async function NewbornPortfolioPage() {
           </div>
           <div className="col-span-12 lg:col-span-4">
             <Reveal delay={75}>
-              <EditorialImage
+              <LightboxImage
                 src={rowOne2.src}
                 alt={rowOne2.alt}
                 aspect={rowOne2.desktopAspect}
@@ -97,7 +105,7 @@ export default async function NewbornPortfolioPage() {
           </div>
           <div className="col-span-12 lg:col-span-5">
             <Reveal>
-              <EditorialImage
+              <LightboxImage
                 src={rowTwo1.src}
                 alt={rowTwo1.alt}
                 aspect={rowTwo1.desktopAspect}
@@ -110,7 +118,7 @@ export default async function NewbornPortfolioPage() {
           </div>
           <div className="col-span-12 lg:col-span-7">
             <Reveal delay={75}>
-              <EditorialImage
+              <LightboxImage
                 src={rowTwo2.src}
                 alt={rowTwo2.alt}
                 aspect={rowTwo2.desktopAspect}
@@ -128,7 +136,7 @@ export default async function NewbornPortfolioPage() {
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-12">
           <div className="lg:col-span-6">
             <Reveal>
-              <EditorialImage
+              <LightboxImage
                 src={familyPortrait.src}
                 alt={familyPortrait.alt}
                 aspect={familyPortrait.desktopAspect}
@@ -208,6 +216,6 @@ export default async function NewbornPortfolioPage() {
           </Cluster>
         </div>
       </Section>
-    </>
+    </LightboxRoot>
   );
 }

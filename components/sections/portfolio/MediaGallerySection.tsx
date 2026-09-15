@@ -1,6 +1,7 @@
 import { EditorialGrid } from "@/components/primitives/EditorialGrid";
 import { Section } from "@/components/primitives/Section";
-import { EditorialImage } from "@/components/ui/EditorialImage";
+import { LightboxImage } from "@/components/gallery/LightboxImage";
+import { LightboxRoot } from "@/components/gallery/LightboxRoot";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getPublishedMediaByCategory } from "@/lib/media/library-data";
@@ -22,17 +23,19 @@ export async function MediaGallerySection({ category }: { category: MediaLibrary
   if (assets.length === 0) return null;
 
   return (
-    <Section tone="ivory">
-      <SectionHeading eyebrow="Recently Added" title="More from the studio" />
-      <EditorialGrid className="mt-12">
-        {assets.map((asset, index) => (
-          <div key={asset.id} className="col-span-12 sm:col-span-6 lg:col-span-4">
-            <Reveal delay={index * 50}>
-              <EditorialImage src={asset.url} alt={asset.alt} aspect="square" rounded />
-            </Reveal>
-          </div>
-        ))}
-      </EditorialGrid>
-    </Section>
+    <LightboxRoot images={assets.map((asset) => ({ src: asset.url, alt: asset.alt }))}>
+      <Section tone="ivory">
+        <SectionHeading eyebrow="Recently Added" title="More from the studio" />
+        <EditorialGrid className="mt-12">
+          {assets.map((asset, index) => (
+            <div key={asset.id} className="col-span-12 sm:col-span-6 lg:col-span-4">
+              <Reveal delay={index * 50}>
+                <LightboxImage src={asset.url} alt={asset.alt} aspect="square" rounded />
+              </Reveal>
+            </div>
+          ))}
+        </EditorialGrid>
+      </Section>
+    </LightboxRoot>
   );
 }

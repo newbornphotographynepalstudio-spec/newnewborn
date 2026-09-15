@@ -1,10 +1,14 @@
 import { Section } from "@/components/primitives/Section";
+import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { experienceSteps } from "@/lib/data/experience";
+import { routes } from "@/lib/navigation/routes";
 
-/** Calm, ordered explanation of the session journey — reduces uncertainty
- * for parents who haven't been to a photography studio before. */
+/** A short teaser of the full session journey — reduces uncertainty for
+ * parents who haven't been to a photography studio before, and links to
+ * the full /experience/ page for the complete before/during/after
+ * walkthrough rather than trying to explain everything here. */
 export function ExperienceSteps() {
   return (
     <Section tone="ivory">
@@ -24,6 +28,12 @@ export function ExperienceSteps() {
             </p>
           </Reveal>
         ))}
+      </div>
+
+      <div className="mt-12 text-center">
+        <Button href={routes.experience} variant="text">
+          See the Full Session Experience
+        </Button>
       </div>
     </Section>
   );

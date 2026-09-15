@@ -2,10 +2,11 @@ import type { ImageProps } from "next/image";
 
 import { Cluster } from "@/components/primitives/Cluster";
 import { EditorialGrid } from "@/components/primitives/EditorialGrid";
+import { LightboxImage } from "@/components/gallery/LightboxImage";
+import { LightboxRoot } from "@/components/gallery/LightboxRoot";
 import { Reveal } from "@/components/ui/Reveal";
 import { Section } from "@/components/primitives/Section";
 import { Button } from "@/components/ui/Button";
-import { EditorialImage } from "@/components/ui/EditorialImage";
 import { PageHero } from "@/components/ui/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import type { PortfolioCategory } from "@/lib/data/portfolio";
@@ -42,9 +43,13 @@ export async function PortfolioCategoryLayout({
   // e.g. /portfolio/maternity/ lands on the form with "Maternity" already
   // selected instead of the default.
   const bookingHref = `${bookASessionCta.href}?type=${category.slug}`;
+  const lightboxImages = [
+    ...(featuredImage ? [{ src: featuredImage, alt: featuredAlt ?? category.name }] : []),
+    ...mediaAssets.map((asset) => ({ src: asset.url, alt: asset.alt })),
+  ];
 
   return (
-    <>
+    <LightboxRoot images={lightboxImages}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -60,7 +65,7 @@ export async function PortfolioCategoryLayout({
 
       {featuredImage ? (
         <Section>
-          <EditorialImage src={featuredImage} alt={featuredAlt ?? category.name} aspect="wide" rounded />
+          <LightboxImage src={featuredImage} alt={featuredAlt ?? category.name} aspect="wide" rounded />
         </Section>
       ) : null}
 
@@ -71,7 +76,7 @@ export async function PortfolioCategoryLayout({
             {mediaAssets.map((asset, index) => (
               <div key={asset.id} className="col-span-12 sm:col-span-6 lg:col-span-4">
                 <Reveal delay={index * 50}>
-                  <EditorialImage src={asset.url} alt={asset.alt} aspect="square" rounded />
+                  <LightboxImage src={asset.url} alt={asset.alt} aspect="square" rounded />
                 </Reveal>
               </div>
             ))}
@@ -105,6 +110,6 @@ export async function PortfolioCategoryLayout({
           ← All Portfolio Categories
         </Button>
       </Section>
-    </>
+    </LightboxRoot>
   );
 }

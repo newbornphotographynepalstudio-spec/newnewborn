@@ -74,6 +74,22 @@ export default function AboutPage() {
             safely and confidently.
           </p>
         </div>
+
+        {/* A real photographer bio/portrait (see WhyUsSection.tsx's doc
+            comment) is OWNER CONTENT REQUIRED and deliberately not
+            invented here — this links to the studio's real, already-
+            written trust content instead. */}
+        <Cluster gap="sm" className="mx-auto mt-10 max-w-prose">
+          <Button href={routes.safety} variant="secondary" size="sm">
+            How Safety Works
+          </Button>
+          <Button href={routes.studio} variant="secondary" size="sm">
+            Inside the Studio
+          </Button>
+          <Button href={routes.experience} variant="secondary" size="sm">
+            The Full Session Experience
+          </Button>
+        </Cluster>
       </Section>
 
       <Section tone="blush" compact>

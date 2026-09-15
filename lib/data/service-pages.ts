@@ -21,6 +21,12 @@ export type ServicePageContent = {
   heroDescription: string;
   introHeading: string;
   introParagraphs: string[];
+  /** A short, prominent answer to "when should I book this?" — restates
+   * (never invents) the timing already established in this service's own
+   * introParagraphs/FAQs, just surfaced as its own visible callout instead
+   * of being buried only in prose, per the redesign's "customer
+   * comprehension" objective. */
+  bestTiming: string;
   includes: string[];
   whyChoose: string[];
   showcaseImage?: ImageProps["src"];
@@ -55,6 +61,7 @@ export function getServicePages(): Record<ServiceSlug, ServicePageContent> {
         "Newborns change by the week: the way they sleep, the size of their hands, the sounds they make before they can smile. A newborn session is timed to catch that specific, short window, usually within the first two weeks.",
         "Every session moves at the baby's pace. There's no rush and no forced poses, just enough time in a warm room for your baby to settle, so the small details come through in the photographs.",
       ],
+      bestTiming: "Best booked during pregnancy, for a session in your baby's first one to two weeks.",
       includes: [
         "A private studio session, timed around your baby's feeding and sleep",
         "Simple wraps, hats and set-ups suited to a newborn, nothing overdone",
@@ -106,6 +113,7 @@ export function getServicePages(): Record<ServiceSlug, ServicePageContent> {
         "Maternity sessions are usually booked between the twenty-eighth and thirty-fifth week: late enough to show, early enough to still be comfortable standing through a session.",
         "Some parents want portraits of just the bump; others bring a partner, an older sibling, or grandparents. The session is shaped around what your family actually wants, not a fixed formula.",
       ],
+      bestTiming: "Best booked between weeks 28 and 35 of pregnancy.",
       includes: [
         "A studio session timed to fit comfortably into your third trimester",
         "Options to include a partner, siblings or extended family",
@@ -155,6 +163,7 @@ export function getServicePages(): Record<ServiceSlug, ServicePageContent> {
         "Somewhere between three and twelve months, babies start reaching, sitting and reacting to the world in ways a newborn can't yet. A baby session is built around wherever your baby is in that stretch: sitting confidently, pulling up, or just starting to crawl.",
         "These sessions tend to be more playful than a newborn session, with more movement and more chance to photograph your baby actually looking like themselves.",
       ],
+      bestTiming: "Best booked any time between three and twelve months, whenever fits your baby's stage.",
       includes: [
         "A studio session timed around your baby's age and mood",
         "Time for both calm portraits and more playful moments",
@@ -205,6 +214,7 @@ export function getServicePages(): Record<ServiceSlug, ServicePageContent> {
         "A cake smash session is less posed and more reactive. Most of the best photographs happen in the moments your baby isn't expecting, whether that's total delight or complete suspicion of the cake in front of them.",
         "The set-up is simple by design: a backdrop, a cake, and enough room for your baby to make a mess of it. What happens next is really up to them.",
       ],
+      bestTiming: "Best booked around your baby's first birthday.",
       includes: [
         "A themed or simple backdrop set-up, agreed on beforehand",
         "Time before the smash for a few clean, dressed-up portraits",
@@ -254,6 +264,7 @@ export function getServicePages(): Record<ServiceSlug, ServicePageContent> {
         "Family sessions work for a lot of occasions: a new baby joining the family, grandparents visiting, or simply wanting a current portrait when the last one is a few years old.",
         "The session is planned around your family as it actually is, including however many generations, siblings or pets are part of the picture.",
       ],
+      bestTiming: "Flexible — no specific age window. Book whenever it fits your family.",
       includes: [
         "A studio session sized to fit your family, however many people that is",
         "Guidance on coordinating outfits beforehand",

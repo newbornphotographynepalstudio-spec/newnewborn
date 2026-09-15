@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/form/Label";
 import { Select } from "@/components/ui/form/Select";
 import { Textarea } from "@/components/ui/form/Textarea";
 import { contactInfo } from "@/lib/data/contact";
+import { newbornPackages } from "@/lib/data/packages";
 import { submitInquiry, type SubmitInquiryState } from "@/lib/inquiries/actions";
 import { getPackageOptions } from "@/lib/inquiries/package-options";
 import {
@@ -114,6 +115,13 @@ export function BookingForm({
     setFields((prev) => ({ ...prev, package: "" }));
   }
 
+  // Only newborn session types have real, published pricing data
+  // (lib/data/packages.ts) to show inline — training/maternity/baby/
+  // cake-smash/family have no equivalent published price list yet, so
+  // this stays undefined for them rather than guessing.
+  const selectedPackage =
+    sessionType === "newborn" ? newbornPackages.find((pkg) => pkg.name === fields.package) : undefined;
+
   if (state.status === "success") {
     return (
       <div role="status" className="border border-taupe/25 bg-white px-8 py-12 text-center">
@@ -166,57 +174,11 @@ export function BookingForm({
     >
       <Stack gap="2xl">
         <fieldset>
-          <legend className="text-caption font-medium tracking-eyebrow text-taupe uppercase">
-            Your Details
-          </legend>
-          <Stack gap="md" className="mt-4">
-            <div>
-              <Label htmlFor="name">Full Name</Label>
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                required
-                autoComplete="name"
-                className="mt-2"
-                value={fields.name}
-                onChange={updateField("name")}
-              />
-            </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  className="mt-2"
-                  value={fields.email}
-                  onChange={updateField("email")}
-                />
-              </div>
-              <div>
-                <Label htmlFor="phone">Phone / WhatsApp</Label>
-                <Input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  required
-                  autoComplete="tel"
-                  className="mt-2"
-                  value={fields.phone}
-                  onChange={updateField("phone")}
-                />
-              </div>
-            </div>
-          </Stack>
-        </fieldset>
-
-        <fieldset>
-          <legend className="text-caption font-medium tracking-eyebrow text-taupe uppercase">
-            Session
+          <legend className="flex items-baseline gap-3">
+            <span className="font-display text-h3 text-rose">01</span>
+            <span className="text-caption font-medium tracking-eyebrow text-taupe uppercase">
+              Your Session
+            </span>
           </legend>
           <Stack gap="md" className="mt-4">
             <div>
@@ -254,6 +216,25 @@ export function BookingForm({
                     </option>
                   ))}
                 </Select>
+              </div>
+            ) : null}
+
+            {selectedPackage ? (
+              <div className="border border-taupe/25 bg-blush/40 px-5 py-4">
+                <div className="flex items-baseline justify-between gap-3">
+                  <p className="text-small font-medium text-plum">{selectedPackage.name}</p>
+                  <p className="text-small font-medium text-plum">{selectedPackage.priceLabel}</p>
+                </div>
+                <p className="mt-1 text-caption text-charcoal/70">
+                  {selectedPackage.duration} &middot; {selectedPackage.editedPhotos}
+                </p>
+                <ul className="mt-3 space-y-1">
+                  {selectedPackage.includes.map((item) => (
+                    <li key={item} className="text-caption text-charcoal/75">
+                      &bull; {item}
+                    </li>
+                  ))}
+                </ul>
               </div>
             ) : null}
 
@@ -311,8 +292,11 @@ export function BookingForm({
         </fieldset>
 
         <fieldset>
-          <legend className="text-caption font-medium tracking-eyebrow text-taupe uppercase">
-            Date
+          <legend className="flex items-baseline gap-3">
+            <span className="font-display text-h3 text-rose">02</span>
+            <span className="text-caption font-medium tracking-eyebrow text-taupe uppercase">
+              Preferred Date
+            </span>
           </legend>
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
@@ -352,10 +336,54 @@ export function BookingForm({
         </fieldset>
 
         <fieldset>
-          <legend className="text-caption font-medium tracking-eyebrow text-taupe uppercase">
-            Message
+          <legend className="flex items-baseline gap-3">
+            <span className="font-display text-h3 text-rose">03</span>
+            <span className="text-caption font-medium tracking-eyebrow text-taupe uppercase">
+              Your Details
+            </span>
           </legend>
           <Stack gap="md" className="mt-4">
+            <div>
+              <Label htmlFor="name">Full Name</Label>
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                required
+                autoComplete="name"
+                className="mt-2"
+                value={fields.name}
+                onChange={updateField("name")}
+              />
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  autoComplete="email"
+                  className="mt-2"
+                  value={fields.email}
+                  onChange={updateField("email")}
+                />
+              </div>
+              <div>
+                <Label htmlFor="phone">Phone / WhatsApp</Label>
+                <Input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  required
+                  autoComplete="tel"
+                  className="mt-2"
+                  value={fields.phone}
+                  onChange={updateField("phone")}
+                />
+              </div>
+            </div>
             <div>
               <Label htmlFor="contactPreference">Preferred Contact Method</Label>
               <Select

@@ -9,6 +9,7 @@ import {
   contactLink,
   newbornNav,
   primaryNav,
+  secondaryNav,
   servicesNav,
 } from "@/lib/navigation/routes";
 
@@ -162,7 +163,21 @@ export function MobileNav({
           ))}
         </ul>
 
-        <div className="flex flex-col gap-4 pt-16">
+        {/* De-emphasized secondary links (Blog, Training) — smaller type,
+            below the primary editorial list, so they stay genuinely
+            discoverable without competing with the booking-focused primary
+            nav for visual weight. */}
+        <ul className="flex flex-col gap-1 pt-6 text-small text-taupe">
+          {secondaryNav.map((item) => (
+            <li key={item.href}>
+              <Link href={item.href} onClick={onClose} className="block py-1.5 hover:text-plum">
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+
+        <div className="flex flex-col gap-4 pt-10">
           <Link
             href={contactLink.href}
             onClick={onClose}

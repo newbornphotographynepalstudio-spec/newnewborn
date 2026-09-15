@@ -20,6 +20,7 @@ export const routes = {
   portfolioFamily: "/portfolio/family/",
   packages: "/packages/",
   studio: "/studio/",
+  experience: "/experience/",
   safety: "/safety/",
   blog: "/blog/",
   training: "/training/",
@@ -55,8 +56,19 @@ export const primaryNav: NavItem[] = [
   { label: "Portfolio", href: routes.portfolio },
   { label: "Packages", href: routes.packages },
   { label: "Studio", href: routes.studio },
-  { label: "Training", href: routes.training },
+];
+
+/**
+ * De-emphasized secondary links — not part of the primary flat nav (kept
+ * short and booking-focused per the redesign), but still surfaced in a
+ * smaller/lower-priority spot in MobileNav so they never disappear from
+ * the site's navigable structure. Training's audience is photographers,
+ * not parents booking a session; Blog is kept discoverable specifically
+ * because it's the foundation for the later SEO/GEO/AEO phase.
+ */
+export const secondaryNav: NavItem[] = [
   { label: "Blog", href: routes.blog },
+  { label: "Training", href: routes.training },
 ];
 
 /** Standalone top-level link, ahead of the Services dropdown — newborn
@@ -84,6 +96,7 @@ export const footerStudioLinks: NavItem[] = [
   { label: "Portfolio", href: routes.portfolio },
   { label: "Packages", href: routes.packages },
   { label: "Studio", href: routes.studio },
+  { label: "The Experience", href: routes.experience },
   { label: "Safety", href: routes.safety },
   { label: "Training", href: routes.training },
 ];

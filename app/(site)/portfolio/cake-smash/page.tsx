@@ -3,8 +3,9 @@ import type { Metadata } from "next";
 import { Cluster } from "@/components/primitives/Cluster";
 import { EditorialGrid } from "@/components/primitives/EditorialGrid";
 import { Section } from "@/components/primitives/Section";
+import { LightboxImage } from "@/components/gallery/LightboxImage";
+import { LightboxRoot } from "@/components/gallery/LightboxRoot";
 import { Button } from "@/components/ui/Button";
-import { EditorialImage } from "@/components/ui/EditorialImage";
 import { PageHero } from "@/components/ui/PageHero";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -16,6 +17,12 @@ import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
 const [featured, ...rest] = cakeSmashGallery;
 const [rowOne1, rowOne2, rowTwo1, rowTwo2] = rest;
+
+/** Visual order the photos appear on the page. */
+const lightboxImages = [featured, rowOne1, rowOne2, rowTwo1, rowTwo2].map((img) => ({
+  src: img.src,
+  alt: img.alt,
+}));
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata(routes.portfolioCakeSmash, {
@@ -32,7 +39,7 @@ const jsonLd = breadcrumbJsonLd([
 
 export default async function CakeSmashPortfolioPage() {
   return (
-    <>
+    <LightboxRoot images={lightboxImages}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -52,7 +59,7 @@ export default async function CakeSmashPortfolioPage() {
 
       <Section>
         <Reveal>
-          <EditorialImage
+          <LightboxImage
             src={featured.src}
             alt={featured.alt}
             aspect={featured.desktopAspect}
@@ -70,7 +77,7 @@ export default async function CakeSmashPortfolioPage() {
         <EditorialGrid className="mt-12">
           <div className="col-span-12 lg:col-span-7">
             <Reveal>
-              <EditorialImage
+              <LightboxImage
                 src={rowOne1.src}
                 alt={rowOne1.alt}
                 aspect={rowOne1.desktopAspect}
@@ -83,7 +90,7 @@ export default async function CakeSmashPortfolioPage() {
           </div>
           <div className="col-span-12 lg:col-span-5">
             <Reveal delay={75}>
-              <EditorialImage
+              <LightboxImage
                 src={rowOne2.src}
                 alt={rowOne2.alt}
                 aspect={rowOne2.desktopAspect}
@@ -96,7 +103,7 @@ export default async function CakeSmashPortfolioPage() {
           </div>
           <div className="col-span-12 lg:col-span-4">
             <Reveal>
-              <EditorialImage
+              <LightboxImage
                 src={rowTwo1.src}
                 alt={rowTwo1.alt}
                 aspect={rowTwo1.desktopAspect}
@@ -109,7 +116,7 @@ export default async function CakeSmashPortfolioPage() {
           </div>
           <div className="col-span-12 lg:col-span-8">
             <Reveal delay={75}>
-              <EditorialImage
+              <LightboxImage
                 src={rowTwo2.src}
                 alt={rowTwo2.alt}
                 aspect={rowTwo2.desktopAspect}
@@ -183,6 +190,6 @@ export default async function CakeSmashPortfolioPage() {
           </Cluster>
         </div>
       </Section>
-    </>
+    </LightboxRoot>
   );
 }

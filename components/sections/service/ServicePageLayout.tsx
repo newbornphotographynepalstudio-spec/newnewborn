@@ -1,5 +1,8 @@
 import { Cluster } from "@/components/primitives/Cluster";
+import { EditorialGrid } from "@/components/primitives/EditorialGrid";
 import { Section } from "@/components/primitives/Section";
+import { LightboxImage } from "@/components/gallery/LightboxImage";
+import { LightboxRoot } from "@/components/gallery/LightboxRoot";
 import { Button } from "@/components/ui/Button";
 import { EditorialImage } from "@/components/ui/EditorialImage";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
@@ -8,6 +11,8 @@ import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { experienceSteps } from "@/lib/data/experience";
 import type { ServicePageContent, ServiceSlug } from "@/lib/data/service-pages";
+import { getPublishedMediaByCategory } from "@/lib/media/library-data";
+import type { MediaLibraryCategory } from "@/lib/media/library-types";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
 
 /**
@@ -16,8 +21,16 @@ import { bookASessionCta, routes } from "@/lib/navigation/routes";
  * FAQ, related services, final CTA. Content (copy, images, FAQs) is
  * entirely data-driven from lib/data/service-pages.ts; this component
  * only supplies the layout.
+ *
+ * The photography showcase prefers `content.showcaseImage` (the
+ * approved static photo, only set for newborn/cake-smash today) but
+ * falls back to the Media Library for any category without one —
+ * maternity/baby/family have no static showcase image, so this is what
+ * lets real uploaded/backfilled photography reach these pages without a
+ * code change per category. Only the honest empty state renders when
+ * neither exists.
  */
-export function ServicePageLayout({
+export async function ServicePageLayout({
   content,
   related,
 }: {
@@ -25,6 +38,9 @@ export function ServicePageLayout({
   related: { slug: ServiceSlug; name: string; href: string }[];
 }) {
   const bookingHref = `${bookASessionCta.href}?type=${content.slug}`;
+  const libraryPhotos = content.showcaseImage
+    ? []
+    : await getPublishedMediaByCategory(content.slug as MediaLibraryCategory);
 
   return (
     <>
@@ -46,6 +62,13 @@ export function ServicePageLayout({
                 {paragraph}
               </p>
             ))}
+          </div>
+
+          <div className="mt-8 flex flex-col gap-2 border border-taupe/25 bg-blush/40 px-6 py-5 sm:flex-row sm:items-start sm:gap-4">
+            <p className="shrink-0 text-caption font-medium tracking-eyebrow text-plum uppercase">
+              When to Book
+            </p>
+            <p className="text-small leading-relaxed text-charcoal/85">{content.bestTiming}</p>
           </div>
         </div>
       </Section>
@@ -126,6 +149,23 @@ export function ServicePageLayout({
               </Button>
             </div>
           </>
+        ) : libraryPhotos.length > 0 ? (
+          <LightboxRoot images={libraryPhotos.map((p) => ({ src: p.url, alt: p.alt }))}>
+            <EditorialGrid className="mt-10">
+              {libraryPhotos.slice(0, 6).map((photo, index) => (
+                <div key={photo.id} className="col-span-6 sm:col-span-4">
+                  <Reveal delay={index * 50}>
+                    <LightboxImage src={photo.url} alt={photo.alt} aspect="square" rounded />
+                  </Reveal>
+                </div>
+              ))}
+            </EditorialGrid>
+            <div className="mt-6">
+              <Button href={routes.portfolio} variant="text">
+                View Full Portfolio
+              </Button>
+            </div>
+          </LightboxRoot>
         ) : (
           <Reveal className="mt-10">
             <div className="mx-auto max-w-xl border border-taupe/25 bg-blush/40 px-8 py-10 text-center">

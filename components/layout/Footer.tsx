@@ -92,17 +92,19 @@ export async function Footer() {
       <div className="border-t border-taupe/10">
         <Container
           size="wide"
-          className="pt-4 pb-24 text-center text-caption text-taupe/70 sm:pb-4"
+          className="pt-4 pb-32 text-center text-caption text-taupe/70 lg:pb-4"
         >
-          {/* This is now the last content on every page, so it — not the
-              bar above — carries the clearance for the fixed
-              WhatsAppButton's ~76px footprint (h-14 + bottom-5) below
-              `sm`, where the button sits right-5/bottom-5 with nothing
-              beside it to push it aside. At `sm`+ the button moves to
-              right-6/bottom-6 but this line is short enough not to reach
-              under it at those widths, so pb-4 is enough. Verified against
-              the WhatsApp button at 320/375/390/430/1440px — the same
-              overlap bug found twice before in this footer. */}
+          {/* This is the last content on every page, so it carries the
+              clearance for TWO fixed elements below `lg` (where both
+              WhatsAppButton and StickyMobileCta are visible — the CTA
+              bar is `lg:hidden`, matching this breakpoint exactly):
+              WhatsAppButton's ~76px footprint (h-14 + bottom-5, reserved
+              horizontally via the row above's sm:mr-*) and
+              StickyMobileCta's own ~76-110px full-width bar (taller on
+              notched devices, via safe-area-inset-bottom). pb-32 (128px)
+              covers both with margin; lg:pb-4 once neither fixed element
+              is visible. Verified against both elements at
+              320/375/390/430/1440px. */}
           Designed &amp; crafted by{" "}
           <a
             href="https://www.aayushmainali.me/"

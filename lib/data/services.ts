@@ -1,5 +1,7 @@
 import type { ImageProps } from "next/image";
 
+import { cakeSmashGallery } from "@/lib/media/cake-smash-gallery";
+import { newbornGallery } from "@/lib/media/newborn-gallery";
 import { routes } from "@/lib/navigation/routes";
 
 /**
@@ -8,10 +10,12 @@ import { routes } from "@/lib/navigation/routes";
  * scope, not invented claims. `image` is only set for services with an
  * approved photography asset dedicated to that category — components
  * must render an honest placeholder (never invented photography) when
- * it's absent. The one approved photo (culture1.jpg) is used as the
- * homepage hero and in Featured Work, not repeated here too — the
- * newborn tile gets its visual emphasis from layout size instead, to
- * avoid showing the same photograph twice in one scroll.
+ * it's absent. Newborn and Cake Smash use photos not already shown
+ * elsewhere on the homepage (see FeaturedWork/HeritageSection); Maternity/
+ * Baby/Family have no approved static photography yet, so their `image`
+ * stays unset here — ServicesOverview additionally checks the Media
+ * Library at render time for those three before falling back to an
+ * honest "gallery being curated" state.
  */
 export type ServiceSummary = {
   slug: string;
@@ -23,6 +27,9 @@ export type ServiceSummary = {
   featured?: boolean;
 };
 
+const newbornCardPhoto = newbornGallery.find((img) => img.id === "newborn-robe-chair")!;
+const cakeSmashCardPhoto = cakeSmashGallery.find((img) => img.id === "cakesmash-balloon-portrait")!;
+
 export function getServices(): ServiceSummary[] {
   return [
     {
@@ -31,6 +38,8 @@ export function getServices(): ServiceSummary[] {
       href: routes.newborn,
       description:
         "Gentle, safety-led portraits of your baby's earliest days, styled with quiet care in the studio.",
+      image: newbornCardPhoto.src,
+      imageAlt: newbornCardPhoto.alt,
       featured: true,
     },
     {
@@ -50,6 +59,8 @@ export function getServices(): ServiceSummary[] {
       name: "Cake Smash",
       href: routes.cakeSmash,
       description: "A joyful, playful session to mark your baby's first birthday.",
+      image: cakeSmashCardPhoto.src,
+      imageAlt: cakeSmashCardPhoto.alt,
     },
     {
       slug: "family",

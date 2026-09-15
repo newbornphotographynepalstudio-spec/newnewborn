@@ -12,6 +12,7 @@ import { ReviewsSection } from "@/components/sections/home/ReviewsSection";
 import { SafetySection } from "@/components/sections/home/SafetySection";
 import { ServicesOverview } from "@/components/sections/home/ServicesOverview";
 import { StudioSection } from "@/components/sections/home/StudioSection";
+import { WhyUsSection } from "@/components/sections/home/WhyUsSection";
 import { fetchGoogleReviews } from "@/lib/reviews/google-places";
 import {
   organizationJsonLd,
@@ -42,12 +43,16 @@ export async function generateMetadata(): Promise<Metadata> {
  * packages/reviews render honest empty states until real data exists (see
  * lib/data/packages.ts, lib/data/reviews.ts).
  *
- * Section order follows the required narrative arc: hero, trust/
- * positioning, the newborn photography experience, featured work,
- * services, safety, the studio, packages, reviews, why families choose
- * this studio (HeritageSection's Nepali-family-heritage positioning is
- * the real, non-invented answer to that question here), FAQ, final CTA.
- * The Service Area section is intentionally NOT rendered here —
+ * Redesign section order (2026 redesign, Aana-inspired arc — emotional
+ * hook, distributed trust, then conversion): hero, emotional intro, why-us
+ * differentiation (WhyUsSection — a real "Meet Navin" personal-bio
+ * section is deferred until a real name/bio/portrait is supplied; see
+ * WhyUsSection's own doc comment), featured real photography, services
+ * overview (now photo-forward), safety (moved earlier — resolves the
+ * newborn-safety anxiety before price is ever mentioned), the session
+ * experience teaser (links to the full /experience/ page), the studio,
+ * packages/pricing, reviews, heritage/cultural positioning, FAQ, final
+ * CTA. The Service Area section is intentionally NOT rendered here —
  * Kathmandu/Lalitpur/Bhaktapur stay as their own indexable /areas/ pages
  * (linked from the footer) rather than a large homepage section.
  *
@@ -55,7 +60,8 @@ export async function generateMetadata(): Promise<Metadata> {
  * Photographers" / "Newborn Photography Training" section previously
  * here) — the homepage stays focused on families searching for newborn
  * photography, training's actual audience. Training remains fully live
- * at /training/, linked from the header and footer.
+ * at /training/, reachable from MobileNav's secondary links and the
+ * footer.
  */
 export default async function HomePage() {
   // null in this environment — no GOOGLE_PLACES_API_KEY/PLACE_ID
@@ -86,10 +92,11 @@ export default async function HomePage() {
 
       <HomeHero />
       <BrandIntro />
-      <ExperienceSteps />
+      <WhyUsSection />
       <FeaturedWork />
       <ServicesOverview />
       <SafetySection />
+      <ExperienceSteps />
       <StudioSection />
       <PackagesPreview />
       <ReviewsSection
