@@ -164,17 +164,34 @@ export async function ServicePageLayout({
               posing, careful handling, and a controlled studio environment.
             </p>
           </div>
-          <Button href={routes.safety} variant="secondary" size="sm" className="shrink-0">
-            Learn About Safety
-          </Button>
+          <Cluster gap="sm" className="shrink-0">
+            <Button href={routes.safety} variant="secondary" size="sm">
+              Learn About Safety
+            </Button>
+            <Button href={routes.studio} variant="secondary" size="sm">
+              Visit the Studio
+            </Button>
+          </Cluster>
         </div>
       </Section>
 
       <Section compact>
         <p className="text-center text-small text-charcoal/70">
           Sessions are based in the studio in Kathmandu Valley, serving families across{" "}
-          <Link href={routes.areas} className="text-plum underline-offset-4 hover:underline">
-            Kathmandu, Lalitpur and Bhaktapur
+          <Link href={routes.areasKathmandu} className="text-plum underline-offset-4 hover:underline">
+            Kathmandu
+          </Link>
+          ,{" "}
+          <Link href={routes.areasLalitpur} className="text-plum underline-offset-4 hover:underline">
+            Lalitpur
+          </Link>{" "}
+          and{" "}
+          <Link href={routes.areasBhaktapur} className="text-plum underline-offset-4 hover:underline">
+            Bhaktapur
+          </Link>
+          . See current{" "}
+          <Link href={routes.packages} className="text-plum underline-offset-4 hover:underline">
+            Packages &amp; Pricing
           </Link>
           .
         </p>

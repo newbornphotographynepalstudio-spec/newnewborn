@@ -1,3 +1,5 @@
+import { routes } from "@/lib/navigation/routes";
+
 /**
  * The complete before/during/after session journey for the
  * `/experience/` page — every stage restates a real fact already
@@ -24,31 +26,40 @@ export type ExperienceStage = {
  * is a new claim: newborn/baby restate that wraps/styling are provided;
  * maternity/family restate the existing "styling guidance beforehand"
  * fact; cake smash restates the existing cake/outfit FAQ answers.
+ *
+ * `href` (SEO Phase 4) links each service name to its own service page —
+ * internal-linking only, the checklist information itself is unchanged.
  */
 export type WhatToBringItem = {
   service: string;
+  href: string;
   detail: string;
 };
 
 export const whatToBring: WhatToBringItem[] = [
   {
     service: "Newborn",
+    href: routes.newborn,
     detail: "Nothing extra needed — wraps, hats and set-ups are provided at the studio.",
   },
   {
     service: "Baby",
+    href: routes.baby,
     detail: "Nothing extra needed — styling is simple and seasonally-appropriate, provided at the studio.",
   },
   {
     service: "Maternity",
+    href: routes.maternity,
     detail: "Your own outfit, chosen with the styling guidance shared before your session.",
   },
   {
     service: "Family",
+    href: routes.family,
     detail: "Coordinated outfits for your group, with guidance shared beforehand.",
   },
   {
     service: "Cake Smash",
+    href: routes.cakeSmash,
     detail: "A small, simple cake, and an outfit change afterward if you'd like one.",
   },
 ];

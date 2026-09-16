@@ -22,9 +22,17 @@ import {
 import { getSiteSettings } from "@/lib/settings/data";
 import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
-const title = "Newborn Photography in Kathmandu, Nepal";
+/** Kept short so the rendered `<title>` (this string + " | " + the site
+ * name, via app/layout.tsx's title template) lands at 60 characters —
+ * SEMrush flagged the previous version at 67; "Kathmandu" and "Newborn
+ * Photography" both stay intact, nothing added to compensate. */
+const title = "Newborn Photography in Kathmandu";
+/** Trimmed from 141 to 121 characters (SEMrush flagged >130) by cutting
+ * one redundant word ("studio", already implied by "Book today") rather
+ * than any keyword or claim — every service this session type still
+ * names (maternity, baby, cake smash, family) is unchanged. */
 const description =
-  "Editorial, safety-led newborn photography in Kathmandu, plus maternity, baby, cake smash and family sessions. Book your studio session today.";
+  "Editorial, safety-led newborn photography in Kathmandu, plus maternity, baby, cake smash and family sessions. Book today.";
 
 /** Uses buildPageMetadata (like every other page) so a Page SEO override
  * for "/" actually takes effect; type/locale/siteName/url/card are all
@@ -67,10 +75,13 @@ export default async function HomePage() {
   // null in this environment — no GOOGLE_PLACES_API_KEY/PLACE_ID
   // configured, so this always falls back to the honest static empty
   // state (see lib/reviews/google-places.ts and ReviewsSection).
-  const [liveGoogleReviews, { seo }] = await Promise.all([fetchGoogleReviews(), getSiteSettings()]);
+  const [liveGoogleReviews, { seo, socialLinks }] = await Promise.all([
+    fetchGoogleReviews(),
+    getSiteSettings(),
+  ]);
 
   const jsonLd = [
-    organizationJsonLd(seo.organizationName),
+    organizationJsonLd(seo.organizationName, socialLinks),
     websiteJsonLd(),
     professionalServiceJsonLd(
       liveGoogleReviews

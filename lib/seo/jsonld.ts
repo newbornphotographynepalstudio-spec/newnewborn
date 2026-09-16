@@ -18,19 +18,31 @@ const areaServedCities = [
   { "@type": "City", name: "Bhaktapur" },
 ];
 
-export function organizationJsonLd(nameOverride?: string) {
+/**
+ * `socialLinks` (optional) are the admin-configured, real profile URLs
+ * from Firestore's `settings/site` doc (lib/settings/data.ts) — the same
+ * ones the public Footer already renders. Only platforms actually
+ * configured there ever appear here; nothing is added for a platform
+ * (e.g. YouTube, X/Twitter, LinkedIn) that has no real URL on file, since
+ * that would mean fabricating a profile that doesn't exist (SEO Phase 3).
+ */
+export function organizationJsonLd(
+  nameOverride?: string,
+  socialLinks?: { href: string }[]
+) {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: nameOverride || siteConfig.name,
     url: siteConfig.url,
     logo: new URL("/brand/logo.jpg", siteConfig.url).toString(),
-    // The real Google Business Profile review link — an identity
+    // The real Google Business Profile review link, plus any real
+    // admin-configured social profiles — every entry here is an identity
     // reference (this Organization also exists at this URL), not review/
     // rating schema. No aggregateRating/reviewCount is added here or
     // anywhere else: no genuine review data has been supplied to this
     // codebase, and that field would have to be invented to populate it.
-    sameAs: [googleReviewsUrl],
+    sameAs: [googleReviewsUrl, ...(socialLinks ?? []).map((link) => link.href)],
   };
 }
 

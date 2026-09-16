@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { Cluster } from "@/components/primitives/Cluster";
 import { Section } from "@/components/primitives/Section";
@@ -99,7 +100,10 @@ export default function ExperiencePage() {
           <ul className="mt-8 space-y-4">
             {whatToBring.map((item) => (
               <li key={item.service} className="border-b border-taupe/20 pb-4 last:border-b-0 last:pb-0">
-                <span className="font-medium text-plum">{item.service}: </span>
+                <Link href={item.href} className="font-medium text-plum underline-offset-4 hover:underline">
+                  {item.service}
+                </Link>
+                <span className="font-medium text-plum">: </span>
                 <span className="text-body text-charcoal/80">{item.detail}</span>
               </li>
             ))}

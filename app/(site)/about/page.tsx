@@ -63,6 +63,10 @@ export default function AboutPage() {
             life, in a studio built specifically for that purpose.
           </p>
           <p className="text-body-lg leading-relaxed text-charcoal/85">
+            Newborn sessions are photographed by Navin, a newborn
+            photographer based in Kathmandu.
+          </p>
+          <p className="text-body-lg leading-relaxed text-charcoal/85">
             Maternity, baby, cake smash and family sessions all sit
             alongside that core focus: the same studio, the same
             unhurried approach, for the milestones that come before and

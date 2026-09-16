@@ -37,6 +37,18 @@ const moreFaqs: FaqItem[] = [
     answer:
       "For newborn sessions, as early as possible during pregnancy. For other sessions, a few weeks' notice is usually enough.",
   },
+  {
+    id: "studio-location",
+    question: "Where is the studio?",
+    answer:
+      "The studio is based in Kathmandu Valley, Nepal. Reach out through the Contact page for exact directions and the studio's Google Maps location.",
+  },
+  {
+    id: "newborn-cost",
+    question: "How much does newborn photography cost?",
+    answer:
+      "Newborn session pricing is published in full on the Packages & Pricing page, with three collections — Mini, Premium and Luxury — each showing exact NPR pricing and what's included.",
+  },
 ];
 
 export const fullFaqList: FaqItem[] = [...homeFaqPreview, ...moreFaqs];
