@@ -45,6 +45,47 @@ function slugifyFilename(name: string): string {
     .slice(0, 60);
 }
 
+/**
+ * Turns a real Supabase Storage / Firestore error into a specific but
+ * safe admin-facing message — never the raw error (which can include
+ * internal endpoint/table details), never a secret, but specific enough
+ * to actually act on instead of the one generic "Couldn't upload" string
+ * every failure used to collapse into. Matched by message substring
+ * rather than error class, since @supabase/supabase-js's StorageError
+ * and firebase-admin's Firestore errors are both plain-shaped enough
+ * that this is more robust than an instanceof check across two SDKs.
+ */
+function describeUploadError(error: unknown, fileName: string): string {
+  const message = error instanceof Error ? error.message : String(error);
+  const lower = message.toLowerCase();
+
+  if (lower.includes("bucket not found") || lower.includes("resource_not_found")) {
+    return `"${fileName}": the photo storage bucket isn't set up correctly. Contact the developer.`;
+  }
+  if (
+    lower.includes("row-level security") ||
+    lower.includes("row level security") ||
+    lower.includes("permission") ||
+    lower.includes("unauthorized") ||
+    lower.includes("not allowed")
+  ) {
+    return `"${fileName}": photo storage refused this upload (a permissions issue on the storage side). Contact the developer.`;
+  }
+  if (lower.includes("payload too large") || lower.includes("exceeded the maximum allowed size")) {
+    return `"${fileName}": this file is too large for photo storage to accept.`;
+  }
+  if (lower.includes("already exists") || lower.includes("duplicate")) {
+    return `"${fileName}": a file with this name already exists in storage. Try again — a new upload gets a unique name automatically.`;
+  }
+  if (lower.includes("fetch failed") || lower.includes("network") || lower.includes("timeout") || lower.includes("timed out")) {
+    return `"${fileName}": couldn't reach photo storage (a network issue). Please try again.`;
+  }
+  if (lower.includes("firestore") || lower.includes("deadline_exceeded") || lower.includes("unavailable")) {
+    return `"${fileName}": the photo uploaded, but saving its details failed. Please try again or contact the developer.`;
+  }
+  return `"${fileName}": upload failed unexpectedly. Please try again. If the problem continues, contact the developer.`;
+}
+
 async function uploadOneFile(
   file: File,
   category: MediaLibraryCategory,
@@ -65,39 +106,53 @@ async function uploadOneFile(
 
   const extension = file.type.split("/")[1];
   const storagePath = `${category}/${Date.now()}-${slugifyFilename(file.name) || "photo"}.${extension}`;
-  const buffer = Buffer.from(await file.arrayBuffer());
 
-  const supabase = getSupabaseAdmin();
-  const { error: uploadError } = await supabase.storage.from(MEDIA_BUCKET).upload(storagePath, buffer, {
-    contentType: file.type,
-    upsert: false,
-  });
-  if (uploadError) {
-    throw uploadError;
+  // Everything past this point talks to Supabase Storage and Firestore —
+  // wrapped in its own try/catch (rather than relying solely on the
+  // caller's) so one file's real storage/database error becomes this
+  // file's own `{ok:false}` result instead of an uncaught throw that
+  // would abort every other file in the same batch (when run in
+  // parallel — see uploadMedia) or surface to the browser as the
+  // generic unhandled-error page instead of this form's own inline
+  // message (see describeUploadError above).
+  try {
+    const buffer = Buffer.from(await file.arrayBuffer());
+
+    const supabase = getSupabaseAdmin();
+    const { error: uploadError } = await supabase.storage.from(MEDIA_BUCKET).upload(storagePath, buffer, {
+      contentType: file.type,
+      upsert: false,
+    });
+    if (uploadError) {
+      throw uploadError;
+    }
+
+    const { data: publicUrlData } = supabase.storage.from(MEDIA_BUCKET).getPublicUrl(storagePath);
+    const dimensions = getImageDimensions(buffer, file.type);
+
+    const db = getAdminFirestore();
+    const ref = await db.collection("media").add({
+      storagePath,
+      url: publicUrlData.publicUrl,
+      title: titleOverride || file.name,
+      alt,
+      caption: caption || undefined,
+      category,
+      featured: false,
+      published: true,
+      order: 0,
+      contentType: file.type,
+      sizeBytes: file.size,
+      width: dimensions?.width,
+      height: dimensions?.height,
+      createdAt: new Date(),
+    });
+
+    return { ok: true, id: ref.id, sizeBytes: file.size };
+  } catch (error) {
+    console.error(`uploadOneFile failed for "${file.name}":`, error);
+    return { ok: false, message: describeUploadError(error, file.name) };
   }
-
-  const { data: publicUrlData } = supabase.storage.from(MEDIA_BUCKET).getPublicUrl(storagePath);
-  const dimensions = getImageDimensions(buffer, file.type);
-
-  const db = getAdminFirestore();
-  const ref = await db.collection("media").add({
-    storagePath,
-    url: publicUrlData.publicUrl,
-    title: titleOverride || file.name,
-    alt,
-    caption: caption || undefined,
-    category,
-    featured: false,
-    published: true,
-    order: 0,
-    contentType: file.type,
-    sizeBytes: file.size,
-    width: dimensions?.width,
-    height: dimensions?.height,
-    createdAt: new Date(),
-  });
-
-  return { ok: true, id: ref.id, sizeBytes: file.size };
 }
 
 /** Uploads one or more photos to Supabase Storage (this project stays on
@@ -138,8 +193,18 @@ export async function uploadMedia(_prevState: MediaFormState, formData: FormData
   const uploadedIds: string[] = [];
 
   try {
-    for (const file of files) {
-      const result = await uploadOneFile(file, category, files.length === 1 ? title : "", alt, caption);
+    // Run every file's upload concurrently rather than one at a time —
+    // found live: a small 6-photo batch of ordinary export sizes took
+    // over 12 seconds processed sequentially (upload, then a Firestore
+    // write, per file, one after another), comfortably past Vercel's
+    // default 10s Hobby-plan function limit for a request that size.
+    // uploadOneFile already catches its own errors (never throws), so
+    // one bad file can't cancel the others the way Promise.all normally
+    // would on a rejection.
+    const results = await Promise.all(
+      files.map((file) => uploadOneFile(file, category, files.length === 1 ? title : "", alt, caption))
+    );
+    for (const result of results) {
       if (result.ok) {
         uploadedCount += 1;
         uploadedIds.push(result.id);
@@ -172,8 +237,13 @@ export async function uploadMedia(_prevState: MediaFormState, formData: FormData
     }
     return { status: "success", message: `Uploaded ${uploadedCount} photo${uploadedCount > 1 ? "s" : ""}.`, uploadedCount };
   } catch (error) {
+    // uploadOneFile no longer throws (it catches its own errors above),
+    // so reaching this block means something outside any single file's
+    // upload failed — e.g. revalidation or the audit log write. Still
+    // categorized rather than a single blanket message, on the same
+    // reasoning as describeUploadError.
     console.error("uploadMedia failed:", error);
-    return { status: "error", message: "Couldn't upload. Please try again." };
+    return { status: "error", message: describeUploadError(error, "upload") };
   }
 }
 

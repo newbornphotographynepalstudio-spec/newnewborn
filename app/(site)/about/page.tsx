@@ -89,6 +89,9 @@ export default function AboutPage() {
           <Button href={routes.experience} variant="secondary" size="sm">
             The Full Session Experience
           </Button>
+          <Button href={routes.packages} variant="secondary" size="sm">
+            Packages &amp; Pricing
+          </Button>
         </Cluster>
       </Section>
 

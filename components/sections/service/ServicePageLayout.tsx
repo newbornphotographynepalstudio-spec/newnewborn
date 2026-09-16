@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Cluster } from "@/components/primitives/Cluster";
 import { EditorialGrid } from "@/components/primitives/EditorialGrid";
 import { Section } from "@/components/primitives/Section";
@@ -14,6 +16,7 @@ import type { ServicePageContent, ServiceSlug } from "@/lib/data/service-pages";
 import { getPublishedMediaByCategory } from "@/lib/media/library-data";
 import type { MediaLibraryCategory } from "@/lib/media/library-types";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
+import { breadcrumbJsonLd, serviceJsonLd } from "@/lib/seo/jsonld";
 
 /**
  * Shared structure for all five service pages — hero, intro, what's
@@ -29,6 +32,12 @@ import { bookASessionCta, routes } from "@/lib/navigation/routes";
  * lets real uploaded/backfilled photography reach these pages without a
  * code change per category. Only the honest empty state renders when
  * neither exists.
+ *
+ * Also renders this service's Service + BreadcrumbList JSON-LD (SEO
+ * Phase 2) — every one of the 5 service pages previously had zero
+ * structured data at all. `content.showcaseImage` doubles as the
+ * Service schema's `image` when a real one exists for this category;
+ * omitted otherwise rather than pointing at an unrelated photo.
  */
 export async function ServicePageLayout({
   content,
@@ -42,8 +51,39 @@ export async function ServicePageLayout({
     ? []
     : await getPublishedMediaByCategory(content.slug as MediaLibraryCategory);
 
+  // The static showcase photo's own src (a relative path) is a plain
+  // string for a Media-Library photo but a StaticImageData object for
+  // the two approved static imports (newborn/cake-smash) — only the
+  // latter needs unwrapping to get the actual URL string. Every
+  // non-string value reaching this field is a real ESM image import
+  // (StaticImageData, which has `.src`), never a `require()`-style
+  // StaticRequire — the narrower cast reflects that real shape.
+  const showcaseImageSrc = content.showcaseImage
+    ? typeof content.showcaseImage === "string"
+      ? content.showcaseImage
+      : (content.showcaseImage as { src: string }).src
+    : undefined;
+
+  const jsonLd = [
+    serviceJsonLd({
+      name: `${content.name} Photography`,
+      description: content.metaDescription,
+      url: content.href,
+      image: showcaseImageSrc,
+    }),
+    breadcrumbJsonLd([{ name: content.name, href: content.href }]),
+  ];
+
   return (
     <>
+      {jsonLd.map((entry, index) => (
+        <script
+          key={index}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(entry) }}
+        />
+      ))}
+
       <PageHero eyebrow={content.heroEyebrow} title={content.h1} description={content.heroDescription}>
         <Cluster gap="sm" className="mt-8">
           <Button href={bookingHref}>{bookASessionCta.label}</Button>
@@ -128,6 +168,16 @@ export async function ServicePageLayout({
             Learn About Safety
           </Button>
         </div>
+      </Section>
+
+      <Section compact>
+        <p className="text-center text-small text-charcoal/70">
+          Sessions are based in the studio in Kathmandu Valley, serving families across{" "}
+          <Link href={routes.areas} className="text-plum underline-offset-4 hover:underline">
+            Kathmandu, Lalitpur and Bhaktapur
+          </Link>
+          .
+        </p>
       </Section>
 
       <Section>

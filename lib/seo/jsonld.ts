@@ -1,3 +1,4 @@
+import { contactInfo } from "@/lib/data/contact";
 import { googleReviewsUrl } from "@/lib/data/reviews";
 import { siteConfig } from "@/lib/seo/site";
 
@@ -7,6 +8,15 @@ import { siteConfig } from "@/lib/seo/site";
  * rating, review, price, address or certification. Add a field only when
  * a real value exists for it.
  */
+
+/** The 3 real cities this studio serves (client-confirmed) — shared by
+ * every schema type that needs `areaServed`, so the list can't drift
+ * between ProfessionalService and per-page Service entries. */
+const areaServedCities = [
+  { "@type": "City", name: "Kathmandu" },
+  { "@type": "City", name: "Lalitpur" },
+  { "@type": "City", name: "Bhaktapur" },
+];
 
 export function organizationJsonLd(nameOverride?: string) {
   return {
@@ -36,8 +46,17 @@ export function websiteJsonLd() {
 
 /**
  * ProfessionalService rather than a plain LocalBusiness, since that's
- * genuinely what this is. No `address`, no `telephone`, no `priceRange`
- * — all would be invented, since none of those facts have been supplied.
+ * genuinely what this is. Still no `address` and no `priceRange` — both
+ * would be invented, since neither fact has been supplied (no public
+ * street address exists anywhere in this project, and per-service
+ * pricing beyond the newborn packages isn't published).
+ *
+ * `telephone` and `hasMap` ARE included: both are real, already-verified
+ * values already displayed on the live site (lib/data/contact.ts —
+ * the same phone number in the header/footer/contact page, and the
+ * client-provided Google Maps link), not new facts introduced here.
+ * `hasMap` takes a plain URL per schema.org, so the Maps link is used
+ * as-is — it is never decomposed into a fabricated `address` object.
  *
  * `aggregateRating` is the one field this function *can* populate, but
  * only when a caller passes real, freshly-fetched data (see
@@ -58,11 +77,9 @@ export function professionalServiceJsonLd(
     url: siteConfig.url,
     image: new URL("/brand/logo.jpg", siteConfig.url).toString(),
     description: siteConfig.description,
-    areaServed: [
-      { "@type": "City", name: "Kathmandu" },
-      { "@type": "City", name: "Lalitpur" },
-      { "@type": "City", name: "Bhaktapur" },
-    ],
+    telephone: contactInfo.phoneE164,
+    hasMap: contactInfo.mapsUrl,
+    areaServed: areaServedCities,
     ...(aggregateRating && aggregateRating.reviewCount > 0
       ? {
           aggregateRating: {
@@ -72,6 +89,47 @@ export function professionalServiceJsonLd(
           },
         }
       : {}),
+  };
+}
+
+/**
+ * Service — one of this studio's real, distinct session types (newborn,
+ * maternity, baby, cake smash, family). `provider` is a minimal reference
+ * to the same real business the homepage's ProfessionalService describes
+ * (name + url only, not a full re-nested copy of that entity — avoids
+ * duplicating the same business data as a separate, competing entity on
+ * every service page). `image` is only passed when a real, approved
+ * photo exists for that service; omitted otherwise, never a placeholder.
+ *
+ * `url` and `image` are site-relative paths (e.g. `content.href`, a
+ * static import's `.src`) — resolved against `siteConfig.url` here, the
+ * same way breadcrumbJsonLd/blogPostingJsonLd already do, so callers
+ * never have to construct an absolute URL themselves.
+ */
+export function serviceJsonLd({
+  name,
+  description,
+  url,
+  image,
+}: {
+  name: string;
+  description: string;
+  url: string;
+  image?: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name,
+    description,
+    url: new URL(url, siteConfig.url).toString(),
+    provider: {
+      "@type": "ProfessionalService",
+      name: siteConfig.name,
+      url: siteConfig.url,
+    },
+    areaServed: areaServedCities,
+    ...(image ? { image: new URL(image, siteConfig.url).toString() } : {}),
   };
 }
 

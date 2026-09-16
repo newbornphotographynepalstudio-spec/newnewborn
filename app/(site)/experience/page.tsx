@@ -7,7 +7,7 @@ import { EditorialImage } from "@/components/ui/EditorialImage";
 import { PageHero } from "@/components/ui/PageHero";
 import { Reveal } from "@/components/ui/Reveal";
 import { cakeSmashGallery } from "@/lib/media/cake-smash-gallery";
-import { fullExperience } from "@/lib/data/full-experience";
+import { fullExperience, whatToBring } from "@/lib/data/full-experience";
 import { newbornGallery } from "@/lib/media/newborn-gallery";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
 import { buildPageMetadata } from "@/lib/seo/build-metadata";
@@ -88,6 +88,23 @@ export default function ExperiencePage() {
 
       <Section>
         <StageList stages={groupOne} />
+      </Section>
+
+      <Section tone="ivory" compact>
+        <div className="mx-auto max-w-2xl">
+          <p className="text-center text-caption tracking-eyebrow text-taupe uppercase">
+            What to Bring
+          </p>
+          <h2 className="mt-2 text-center text-h3">One less thing to plan for</h2>
+          <ul className="mt-8 space-y-4">
+            {whatToBring.map((item) => (
+              <li key={item.service} className="border-b border-taupe/20 pb-4 last:border-b-0 last:pb-0">
+                <span className="font-medium text-plum">{item.service}: </span>
+                <span className="text-body text-charcoal/80">{item.detail}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </Section>
 
       <Section tone="blush" compact>

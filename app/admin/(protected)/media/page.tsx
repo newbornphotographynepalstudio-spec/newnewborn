@@ -12,6 +12,23 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+/**
+ * Raises this route's serverless execution limit from Vercel's default
+ * (10s on Hobby) to the platform's max on Hobby (60s) — found live:
+ * uploadMedia (lib/media/library-actions.ts) processes files one at a
+ * time (Storage upload, then a Firestore write, per file), and a real
+ * multi-photo batch of ordinary camera-export sizes measured well past
+ * 10s end-to-end even against a local, unconstrained server. On Vercel,
+ * a request that outlives the function's time limit is killed by the
+ * platform before our own try/catch ever runs — which surfaces to the
+ * browser as an unhandled failure (the global app/error.tsx boundary),
+ * not the graceful inline message uploadMedia's own error handling
+ * returns for every failure it actually gets to see. This alone doesn't
+ * make a large batch instant, but it gives real uploads enough room to
+ * finish inside a single request on Vercel's serverless limits.
+ */
+export const maxDuration = 60;
+
 export default async function AdminMediaPage() {
   const [result, diagnostics] = await Promise.all([listMedia(), getSystemDiagnostics()]);
   const existingPhotos = listExistingPhotos();

@@ -60,6 +60,9 @@ export default function StudioPage() {
           <Button href={routes.safety} variant="secondary">
             Read About Safety
           </Button>
+          <Button href={routes.areasKathmandu} variant="secondary">
+            Photography in Kathmandu
+          </Button>
         </Cluster>
       </PageHero>
 

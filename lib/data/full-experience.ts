@@ -16,6 +16,43 @@ export type ExperienceStage = {
   description: string;
 };
 
+/**
+ * "What to bring," per service — answers a real, common AEO question
+ * (SEO Phase 2) using only facts already established on each service's
+ * own page (lib/data/service-pages.ts `includes`/`faqs`), restated here
+ * as a direct checklist rather than left buried in prose. Nothing here
+ * is a new claim: newborn/baby restate that wraps/styling are provided;
+ * maternity/family restate the existing "styling guidance beforehand"
+ * fact; cake smash restates the existing cake/outfit FAQ answers.
+ */
+export type WhatToBringItem = {
+  service: string;
+  detail: string;
+};
+
+export const whatToBring: WhatToBringItem[] = [
+  {
+    service: "Newborn",
+    detail: "Nothing extra needed — wraps, hats and set-ups are provided at the studio.",
+  },
+  {
+    service: "Baby",
+    detail: "Nothing extra needed — styling is simple and seasonally-appropriate, provided at the studio.",
+  },
+  {
+    service: "Maternity",
+    detail: "Your own outfit, chosen with the styling guidance shared before your session.",
+  },
+  {
+    service: "Family",
+    detail: "Coordinated outfits for your group, with guidance shared beforehand.",
+  },
+  {
+    service: "Cake Smash",
+    detail: "A small, simple cake, and an outfit change afterward if you'd like one.",
+  },
+];
+
 export const fullExperience: ExperienceStage[] = [
   {
     id: "planning",

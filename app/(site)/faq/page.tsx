@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
 import { PageHero } from "@/components/ui/PageHero";
 import { getFaqs } from "@/lib/faq/data";
-import { bookASessionCta, routes } from "@/lib/navigation/routes";
+import { bookASessionCta, routes, servicesNav } from "@/lib/navigation/routes";
 import { faqPageJsonLd } from "@/lib/seo/jsonld";
 import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
@@ -32,6 +32,20 @@ export default async function FaqPage() {
 
       <Section containerSize="prose">
         <FaqAccordion items={faqs} />
+
+        <div className="mt-10">
+          <p className="text-center text-caption tracking-eyebrow text-taupe uppercase">
+            Related Sessions
+          </p>
+          <Cluster gap="sm" align="center" justify="center" className="mt-4">
+            {servicesNav.map((service) => (
+              <Button key={service.href} href={service.href} variant="secondary" size="sm">
+                {service.label} Photography
+              </Button>
+            ))}
+          </Cluster>
+        </div>
+
         <div className="mt-10 text-center">
           <p className="text-body text-charcoal/75">Still have a question?</p>
           <Cluster gap="sm" align="center" justify="center" className="mt-4">

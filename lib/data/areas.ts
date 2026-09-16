@@ -24,6 +24,7 @@ export const areas: Record<AreaSlug, AreaContent> = {
     intro: [
       "Families across Kathmandu book newborn, maternity, baby, cake smash and family sessions at the studio, based in Kathmandu Valley.",
       "Sessions are primarily studio-based, with home sessions available where offered. Reach out to check what's possible for your address and timing.",
+      "Every session, whichever of the five you choose, follows the same safety-led, unhurried approach, with exact newborn package pricing published upfront so there's nothing to guess before you get in touch.",
     ],
   },
   lalitpur: {
@@ -37,6 +38,7 @@ export const areas: Record<AreaSlug, AreaContent> = {
     intro: [
       "Families from Lalitpur (Patan) and the surrounding area travel to the studio in Kathmandu Valley for newborn, maternity, baby, cake smash and family sessions.",
       "If a home session is a better fit for your family, let us know when you get in touch. It may be possible depending on timing and location.",
+      "The same safety-led, unhurried approach applies to every session type, with exact newborn package pricing published upfront so there's nothing to guess before you reach out.",
     ],
   },
   bhaktapur: {
@@ -50,6 +52,7 @@ export const areas: Record<AreaSlug, AreaContent> = {
     intro: [
       "Families from Bhaktapur are welcome at the studio in Kathmandu Valley for newborn, maternity, baby, cake smash and family sessions.",
       "Newborn sessions are timed around your baby's first two weeks, so it's worth reaching out early in your pregnancy to plan the date.",
+      "Every session follows the same safety-led, unhurried approach, with exact newborn package pricing published upfront so there's nothing to guess before you get in touch.",
     ],
   },
 };
