@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 
 import { saveFaq, type FaqFormState } from "@/lib/faq/actions";
 import type { AdminFaqItem } from "@/lib/faq/admin-data";
+import { AdminButton } from "@/components/admin/ui/Button";
+import { AdminInput, AdminTextarea, FormField } from "@/components/admin/ui/fields";
+import { FormMessage } from "@/components/admin/ui/FormMessage";
 
 const initialState: FaqFormState = { status: "idle" };
 
@@ -22,53 +25,25 @@ export function FaqForm({ faq, nextOrder }: { faq?: AdminFaqItem; nextOrder: num
   return (
     <form action={formAction} className="space-y-4">
       {faq ? <input type="hidden" name="id" value={faq.id} /> : null}
-      <div>
-        <label htmlFor="question" className="block text-caption tracking-eyebrow text-taupe uppercase">
-          Question
-        </label>
-        <input
-          id="question"
-          name="question"
-          type="text"
-          defaultValue={faq?.question}
-          required
-          className="mt-2 w-full rounded-sm border border-taupe/40 bg-white px-3 py-2 text-small text-charcoal"
-        />
-      </div>
-      <div>
-        <label htmlFor="answer" className="block text-caption tracking-eyebrow text-taupe uppercase">
-          Answer
-        </label>
-        <textarea
-          id="answer"
-          name="answer"
-          rows={4}
-          defaultValue={faq?.answer}
-          required
-          className="mt-2 w-full rounded-sm border border-taupe/40 bg-white px-3 py-2 text-small text-charcoal"
-        />
-      </div>
-      <div>
-        <label htmlFor="order" className="block text-caption tracking-eyebrow text-taupe uppercase">
-          Order (the first 5, by order, also show on the homepage preview)
-        </label>
-        <input
-          id="order"
-          name="order"
-          type="number"
-          defaultValue={faq?.order ?? nextOrder}
-          className="mt-2 w-32 rounded-sm border border-taupe/40 bg-white px-3 py-2 text-small text-charcoal"
-        />
-      </div>
-      <div className="flex items-center gap-4">
-        <button
-          type="submit"
-          disabled={pending}
-          className="rounded-sm bg-plum px-5 py-2.5 text-small font-medium text-white disabled:opacity-50"
-        >
+      <FormField label="Question" htmlFor="question" required>
+        <AdminInput id="question" name="question" type="text" defaultValue={faq?.question} required />
+      </FormField>
+      <FormField label="Answer" htmlFor="answer" required>
+        <AdminTextarea id="answer" name="answer" rows={4} defaultValue={faq?.answer} required />
+      </FormField>
+      <FormField
+        label="Order"
+        htmlFor="order"
+        help="The first 5, by order, also show on the homepage preview."
+      >
+        <AdminInput id="order" name="order" type="number" defaultValue={faq?.order ?? nextOrder} className="w-32" />
+      </FormField>
+
+      <div className="flex items-center gap-4 border-t border-slate-100 pt-4">
+        <AdminButton type="submit" variant="primary" disabled={pending}>
           {pending ? "Saving…" : "Save FAQ"}
-        </button>
-        {state.status === "error" && state.message ? <p className="text-caption text-plum">{state.message}</p> : null}
+        </AdminButton>
+        {state.status === "error" && state.message ? <FormMessage status="error" message={state.message} /> : null}
       </div>
     </form>
   );

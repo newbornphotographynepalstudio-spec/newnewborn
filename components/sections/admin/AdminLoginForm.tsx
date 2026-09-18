@@ -4,10 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 
-import { Stack } from "@/components/primitives/Stack";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/form/Input";
-import { Label } from "@/components/ui/form/Label";
+import { AdminButton } from "@/components/admin/ui/Button";
+import { AdminInput, FormField } from "@/components/admin/ui/fields";
+import { FormMessage } from "@/components/admin/ui/FormMessage";
 import { getFirebaseAuth } from "@/lib/firebase/client";
 
 /**
@@ -70,41 +69,35 @@ export function AdminLoginForm({ redirectTo }: { redirectTo: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8">
-      <Stack gap="md">
-        <div>
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            required
-            autoComplete="username"
-            className="mt-2"
-            placeholder="you@example.com"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-          />
-        </div>
-        <div>
-          <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            required
-            autoComplete="current-password"
-            className="mt-2"
-            placeholder="••••••••"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-        </div>
-        <Button type="submit" disabled={pending} className="w-full">
-          {pending ? "Signing in…" : "Sign In"}
-        </Button>
-        {error ? <p className="text-small text-plum">{error}</p> : null}
-      </Stack>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <FormField label="Email" htmlFor="email">
+        <AdminInput
+          id="email"
+          name="email"
+          type="email"
+          required
+          autoComplete="username"
+          placeholder="you@example.com"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+        />
+      </FormField>
+      <FormField label="Password" htmlFor="password">
+        <AdminInput
+          id="password"
+          name="password"
+          type="password"
+          required
+          autoComplete="current-password"
+          placeholder="••••••••"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+        />
+      </FormField>
+      <AdminButton type="submit" variant="primary" disabled={pending} className="w-full">
+        {pending ? "Signing in…" : "Sign In"}
+      </AdminButton>
+      {error ? <FormMessage status="error" message={error} /> : null}
     </form>
   );
 }

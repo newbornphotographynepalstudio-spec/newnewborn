@@ -4,6 +4,9 @@ import { useActionState } from "react";
 
 import { saveSocialLinks, type SettingsFormState } from "@/lib/settings/actions";
 import type { SocialLinkEntry } from "@/lib/settings/data";
+import { AdminButton } from "@/components/admin/ui/Button";
+import { AdminInput, FormField } from "@/components/admin/ui/fields";
+import { FormMessage } from "@/components/admin/ui/FormMessage";
 
 const PLATFORMS: { key: SocialLinkEntry["platform"]; label: string }[] = [
   { key: "instagram", label: "Instagram" },
@@ -22,30 +25,22 @@ export function SocialLinksForm({ current }: { current: SocialLinkEntry[] }) {
   return (
     <form action={formAction} className="space-y-4">
       {PLATFORMS.map((platform) => (
-        <div key={platform.key}>
-          <label htmlFor={`social_${platform.key}`} className="block text-caption tracking-eyebrow text-taupe uppercase">
-            {platform.label}
-          </label>
-          <input
+        <FormField key={platform.key} label={platform.label} htmlFor={`social_${platform.key}`}>
+          <AdminInput
             id={`social_${platform.key}`}
             name={`social_${platform.key}`}
             type="url"
             defaultValue={byPlatform[platform.key] ?? ""}
             placeholder={`https://${platform.key}.com/...`}
-            className="mt-2 w-full rounded-sm border border-taupe/40 bg-white px-3 py-2 text-small text-charcoal"
           />
-        </div>
+        </FormField>
       ))}
-      <div className="flex items-center gap-4 pt-2">
-        <button
-          type="submit"
-          disabled={pending}
-          className="rounded-sm bg-plum px-5 py-2.5 text-small font-medium text-white disabled:opacity-50"
-        >
+      <div className="flex items-center gap-4 border-t border-slate-100 pt-4">
+        <AdminButton type="submit" variant="primary" disabled={pending}>
           {pending ? "Saving…" : "Save Social Links"}
-        </button>
+        </AdminButton>
         {state.status !== "idle" && state.message ? (
-          <p className={`text-caption ${state.status === "error" ? "text-plum" : "text-taupe"}`}>{state.message}</p>
+          <FormMessage status={state.status === "error" ? "error" : "success"} message={state.message} />
         ) : null}
       </div>
     </form>

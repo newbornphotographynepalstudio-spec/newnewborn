@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
 
 import { getFirebaseAuth } from "@/lib/firebase/client";
+import { LogoutIcon } from "@/components/admin/ui/icons";
 
 export function SignOutButton() {
   const router = useRouter();
@@ -26,8 +27,9 @@ export function SignOutButton() {
       type="button"
       onClick={handleSignOut}
       disabled={pending}
-      className="text-caption tracking-eyebrow text-taupe uppercase hover:text-plum disabled:opacity-50"
+      className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 disabled:opacity-50"
     >
+      <LogoutIcon width={15} height={15} />
       {pending ? "Signing out…" : "Sign out"}
     </button>
   );

@@ -12,6 +12,8 @@ import {
 } from "@/lib/seo/jsonld";
 import { routes } from "@/lib/navigation/routes";
 import { getSiteSettings } from "@/lib/settings/data";
+import { PageHeader } from "@/components/admin/ui/PageHeader";
+import { Card } from "@/components/admin/ui/Card";
 
 export const metadata: Metadata = {
   title: "Schema Inspector",
@@ -22,13 +24,13 @@ export const metadata: Metadata = {
  * page makes — this is not a mockup or an approximation of the site's
  * structured data, it's the actual generated output, computed live. */
 export default async function AdminSchemaPage() {
-  const { seo } = await getSiteSettings();
+  const { seo, socialLinks } = await getSiteSettings();
   const faqs = await getFaqs();
   const posts = await getPublishedPosts();
   const samplePost = posts[0];
 
   const blocks: { label: string; page: string; jsonLd: object }[] = [
-    { label: "Organization", page: "/ (homepage)", jsonLd: organizationJsonLd(seo.organizationName) },
+    { label: "Organization", page: "/ (homepage)", jsonLd: organizationJsonLd(seo.organizationName, socialLinks) },
     { label: "WebSite", page: "/ (homepage)", jsonLd: websiteJsonLd() },
     { label: "ProfessionalService", page: "/ (homepage)", jsonLd: professionalServiceJsonLd(undefined, seo.organizationName) },
     {
@@ -51,30 +53,29 @@ export default async function AdminSchemaPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-gutter py-2xl">
-      <h1 className="text-h2 text-plum">Schema Inspector</h1>
-      <p className="mt-2xs text-small text-charcoal/70">
-        The actual structured data currently generated on real pages, computed live from the
-        same code the public site runs — not a preview or a mockup.
-      </p>
+    <div className="mx-auto max-w-4xl">
+      <PageHeader
+        title="Schema Inspector"
+        description="The actual structured data currently generated on real pages, computed live from the same code the public site runs — not a preview or a mockup."
+      />
       {!samplePost ? (
-        <p className="mt-2 text-caption text-taupe">
-          No published blog post exists yet, so BlogPosting schema isn&apos;t shown below —
-          publish one to see it here.
+        <p className="mb-4 text-xs text-slate-500">
+          No published blog post exists yet, so BlogPosting schema isn&apos;t shown below — publish one to see
+          it here.
         </p>
       ) : null}
 
-      <div className="mt-lg space-y-6">
+      <div className="space-y-4">
         {blocks.map((block) => (
-          <div key={block.label} className="border border-taupe/20 bg-white p-6">
+          <Card key={block.label} className="p-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-small font-medium text-plum">{block.label}</h2>
-              <span className="text-caption text-taupe">{block.page}</span>
+              <h2 className="text-sm font-semibold text-plum">{block.label}</h2>
+              <span className="text-xs text-slate-400">{block.page}</span>
             </div>
-            <pre className="mt-3 overflow-x-auto rounded-sm bg-blush/20 p-4 text-caption text-charcoal">
+            <pre className="mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-xs text-slate-200">
               {JSON.stringify(block.jsonLd, null, 2)}
             </pre>
-          </div>
+          </Card>
         ))}
       </div>
     </div>

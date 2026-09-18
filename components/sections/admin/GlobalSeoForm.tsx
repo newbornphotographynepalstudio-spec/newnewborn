@@ -4,6 +4,9 @@ import { useActionState } from "react";
 
 import { saveGlobalSeo, type SettingsFormState } from "@/lib/settings/actions";
 import type { GlobalSeoSettings } from "@/lib/settings/data";
+import { AdminButton } from "@/components/admin/ui/Button";
+import { AdminInput, AdminTextarea, FormField } from "@/components/admin/ui/fields";
+import { FormMessage } from "@/components/admin/ui/FormMessage";
 
 const initialState: SettingsFormState = { status: "idle" };
 
@@ -27,16 +30,9 @@ export function GlobalSeoForm({ current, defaults }: { current: GlobalSeoSetting
         note="Not currently visible on any live page — every page sets its own explicit title, so this only feeds a fallback template no route actually uses."
       />
       <div>
-        <label htmlFor="defaultDescription" className="block text-caption tracking-eyebrow text-taupe uppercase">
-          Default meta description
-        </label>
-        <textarea
-          id="defaultDescription"
-          name="defaultDescription"
-          rows={2}
-          defaultValue={current.defaultDescription}
-          className="mt-2 w-full rounded-sm border border-taupe/40 bg-white px-3 py-2 text-small text-charcoal"
-        />
+        <FormField label="Default meta description" htmlFor="defaultDescription">
+          <AdminTextarea id="defaultDescription" name="defaultDescription" rows={2} defaultValue={current.defaultDescription} />
+        </FormField>
         <FieldStatus
           saved={current.defaultDescription}
           codeDefault={defaults.description}
@@ -58,16 +54,12 @@ export function GlobalSeoForm({ current, defaults }: { current: GlobalSeoSetting
         note="Used in the Organization/ProfessionalService structured data (JSON-LD) on the homepage — see Schema Inspector."
       />
 
-      <div className="flex items-center gap-4 pt-2">
-        <button
-          type="submit"
-          disabled={pending}
-          className="rounded-sm bg-plum px-5 py-2.5 text-small font-medium text-white disabled:opacity-50"
-        >
+      <div className="flex items-center gap-4 border-t border-slate-100 pt-4">
+        <AdminButton type="submit" variant="primary" disabled={pending}>
           {pending ? "Saving…" : "Save Global SEO"}
-        </button>
+        </AdminButton>
         {state.status !== "idle" && state.message ? (
-          <p className={`text-caption ${state.status === "error" ? "text-plum" : "text-taupe"}`}>{state.message}</p>
+          <FormMessage status={state.status === "error" ? "error" : "success"} message={state.message} />
         ) : null}
       </div>
     </form>
@@ -85,19 +77,19 @@ export function GlobalSeoForm({ current, defaults }: { current: GlobalSeoSetting
  */
 function FieldStatus({ saved, codeDefault, note }: { saved?: string; codeDefault: string; note?: string }) {
   return (
-    <p className="mt-1.5 text-caption text-charcoal/60">
+    <p className="mt-1.5 text-xs text-slate-500">
       {saved ? (
         <>
-          <span className="font-medium text-plum">Saved override active</span> — this value is
-          live on the public site.
+          <span className="font-medium text-plum">Saved override active</span> — this value is live on the
+          public site.
         </>
       ) : (
         <>
-          <span className="font-medium">Not overridden.</span> Using code default:{" "}
-          <span className="text-charcoal/80">&quot;{codeDefault}&quot;</span>
+          <span className="font-medium text-slate-600">Not overridden.</span> Using code default:{" "}
+          <span className="text-slate-700">&quot;{codeDefault}&quot;</span>
         </>
       )}
-      {note ? <span className="block text-charcoal/50">{note}</span> : null}
+      {note ? <span className="mt-0.5 block text-slate-400">{note}</span> : null}
     </p>
   );
 }
@@ -117,16 +109,9 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={name} className="block text-caption tracking-eyebrow text-taupe uppercase">
-        {label}
-      </label>
-      <input
-        id={name}
-        name={name}
-        type="text"
-        defaultValue={defaultValue}
-        className="mt-2 w-full rounded-sm border border-taupe/40 bg-white px-3 py-2 text-small text-charcoal"
-      />
+      <FormField label={label} htmlFor={name}>
+        <AdminInput id={name} name={name} type="text" defaultValue={defaultValue} />
+      </FormField>
       <FieldStatus saved={defaultValue} codeDefault={codeDefault} note={note} />
     </div>
   );

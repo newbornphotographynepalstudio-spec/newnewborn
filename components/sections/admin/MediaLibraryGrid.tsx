@@ -4,6 +4,9 @@ import { useMemo, useState } from "react";
 
 import { MediaCard } from "@/components/sections/admin/MediaCard";
 import { MEDIA_CATEGORIES, type MediaLibraryAsset } from "@/lib/media/library-types";
+import { AdminInput, AdminSelect } from "@/components/admin/ui/fields";
+import { EmptyState } from "@/components/admin/ui/EmptyState";
+import { SearchIcon } from "@/components/admin/ui/icons";
 
 export function MediaLibraryGrid({ assets }: { assets: MediaLibraryAsset[] }) {
   const [search, setSearch] = useState("");
@@ -21,18 +24,21 @@ export function MediaLibraryGrid({ assets }: { assets: MediaLibraryAsset[] }) {
 
   return (
     <div>
-      <div className="mt-4 flex flex-wrap items-center gap-3">
-        <input
-          type="search"
-          placeholder="Search title, alt text, caption…"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          className="min-w-[220px] flex-1 rounded-sm border border-taupe/40 bg-white px-3 py-2 text-small text-charcoal"
-        />
-        <select
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative min-w-[220px] flex-1">
+          <SearchIcon width={16} height={16} className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-slate-400" />
+          <AdminInput
+            type="search"
+            placeholder="Search title, alt text, caption…"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <AdminSelect
           value={categoryFilter}
           onChange={(event) => setCategoryFilter(event.target.value)}
-          className="rounded-sm border border-taupe/40 bg-white px-3 py-2 text-small text-charcoal"
+          className="w-auto"
         >
           <option value="all">All categories</option>
           {MEDIA_CATEGORIES.map((c) => (
@@ -40,16 +46,16 @@ export function MediaLibraryGrid({ assets }: { assets: MediaLibraryAsset[] }) {
               {c}
             </option>
           ))}
-        </select>
+        </AdminSelect>
       </div>
 
-      <p className="mt-3 text-caption text-charcoal/60">
+      <p className="mt-3 text-xs text-slate-500">
         Showing {filtered.length} of {assets.length}
       </p>
 
       {filtered.length === 0 ? (
-        <div className="mt-4 border border-dashed border-taupe/40 bg-white p-lg text-small text-taupe">
-          No photos match this search/filter.
+        <div className="mt-4">
+          <EmptyState title="No photos match this search/filter" />
         </div>
       ) : (
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

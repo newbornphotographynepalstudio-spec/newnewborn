@@ -23,13 +23,20 @@ export default async function AdminLoginPage({
   const redirectTo = redirect && redirect.startsWith("/admin") ? redirect : "/admin";
 
   return (
-    <div className="mx-auto flex min-h-[70vh] max-w-sm flex-col justify-center px-gutter py-16">
-      <h1 className="text-h2 text-plum">Admin Sign In</h1>
-      <p className="mt-2 text-small text-charcoal/70">
-        Sign in with your admin account.
-      </p>
+    <div className="flex min-h-screen items-center justify-center px-4 py-16">
+      <div className="w-full max-w-sm">
+        <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-plum font-display text-lg font-medium text-white">
+          N
+        </div>
+        <h1 className="mt-5 text-center text-xl font-semibold text-slate-900">Admin Sign In</h1>
+        <p className="mt-1.5 text-center text-sm text-slate-500">
+          Newborn Photography Nepal — sign in with your admin account.
+        </p>
 
-      <AdminLoginForm redirectTo={redirectTo} />
+        <div className="mt-8 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <AdminLoginForm redirectTo={redirectTo} />
+        </div>
+      </div>
     </div>
   );
 }

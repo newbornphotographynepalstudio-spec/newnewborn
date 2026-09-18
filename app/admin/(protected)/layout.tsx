@@ -1,6 +1,5 @@
 import { requireAdminSession } from "@/lib/firebase/session";
-import { AdminNav } from "@/components/sections/admin/AdminNav";
-import { SignOutButton } from "@/components/sections/admin/SignOutButton";
+import { AdminShell } from "@/components/admin/shell/AdminShell";
 
 /**
  * The real authorization boundary for every admin screen except
@@ -11,21 +10,17 @@ import { SignOutButton } from "@/components/sections/admin/SignOutButton";
  * (Edge middleware alone can only check cookie presence). Redirects to
  * /admin/login when there's no valid admin session, so nothing below this
  * layout renders for an unauthenticated or non-admin request.
+ *
+ * The decoded session's email is passed straight into AdminShell (a
+ * client component) for display — the shell itself never touches
+ * auth/cookies directly.
  */
 export default async function ProtectedAdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  await requireAdminSession();
+  const session = await requireAdminSession();
 
-  return (
-    <>
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-taupe/10 bg-white px-gutter py-3">
-        <AdminNav />
-        <SignOutButton />
-      </div>
-      {children}
-    </>
-  );
+  return <AdminShell adminEmail={session.email}>{children}</AdminShell>;
 }

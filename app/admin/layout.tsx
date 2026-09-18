@@ -4,28 +4,19 @@ export const metadata = {
 };
 
 /**
- * Intentionally separate from the public (site) layout — no public Header
- * or Footer, and deliberately not fully designed yet (see
- * docs/DESIGN-SYSTEM.md, Admin UI section — this phase is public-site
- * design system + foundation only). It shares the same color/type/spacing
- * tokens as the public site, but is not required to look identical to it —
- * a later phase designs the real admin UI.
+ * Intentionally separate from the public (site) layout — no public
+ * Header or Footer. Deliberately thin: it only resets the font to sans
+ * (the base layer in app/globals.css applies the public site's serif
+ * display font to every h1-h4 by element selector, including here — see
+ * that file's `@layer base` block) and sets the admin's neutral
+ * background; everything else (sidebar, header, page chrome) is owned
+ * by AdminShell (rendered from the protected layout) or, for
+ * /admin/login specifically, by that page itself.
  */
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div className="min-h-screen bg-blush text-charcoal">
-      <header className="border-b border-taupe/20 bg-white">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-gutter">
-          <p className="font-display text-h4 text-plum">
-            Newborn Photography Nepal: Admin
-          </p>
-        </div>
-      </header>
-      {children}
-    </div>
-  );
+  return <div className="min-h-screen bg-slate-50 font-sans text-slate-900 [&_h1]:font-sans [&_h2]:font-sans [&_h3]:font-sans">{children}</div>;
 }

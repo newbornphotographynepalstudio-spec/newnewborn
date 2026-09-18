@@ -1,9 +1,16 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
-import { DeletePostButton } from "@/components/sections/admin/DeletePostButton";
 import { listAllPosts } from "@/lib/blog/admin-data";
+import { deletePost } from "@/lib/blog/actions";
 import { formatDate } from "@/lib/utils/format-date";
+import { PageHeader } from "@/components/admin/ui/PageHeader";
+import { AdminButton } from "@/components/admin/ui/Button";
+import { EmptyState } from "@/components/admin/ui/EmptyState";
+import { Table, TableHead, Th, TableBody, Tr, Td } from "@/components/admin/ui/Table";
+import { Badge } from "@/components/admin/ui/Badge";
+import { ConfirmDeleteButton } from "@/components/admin/ui/ConfirmDialog";
+import { BlogIcon, PlusIcon } from "@/components/admin/ui/icons";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -14,68 +21,62 @@ export default async function AdminBlogPage() {
   const result = await listAllPosts();
 
   return (
-    <div className="mx-auto max-w-5xl px-gutter py-2xl">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-h2 text-plum">Blog</h1>
-          <p className="mt-2xs text-small text-charcoal/70">
-            Published posts appear on /blog/ immediately. Drafts stay private.
-          </p>
-        </div>
-        <Link href="/admin/blog/new" className="rounded-sm bg-plum px-4 py-2 text-small font-medium text-white">
-          New Post
-        </Link>
-      </div>
+    <div>
+      <PageHeader
+        title="Blog"
+        description="Published posts appear on /blog/ immediately. Drafts stay private."
+        action={
+          <AdminButton href="/admin/blog/new" variant="primary" icon={<PlusIcon width={15} height={15} />}>
+            New Post
+          </AdminButton>
+        }
+      />
 
       {!result.configured ? (
-        <div className="mt-lg border border-dashed border-taupe/40 bg-white p-lg text-small text-taupe">
-          Firebase Admin credentials aren&apos;t configured in this environment yet, so posts
-          can&apos;t be loaded here.
-        </div>
+        <EmptyState
+          icon={<BlogIcon width={28} height={28} />}
+          title="Firebase Admin credentials aren't configured"
+          description="Posts can't be loaded here."
+        />
       ) : result.posts.length === 0 ? (
-        <div className="mt-lg border border-dashed border-taupe/40 bg-white p-lg text-small text-taupe">
-          No posts yet. Create the first one to start publishing to /blog/.
-        </div>
+        <EmptyState
+          icon={<BlogIcon width={28} height={28} />}
+          title="No posts yet"
+          description="Create the first one to start publishing to /blog/."
+          action={
+            <AdminButton href="/admin/blog/new" variant="primary">
+              New Post
+            </AdminButton>
+          }
+        />
       ) : (
-        <div className="mt-lg overflow-x-auto border border-taupe/20 bg-white">
-          <table className="w-full min-w-[640px] text-left text-small">
-            <thead className="border-b border-taupe/20 text-caption tracking-eyebrow text-taupe uppercase">
-              <tr>
-                <th className="px-4 py-3">Title</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Updated</th>
-                <th className="px-4 py-3" />
-              </tr>
-            </thead>
-            <tbody>
-              {result.posts.map((post) => (
-                <tr key={post.id} className="border-b border-taupe/10 last:border-b-0">
-                  <td className="px-4 py-3">
-                    <Link href={`/admin/blog/${post.id}`} className="font-medium text-plum hover:underline">
-                      {post.title}
-                    </Link>
-                    <div className="text-caption text-taupe">/blog/{post.slug}/</div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`inline-block rounded-sm px-2 py-1 text-caption font-medium uppercase ${
-                        post.status === "published" ? "bg-plum text-white" : "border border-taupe/30 text-taupe"
-                      }`}
-                    >
-                      {post.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-charcoal/60">
-                    {formatDate(post.updatedAt)}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <DeletePostButton id={post.id} title={post.title} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <Table minWidth={560}>
+          <TableHead>
+            <Th>Title</Th>
+            <Th>Status</Th>
+            <Th>Updated</Th>
+            <Th className="text-right">Actions</Th>
+          </TableHead>
+          <TableBody>
+            {result.posts.map((post) => (
+              <Tr key={post.id}>
+                <Td>
+                  <Link href={`/admin/blog/${post.id}`} className="font-medium text-plum hover:underline">
+                    {post.title}
+                  </Link>
+                  <div className="mt-0.5 text-xs text-slate-400">/blog/{post.slug}/</div>
+                </Td>
+                <Td>
+                  <Badge tone={post.status === "published" ? "success" : "neutral"}>{post.status}</Badge>
+                </Td>
+                <Td className="text-slate-500">{formatDate(post.updatedAt)}</Td>
+                <Td className="text-right">
+                  <ConfirmDeleteButton itemLabel={post.title} onConfirm={deletePost.bind(null, post.id)} />
+                </Td>
+              </Tr>
+            ))}
+          </TableBody>
+        </Table>
       )}
     </div>
   );

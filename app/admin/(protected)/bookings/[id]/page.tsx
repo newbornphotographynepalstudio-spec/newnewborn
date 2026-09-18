@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -7,6 +6,8 @@ import { StatusUpdateForm } from "@/components/sections/admin/StatusUpdateForm";
 import { getInquiry } from "@/lib/inquiries/admin-data";
 import { SESSION_TYPE_LABELS } from "@/lib/inquiries/types";
 import { formatDateTime } from "@/lib/utils/format-date";
+import { PageHeader } from "@/components/admin/ui/PageHeader";
+import { SectionCard } from "@/components/admin/ui/Card";
 
 export const metadata: Metadata = {
   title: "Booking Detail",
@@ -16,9 +17,9 @@ export const metadata: Metadata = {
 function Field({ label, value }: { label: string; value?: string | number | null }) {
   if (!value) return null;
   return (
-    <div className="border-b border-taupe/15 py-3">
-      <p className="text-caption tracking-eyebrow text-taupe uppercase">{label}</p>
-      <p className="mt-1 text-body text-charcoal">{value}</p>
+    <div className="border-b border-slate-100 py-2.5 last:border-b-0">
+      <p className="text-xs font-medium tracking-wide text-slate-400 uppercase">{label}</p>
+      <p className="mt-0.5 text-sm text-slate-800">{value}</p>
     </div>
   );
 }
@@ -36,60 +37,52 @@ export default async function AdminBookingDetailPage({
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-gutter py-2xl">
-      <Link href="/admin/bookings" className="text-small text-plum hover:underline">
-        ← All Bookings
-      </Link>
+    <div className="mx-auto max-w-3xl">
+      <PageHeader
+        title={inquiry.customer.name}
+        description={`Submitted ${formatDateTime(inquiry.createdAt)}`}
+        back={{ href: "/admin/bookings", label: "All Bookings" }}
+      />
 
-      <h1 className="mt-4 text-h2 text-plum">{inquiry.customer.name}</h1>
-      <p className="mt-1 text-small text-taupe">
-        Submitted {formatDateTime(inquiry.createdAt)}
-      </p>
+      <div className="space-y-6">
+        <SectionCard title="Status">
+          <StatusUpdateForm id={inquiry.id} currentStatus={inquiry.status} />
+        </SectionCard>
 
-      <div className="mt-8 border border-taupe/20 bg-white p-6">
-        <StatusUpdateForm id={inquiry.id} currentStatus={inquiry.status} />
-      </div>
+        <SectionCard title="Customer">
+          <Field label="Name" value={inquiry.customer.name} />
+          <Field label="Email" value={inquiry.customer.email} />
+          <Field label="Phone / WhatsApp" value={inquiry.customer.phone} />
+          <Field label="Preferred Contact Method" value={inquiry.contactPreference} />
+          <Field label="Consent to Contact" value={inquiry.consent ? "Yes" : "No"} />
+        </SectionCard>
 
-      <div className="mt-8 border border-taupe/20 bg-white p-6">
-        <h2 className="text-caption font-medium tracking-eyebrow text-taupe uppercase">Customer</h2>
-        <Field label="Name" value={inquiry.customer.name} />
-        <Field label="Email" value={inquiry.customer.email} />
-        <Field label="Phone / WhatsApp" value={inquiry.customer.phone} />
-        <Field label="Preferred Contact Method" value={inquiry.contactPreference} />
-        <Field label="Consent to Contact" value={inquiry.consent ? "Yes" : "No"} />
-      </div>
+        <SectionCard title="Session">
+          <Field label="Type" value={SESSION_TYPE_LABELS[inquiry.session.type]} />
+          <Field label="Package" value={inquiry.session.package} />
+          <Field label="Preferred Date" value={inquiry.session.preferredDate} />
+          <Field label="Preferred Time" value={inquiry.session.preferredTime} />
+          <Field label="Alternative Date" value={inquiry.session.alternativeDate} />
+          <Field label="Family Members" value={inquiry.familyMembers} />
+        </SectionCard>
 
-      <div className="mt-8 border border-taupe/20 bg-white p-6">
-        <h2 className="text-caption font-medium tracking-eyebrow text-taupe uppercase">Session</h2>
-        <Field label="Type" value={SESSION_TYPE_LABELS[inquiry.session.type]} />
-        <Field label="Package" value={inquiry.session.package} />
-        <Field label="Preferred Date" value={inquiry.session.preferredDate} />
-        <Field label="Preferred Time" value={inquiry.session.preferredTime} />
-        <Field label="Alternative Date" value={inquiry.session.alternativeDate} />
-        <Field label="Family Members" value={inquiry.familyMembers} />
-      </div>
+        {inquiry.baby.name || inquiry.baby.dateOfBirth || inquiry.baby.dueDate ? (
+          <SectionCard title="Baby">
+            <Field label="Name" value={inquiry.baby.name} />
+            <Field label="Date of Birth" value={inquiry.baby.dateOfBirth} />
+            <Field label="Expected Due Date" value={inquiry.baby.dueDate} />
+          </SectionCard>
+        ) : null}
 
-      {(inquiry.baby.name || inquiry.baby.dateOfBirth || inquiry.baby.dueDate) ? (
-        <div className="mt-8 border border-taupe/20 bg-white p-6">
-          <h2 className="text-caption font-medium tracking-eyebrow text-taupe uppercase">Baby</h2>
-          <Field label="Name" value={inquiry.baby.name} />
-          <Field label="Date of Birth" value={inquiry.baby.dateOfBirth} />
-          <Field label="Expected Due Date" value={inquiry.baby.dueDate} />
-        </div>
-      ) : null}
+        {inquiry.message ? (
+          <SectionCard title="Message">
+            <p className="text-sm leading-relaxed text-slate-700">{inquiry.message}</p>
+          </SectionCard>
+        ) : null}
 
-      {inquiry.message ? (
-        <div className="mt-8 border border-taupe/20 bg-white p-6">
-          <h2 className="text-caption font-medium tracking-eyebrow text-taupe uppercase">Message</h2>
-          <p className="mt-3 text-body leading-relaxed text-charcoal/85">{inquiry.message}</p>
-        </div>
-      ) : null}
-
-      <div className="mt-8 border border-taupe/20 bg-white p-6">
-        <h2 className="text-caption font-medium tracking-eyebrow text-taupe uppercase">Notes &amp; Follow-up</h2>
-        <div className="mt-4">
+        <SectionCard title="Notes & Follow-up">
           <NotesForm id={inquiry.id} adminNotes={inquiry.adminNotes} followUpDate={inquiry.followUpDate} />
-        </div>
+        </SectionCard>
       </div>
     </div>
   );

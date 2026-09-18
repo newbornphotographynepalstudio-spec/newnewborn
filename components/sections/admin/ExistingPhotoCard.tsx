@@ -1,42 +1,46 @@
 import Image from "next/image";
 
 import type { ExistingPhoto } from "@/lib/media/existing-photos";
+import { Card } from "@/components/admin/ui/Card";
+import { Badge } from "@/components/admin/ui/Badge";
 
 /** Read-only — this metadata is code-controlled (see lib/media/existing-photos.ts),
  * not a Firestore document, so there is nothing here for an admin action to save. */
 export function ExistingPhotoCard({ photo }: { photo: ExistingPhoto }) {
   return (
-    <div className="border border-taupe/20 bg-white p-4">
-      <div className="relative aspect-square w-full overflow-hidden rounded-sm">
+    <Card className="overflow-hidden p-3">
+      <div className="relative aspect-square w-full overflow-hidden rounded-lg">
         <Image src={photo.src} alt={photo.alt} fill sizes="300px" className="object-cover" />
       </div>
 
-      <span className="mt-2 inline-block rounded-sm bg-stone-soft px-2 py-0.5 text-caption font-medium tracking-eyebrow text-charcoal/70 uppercase">
-        Existing / Approved
-      </span>
+      <div className="mt-2.5">
+        <Badge tone="neutral">Existing / Approved</Badge>
+      </div>
 
-      <dl className="mt-2 space-y-1 text-caption text-charcoal/70">
+      <dl className="mt-2.5 space-y-1 text-xs text-slate-500">
         <div>
-          <dt className="inline font-medium text-charcoal">Title: </dt>
+          <dt className="inline font-medium text-slate-700">Title: </dt>
           <dd className="inline">{photo.title || "—"}</dd>
         </div>
         <div>
-          <dt className="inline font-medium text-charcoal">Category: </dt>
+          <dt className="inline font-medium text-slate-700">Category: </dt>
           <dd className="inline">{photo.category}</dd>
         </div>
         <div>
-          <dt className="inline font-medium text-charcoal">Portfolio: </dt>
+          <dt className="inline font-medium text-slate-700">Portfolio: </dt>
           <dd className="inline">{photo.service}</dd>
         </div>
         <div>
-          <dt className="font-medium text-charcoal">Alt text:</dt>
+          <dt className="font-medium text-slate-700">Alt text:</dt>
           <dd>{photo.alt}</dd>
         </div>
         <div>
-          <dt className="inline font-medium text-charcoal">Source: </dt>
-          <dd className="inline break-all">{photo.sourceFile} (id: {photo.id})</dd>
+          <dt className="inline font-medium text-slate-700">Source: </dt>
+          <dd className="inline break-all">
+            {photo.sourceFile} (id: {photo.id})
+          </dd>
         </div>
       </dl>
-    </div>
+    </Card>
   );
 }
