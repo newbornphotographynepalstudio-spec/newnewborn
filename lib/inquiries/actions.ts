@@ -47,14 +47,23 @@ export async function submitInquiry(
   formData: FormData
 ): Promise<SubmitInquiryState> {
   const name = readString(formData, "name");
-  const email = readString(formData, "email");
+  // Optional (not `readString`) — the simplified public form (Name,
+  // Phone, Package, Preferred Date only) no longer collects an email
+  // address. `customer.email` stays a required `string` field on the
+  // Inquiry type and in firestore.rules' create validation (both still
+  // expect the key to exist and be a string), so this writes "" rather
+  // than omitting the field — satisfies both without either needing a
+  // schema change. lib/inquiries/clients.ts already tolerates a blank
+  // email (falls back to grouping by phone), and every admin view that
+  // renders customer.email already skips it when falsy.
+  const email = readOptionalString(formData, "email") ?? "";
   const phone = readString(formData, "phone");
   const sessionTypeRaw = readString(formData, "sessionType");
   const consent = formData.get("consent") === "on";
   const turnstileToken = formData.get("cf-turnstile-response");
 
-  if (!name || !email || !phone) {
-    return { status: "error", message: "Please fill in your name, email and phone number." };
+  if (!name || !phone) {
+    return { status: "error", message: "Please fill in your name and phone number." };
   }
   if (!SESSION_TYPES.includes(sessionTypeRaw as SessionType)) {
     return { status: "error", message: "Please choose a session type." };

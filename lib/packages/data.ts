@@ -27,6 +27,24 @@ export async function getPackages(): Promise<PackageSummary[]> {
   }
 }
 
+/**
+ * A `priceRange` string for schema.org (ProfessionalService), computed
+ * from whatever packages actually exist right now — never a hardcoded
+ * figure, so an admin-edited price is reflected here automatically and
+ * this can never drift from what's really published on /packages/. Real
+ * lowest/highest across the current package set, formatted the same way
+ * NPR prices already are elsewhere on the site (e.g. `priceLabel`).
+ */
+export function formatPriceRange(packages: PackageSummary[]): string | undefined {
+  if (packages.length === 0) return undefined;
+  const prices = packages.map((p) => p.price).filter((p) => typeof p === "number" && p > 0);
+  if (prices.length === 0) return undefined;
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+  const format = (n: number) => `NPR ${n.toLocaleString("en-US")}`;
+  return min === max ? format(min) : `${format(min)}–${format(max)}`;
+}
+
 export function docToPackage(id: string, data: FirebaseFirestore.DocumentData): PackageSummary {
   return {
     id,

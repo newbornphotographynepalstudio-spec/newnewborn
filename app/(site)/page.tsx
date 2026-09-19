@@ -13,6 +13,7 @@ import { SafetySection } from "@/components/sections/home/SafetySection";
 import { ServicesOverview } from "@/components/sections/home/ServicesOverview";
 import { StudioSection } from "@/components/sections/home/StudioSection";
 import { WhyUsSection } from "@/components/sections/home/WhyUsSection";
+import { formatPriceRange, getPackages } from "@/lib/packages/data";
 import { fetchGoogleReviews } from "@/lib/reviews/google-places";
 import {
   organizationJsonLd,
@@ -75,9 +76,10 @@ export default async function HomePage() {
   // null in this environment — no GOOGLE_PLACES_API_KEY/PLACE_ID
   // configured, so this always falls back to the honest static empty
   // state (see lib/reviews/google-places.ts and ReviewsSection).
-  const [liveGoogleReviews, { seo, socialLinks }] = await Promise.all([
+  const [liveGoogleReviews, { seo, socialLinks }, packages] = await Promise.all([
     fetchGoogleReviews(),
     getSiteSettings(),
+    getPackages(),
   ]);
 
   const jsonLd = [
@@ -87,7 +89,8 @@ export default async function HomePage() {
       liveGoogleReviews
         ? { ratingValue: liveGoogleReviews.rating, reviewCount: liveGoogleReviews.userRatingCount }
         : undefined,
-      seo.organizationName
+      seo.organizationName,
+      formatPriceRange(packages)
     ),
   ];
 

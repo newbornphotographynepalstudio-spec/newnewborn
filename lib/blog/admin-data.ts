@@ -16,6 +16,8 @@ function docToPost(id: string, data: FirebaseFirestore.DocumentData): BlogPost {
     publishedAt: toIso(data.publishedAt),
     seoTitle: data.seoTitle,
     seoDescription: data.seoDescription,
+    relatedServiceSlug: data.relatedServiceSlug || undefined,
+    relatedAreaSlug: data.relatedAreaSlug || undefined,
     createdAt: toIso(data.createdAt) ?? new Date().toISOString(),
     updatedAt: toIso(data.updatedAt) ?? new Date().toISOString(),
   };

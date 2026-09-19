@@ -58,17 +58,22 @@ export function websiteJsonLd() {
 
 /**
  * ProfessionalService rather than a plain LocalBusiness, since that's
- * genuinely what this is. Still no `address` and no `priceRange` — both
- * would be invented, since neither fact has been supplied (no public
- * street address exists anywhere in this project, and per-service
- * pricing beyond the newborn packages isn't published).
+ * genuinely what this is. Still no `address` — that would be invented,
+ * since no public street address exists anywhere in this project.
  *
- * `telephone` and `hasMap` ARE included: both are real, already-verified
- * values already displayed on the live site (lib/data/contact.ts —
- * the same phone number in the header/footer/contact page, and the
- * client-provided Google Maps link), not new facts introduced here.
- * `hasMap` takes a plain URL per schema.org, so the Maps link is used
- * as-is — it is never decomposed into a fabricated `address` object.
+ * `telephone`, `email` and `hasMap` ARE included: all are real,
+ * already-verified values already displayed on the live site
+ * (lib/data/contact.ts — the same phone/email in the header/footer/
+ * contact page, and the client-provided Google Maps link), not new
+ * facts introduced here. `hasMap` takes a plain URL per schema.org, so
+ * the Maps link is used as-is — it is never decomposed into a
+ * fabricated `address` object.
+ *
+ * `priceRange` (SEO Phase 5) is likewise real: callers pass it computed
+ * from the actual published newborn packages (lib/packages/data.ts),
+ * never a hardcoded or estimated figure — omitted entirely if a caller
+ * doesn't have that data on hand (e.g. a page that never fetched
+ * packages), rather than falling back to a guess.
  *
  * `aggregateRating` is the one field this function *can* populate, but
  * only when a caller passes real, freshly-fetched data (see
@@ -80,7 +85,8 @@ export function websiteJsonLd() {
  */
 export function professionalServiceJsonLd(
   aggregateRating?: { ratingValue: number; reviewCount: number },
-  nameOverride?: string
+  nameOverride?: string,
+  priceRange?: string
 ) {
   return {
     "@context": "https://schema.org",
@@ -90,8 +96,10 @@ export function professionalServiceJsonLd(
     image: new URL("/brand/logo.jpg", siteConfig.url).toString(),
     description: siteConfig.description,
     telephone: contactInfo.phoneE164,
+    email: contactInfo.email,
     hasMap: contactInfo.mapsUrl,
     areaServed: areaServedCities,
+    ...(priceRange ? { priceRange } : {}),
     ...(aggregateRating && aggregateRating.reviewCount > 0
       ? {
           aggregateRating: {
@@ -150,6 +158,19 @@ export function serviceJsonLd({
  * document itself (title, excerpt, author, publish/update dates); there
  * is no invented field here (no fake `datePublished` for a draft, since
  * this is only ever called with an already-published post).
+ *
+ * `author` (SEO Phase 6 fix) now uses the post's own real `author`
+ * field — previously hardcoded to `siteConfig.name` regardless of what
+ * the admin actually entered, silently diverging from the "By {author}"
+ * byline the page itself renders. Still typed `Organization` rather
+ * than `Person`, since the data model has no way to know whether a
+ * given author string names a person or the studio itself.
+ *
+ * `image` and `articleSection` (SEO Phase 6) are both optional and only
+ * ever real, already-resolved values a caller passes in — the post's
+ * actual featured-image URL (never a placeholder) and, when the post
+ * has a real `relatedServiceSlug`, that service's own real name (e.g.
+ * "Newborn Photography") — never invented here.
  */
 export function blogPostingJsonLd(post: {
   title: string;
@@ -158,6 +179,8 @@ export function blogPostingJsonLd(post: {
   slug: string;
   publishedAt?: string;
   updatedAt: string;
+  image?: string;
+  articleSection?: string;
 }) {
   const url = new URL(`/blog/${post.slug}/`, siteConfig.url).toString();
   return {
@@ -165,12 +188,14 @@ export function blogPostingJsonLd(post: {
     "@type": "BlogPosting",
     headline: post.title,
     description: post.excerpt || undefined,
-    author: { "@type": "Organization", name: siteConfig.name },
+    author: { "@type": "Organization", name: post.author || siteConfig.name },
     publisher: { "@type": "Organization", name: siteConfig.name },
     url,
     mainEntityOfPage: url,
     ...(post.publishedAt ? { datePublished: post.publishedAt } : {}),
     dateModified: post.updatedAt,
+    ...(post.image ? { image: new URL(post.image, siteConfig.url).toString() } : {}),
+    ...(post.articleSection ? { articleSection: post.articleSection } : {}),
   };
 }
 

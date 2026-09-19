@@ -25,9 +25,22 @@ function slugify(input: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
+/**
+ * `/sitemap.xml` (found live, SEO Phase 9) has no dynamic APIs of its own
+ * (no cookies/headers, no `revalidate` export), so Next.js treats it as
+ * fully static — generated once at build time and never regenerated
+ * again, even though `app/sitemap.ts` itself correctly reads the live
+ * `posts` collection. Without this, a newly published (or deleted) post
+ * would never appear in (or disappear from) the actual live sitemap
+ * until the next full production build/deploy, despite going live on
+ * the site itself immediately. Revalidating it here, alongside the
+ * paths this function already refreshes, keeps the sitemap honest the
+ * moment a post's publish state actually changes.
+ */
 function revalidateBlogPaths(slug?: string) {
   revalidatePath(routes.blog);
   revalidatePath("/admin/blog");
+  revalidatePath("/sitemap.xml");
   if (slug) revalidatePath(`${routes.blog}${slug}`);
 }
 
@@ -47,6 +60,8 @@ export async function savePost(_prevState: PostFormState, formData: FormData): P
   const seoTitle = readString(formData, "seoTitle");
   const seoDescription = readString(formData, "seoDescription");
   const featuredImageId = readString(formData, "featuredImageId");
+  const relatedServiceSlug = readString(formData, "relatedServiceSlug");
+  const relatedAreaSlug = readString(formData, "relatedAreaSlug");
 
   if (!title || !content) {
     return { status: "error", message: "Please fill in a title and content." };
@@ -84,6 +99,8 @@ export async function savePost(_prevState: PostFormState, formData: FormData): P
       data.seoTitle = seoTitle || FieldValue.delete();
       data.seoDescription = seoDescription || FieldValue.delete();
       data.featuredImageId = featuredImageId || FieldValue.delete();
+      data.relatedServiceSlug = relatedServiceSlug || FieldValue.delete();
+      data.relatedAreaSlug = relatedAreaSlug || FieldValue.delete();
 
       const existing = await db.collection("posts").doc(id).get();
       const wasPublished = existing.exists && existing.data()?.status === "published";
@@ -99,6 +116,8 @@ export async function savePost(_prevState: PostFormState, formData: FormData): P
       data.seoTitle = seoTitle || undefined;
       data.seoDescription = seoDescription || undefined;
       data.featuredImageId = featuredImageId || undefined;
+      data.relatedServiceSlug = relatedServiceSlug || undefined;
+      data.relatedAreaSlug = relatedAreaSlug || undefined;
       data.createdAt = FieldValue.serverTimestamp();
       if (status === "published") data.publishedAt = FieldValue.serverTimestamp();
       const ref = await db.collection("posts").add(data);

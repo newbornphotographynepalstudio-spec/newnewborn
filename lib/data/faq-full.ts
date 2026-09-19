@@ -49,6 +49,11 @@ const moreFaqs: FaqItem[] = [
     answer:
       "Newborn session pricing is published in full on the Packages & Pricing page, with three collections — Mini, Premium and Luxury — each showing exact NPR pricing and what's included.",
   },
+  {
+    id: "who-photographs",
+    question: "Who photographs the sessions?",
+    answer: "Newborn sessions are photographed by Navin, a newborn photographer based in Kathmandu.",
+  },
 ];
 
 export const fullFaqList: FaqItem[] = [...homeFaqPreview, ...moreFaqs];

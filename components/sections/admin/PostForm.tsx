@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 
 import { savePost, type PostFormState } from "@/lib/blog/actions";
 import type { BlogPost } from "@/lib/blog/types";
+import { areas } from "@/lib/data/areas";
+import { getServicePages } from "@/lib/data/service-pages";
 import { allGalleryImages } from "@/lib/media/all-images";
 import { AdminButton } from "@/components/admin/ui/Button";
 import { AdminInput, AdminSelect, AdminTextarea, FormField } from "@/components/admin/ui/fields";
@@ -13,6 +15,7 @@ import { FormMessage } from "@/components/admin/ui/FormMessage";
 import { SectionCard } from "@/components/admin/ui/Card";
 
 const initialState: PostFormState = { status: "idle" };
+const servicePages = getServicePages();
 
 export function PostForm({ post }: { post?: BlogPost }) {
   const [state, formAction, pending] = useActionState(savePost, initialState);
@@ -77,6 +80,34 @@ export function PostForm({ post }: { post?: BlogPost }) {
           </Link>{" "}
           aren&apos;t selectable here yet — this picker hasn&apos;t been wired up to that collection.
         </p>
+      </SectionCard>
+
+      <SectionCard
+        title="Related Content"
+        description="Optional — powers one genuinely relevant internal link on the article itself, and the article's schema.org articleSection."
+      >
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <FormField label="Related service" htmlFor="relatedServiceSlug">
+            <AdminSelect id="relatedServiceSlug" name="relatedServiceSlug" defaultValue={post?.relatedServiceSlug ?? ""}>
+              <option value="">None</option>
+              {Object.values(servicePages).map((service) => (
+                <option key={service.slug} value={service.slug}>
+                  {service.name}
+                </option>
+              ))}
+            </AdminSelect>
+          </FormField>
+          <FormField label="Related area" htmlFor="relatedAreaSlug">
+            <AdminSelect id="relatedAreaSlug" name="relatedAreaSlug" defaultValue={post?.relatedAreaSlug ?? ""}>
+              <option value="">None</option>
+              {Object.values(areas).map((area) => (
+                <option key={area.slug} value={area.slug}>
+                  {area.name}
+                </option>
+              ))}
+            </AdminSelect>
+          </FormField>
+        </div>
       </SectionCard>
 
       <SectionCard title="SEO" description="Optional — leave blank to use the post's title/excerpt.">

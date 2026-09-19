@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { getPublishedPosts } from "@/lib/blog/data";
 import { getFaqs } from "@/lib/faq/data";
+import { formatPriceRange, getPackages } from "@/lib/packages/data";
 import {
   blogPostingJsonLd,
   breadcrumbJsonLd,
@@ -27,12 +28,17 @@ export default async function AdminSchemaPage() {
   const { seo, socialLinks } = await getSiteSettings();
   const faqs = await getFaqs();
   const posts = await getPublishedPosts();
+  const packages = await getPackages();
   const samplePost = posts[0];
 
   const blocks: { label: string; page: string; jsonLd: object }[] = [
     { label: "Organization", page: "/ (homepage)", jsonLd: organizationJsonLd(seo.organizationName, socialLinks) },
     { label: "WebSite", page: "/ (homepage)", jsonLd: websiteJsonLd() },
-    { label: "ProfessionalService", page: "/ (homepage)", jsonLd: professionalServiceJsonLd(undefined, seo.organizationName) },
+    {
+      label: "ProfessionalService",
+      page: "/ (homepage)",
+      jsonLd: professionalServiceJsonLd(undefined, seo.organizationName, formatPriceRange(packages)),
+    },
     {
       label: "BreadcrumbList",
       page: routes.portfolioNewborn,
