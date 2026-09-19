@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/Button";
 import { EditorialImage } from "@/components/ui/EditorialImage";
 import { PageHero } from "@/components/ui/PageHero";
 import { getPublishedPostBySlug } from "@/lib/blog/data";
+import { resolveFeaturedImage } from "@/lib/blog/resolve-image";
 import { areas } from "@/lib/data/areas";
 import { getServicePages } from "@/lib/data/service-pages";
-import { findGalleryImage } from "@/lib/media/all-images";
 import { routes } from "@/lib/navigation/routes";
 import { blogPostingJsonLd, breadcrumbJsonLd } from "@/lib/seo/jsonld";
 import { buildPageMetadata } from "@/lib/seo/build-metadata";
@@ -66,18 +66,6 @@ function ContentBlock({ text }: { text: string }) {
   return <p className="text-body-lg leading-relaxed text-charcoal/85">{renderInlineLinks(text)}</p>;
 }
 
-/** Every gallery image `findGalleryImage` can return is a static import
- * (see lib/media/all-images.ts), so `.src` is always a real
- * `StaticImageData` object at runtime — but `ImageProps["src"]` is
- * typed as `string | StaticImport`, so this narrows it for the two
- * spots (OG image, JSON-LD image) that need a plain URL string. */
-function resolveImageUrl(src: unknown): string | undefined {
-  if (!src) return undefined;
-  if (typeof src === "string") return src;
-  if (typeof src === "object" && "src" in src && typeof src.src === "string") return src.src;
-  return undefined;
-}
-
 export async function generateMetadata({
   params,
 }: {
@@ -88,7 +76,7 @@ export async function generateMetadata({
   if (!post) {
     return { title: "Article not found", robots: { index: false, follow: false } };
   }
-  const image = findGalleryImage(post.featuredImageId);
+  const image = await resolveFeaturedImage(post.featuredImageId);
   // buildPageMetadata (SEO Phase 6 fix) — this page previously built its
   // own bare {title, description, canonical} Metadata object, so unlike
   // every other page it had no openGraph/twitter at all (found live:
@@ -99,7 +87,7 @@ export async function generateMetadata({
   return buildPageMetadata(`${routes.blog}${post.slug}/`, {
     title: post.seoTitle || post.title,
     description: post.seoDescription || post.excerpt,
-    ogImage: resolveImageUrl(image?.src),
+    ogImage: image?.src,
   });
 }
 
@@ -115,7 +103,7 @@ export default async function BlogPostPage({
     notFound();
   }
 
-  const image = findGalleryImage(post.featuredImageId);
+  const image = await resolveFeaturedImage(post.featuredImageId);
   // Real, already-published pages only — a post's relatedServiceSlug/
   // relatedAreaSlug (SEO Phase 6) can only ever be one of these actual
   // routes (see the admin PostForm's <select>), never a free-text value,
@@ -127,7 +115,7 @@ export default async function BlogPostPage({
       { name: "Blog", href: routes.blog },
       { name: post.title, href: `${routes.blog}${post.slug}/` },
     ]),
-    blogPostingJsonLd({ ...post, image: resolveImageUrl(image?.src), articleSection: relatedService?.name }),
+    blogPostingJsonLd({ ...post, image: image?.src, articleSection: relatedService?.name }),
   ];
   const paragraphs = post.content.split(/\n\s*\n/).filter(Boolean);
 

@@ -9,6 +9,7 @@ import type { BlogPost } from "@/lib/blog/types";
 import { areas } from "@/lib/data/areas";
 import { getServicePages } from "@/lib/data/service-pages";
 import { allGalleryImages } from "@/lib/media/all-images";
+import type { MediaLibraryAsset } from "@/lib/media/library-types";
 import { AdminButton } from "@/components/admin/ui/Button";
 import { AdminInput, AdminSelect, AdminTextarea, FormField } from "@/components/admin/ui/fields";
 import { FormMessage } from "@/components/admin/ui/FormMessage";
@@ -17,7 +18,17 @@ import { SectionCard } from "@/components/admin/ui/Card";
 const initialState: PostFormState = { status: "idle" };
 const servicePages = getServicePages();
 
-export function PostForm({ post }: { post?: BlogPost }) {
+export function PostForm({
+  post,
+  libraryImages = [],
+}: {
+  post?: BlogPost;
+  /** Real, published Media Library photos (SEO Phase 11) — offered
+   * alongside the static newborn/cake-smash galleries so a post can
+   * reference an uploaded photo (e.g. a real maternity photo) as its
+   * featured image. */
+  libraryImages?: MediaLibraryAsset[];
+}) {
   const [state, formAction, pending] = useActionState(savePost, initialState);
   const router = useRouter();
 
@@ -66,19 +77,30 @@ export function PostForm({ post }: { post?: BlogPost }) {
         <FormField label="Featured image" htmlFor="featuredImageId">
           <AdminSelect id="featuredImageId" name="featuredImageId" defaultValue={post?.featuredImageId ?? ""}>
             <option value="">None</option>
-            {allGalleryImages.map((img) => (
-              <option key={img.id} value={img.id}>
-                {img.title ?? img.id}
-              </option>
-            ))}
+            <optgroup label="Approved Photography">
+              {allGalleryImages.map((img) => (
+                <option key={img.id} value={img.id}>
+                  {img.title ?? img.id}
+                </option>
+              ))}
+            </optgroup>
+            {libraryImages.length > 0 ? (
+              <optgroup label="Uploaded Photography">
+                {libraryImages.map((img) => (
+                  <option key={img.id} value={img.id}>
+                    {img.title || img.alt}
+                  </option>
+                ))}
+              </optgroup>
+            ) : null}
           </AdminSelect>
         </FormField>
         <p className="mt-2 text-xs text-slate-500">
-          Picks from the studio&apos;s existing approved photography. Photos uploaded to{" "}
+          Picks from the studio&apos;s existing approved photography, plus any published photo from{" "}
           <Link href="/admin/media" className="text-plum hover:underline">
             Media Library
-          </Link>{" "}
-          aren&apos;t selectable here yet — this picker hasn&apos;t been wired up to that collection.
+          </Link>
+          .
         </p>
       </SectionCard>
 

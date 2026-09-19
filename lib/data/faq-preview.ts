@@ -13,12 +13,6 @@ export const homeFaqPreview: FaqItem[] = [
       "Newborn sessions are best booked during pregnancy, so a date can be reserved for the first couple of weeks after birth.",
   },
   {
-    id: "baby-age",
-    question: "How old should my baby be?",
-    answer:
-      "Most newborn photography happens within the first one to two weeks of life, while babies are still small and settle easily.",
-  },
-  {
     id: "what-to-bring",
     question: "What should we bring?",
     answer:
@@ -35,5 +29,11 @@ export const homeFaqPreview: FaqItem[] = [
     question: "Do you offer maternity and family photography?",
     answer:
       "Yes. Alongside newborn photography, maternity, baby, cake smash and family sessions are all offered.",
+  },
+  {
+    id: "booking-notice",
+    question: "How far in advance should we book?",
+    answer:
+      "For newborn sessions, as early as possible during pregnancy. For other sessions, a few weeks' notice is usually enough.",
   },
 ];

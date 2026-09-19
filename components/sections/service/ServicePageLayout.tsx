@@ -11,12 +11,13 @@ import { FaqAccordion } from "@/components/ui/FaqAccordion";
 import { PageHero } from "@/components/ui/PageHero";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { getPublishedPostsByServiceSlug } from "@/lib/blog/data";
 import { experienceSteps } from "@/lib/data/experience";
 import type { ServicePageContent, ServiceSlug } from "@/lib/data/service-pages";
 import { getPublishedMediaByCategory } from "@/lib/media/library-data";
 import type { MediaLibraryCategory } from "@/lib/media/library-types";
 import { bookASessionCta, routes } from "@/lib/navigation/routes";
-import { breadcrumbJsonLd, serviceJsonLd } from "@/lib/seo/jsonld";
+import { breadcrumbJsonLd, faqPageJsonLd, serviceJsonLd } from "@/lib/seo/jsonld";
 
 /**
  * Shared structure for all five service pages — hero, intro, what's
@@ -50,6 +51,10 @@ export async function ServicePageLayout({
   const libraryPhotos = content.showcaseImage
     ? []
     : await getPublishedMediaByCategory(content.slug as MediaLibraryCategory);
+  // Existing, already-published articles only (SEO Phase 16) — reuses
+  // relatedServiceSlug (Phase 6), never a hardcoded slug/title, so this
+  // stays correct if an article is added, edited or unpublished later.
+  const relatedArticles = await getPublishedPostsByServiceSlug(content.slug);
 
   // The static showcase photo's own src (a relative path) is a plain
   // string for a Media-Library photo but a StaticImageData object for
@@ -72,6 +77,11 @@ export async function ServicePageLayout({
       image: showcaseImageSrc,
     }),
     breadcrumbJsonLd([{ name: content.name, href: content.href }]),
+    // The exact same 3 FaqItems already rendered below via FaqAccordion —
+    // never a separate hand-written set (SEO Phase 14). This service's
+    // own FAQs previously had no structured-data representation at all,
+    // unlike the global /faq/ page's identical faqPageJsonLd usage.
+    faqPageJsonLd(content.faqs),
   ];
 
   return (
@@ -255,6 +265,32 @@ export async function ServicePageLayout({
           <FaqAccordion items={content.faqs} />
         </div>
       </Section>
+
+      {relatedArticles.length > 0 ? (
+        <Section compact containerSize="prose">
+          <p className="text-eyebrow font-medium tracking-eyebrow text-taupe uppercase">
+            Read More About Your Session
+          </p>
+          <p className="mt-3 text-body text-charcoal/80">
+            Planning your {content.name.toLowerCase()} session? Here&apos;s more to know before you book.
+          </p>
+          <ul className="mt-5 space-y-4">
+            {relatedArticles.map((article) => (
+              <li key={article.id} className="border-b border-taupe/20 pb-4">
+                <Link
+                  href={`${routes.blog}${article.slug}/`}
+                  className="text-body-lg font-medium text-plum underline-offset-4 hover:underline"
+                >
+                  {article.title}
+                </Link>
+                {article.excerpt ? (
+                  <p className="mt-1 text-small leading-relaxed text-charcoal/70">{article.excerpt}</p>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </Section>
+      ) : null}
 
       <Section compact>
         <p className="text-eyebrow font-medium tracking-eyebrow text-taupe uppercase">

@@ -2,6 +2,7 @@ import "server-only";
 
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import type { BlogPost } from "@/lib/blog/types";
+import type { ServiceSlug } from "@/lib/data/service-pages";
 
 function docToPost(id: string, data: FirebaseFirestore.DocumentData): BlogPost {
   return {
@@ -46,6 +47,30 @@ export async function getPublishedPosts(): Promise<BlogPost[]> {
       .sort((a, b) => (b.publishedAt ?? "").localeCompare(a.publishedAt ?? ""));
   } catch (error) {
     console.error("getPublishedPosts failed:", error);
+    return [];
+  }
+}
+
+/** Every published post whose `relatedServiceSlug` matches this service —
+ * reused by ServicePageLayout (SEO Phase 16) to link a service page back
+ * to its existing supporting article(s) without hardcoding any slug or
+ * title. Naturally picks up new articles later (or drops one that's
+ * unpublished) with no code change, since it queries the same field the
+ * admin PostForm already writes. Two equality filters, same pattern as
+ * getPublishedPostBySlug — no composite index required. */
+export async function getPublishedPostsByServiceSlug(slug: ServiceSlug): Promise<BlogPost[]> {
+  try {
+    const db = getAdminFirestore();
+    const snapshot = await db
+      .collection("posts")
+      .where("relatedServiceSlug", "==", slug)
+      .where("status", "==", "published")
+      .get();
+    return snapshot.docs
+      .map((doc) => docToPost(doc.id, doc.data()))
+      .sort((a, b) => (b.publishedAt ?? "").localeCompare(a.publishedAt ?? ""));
+  } catch (error) {
+    console.error("getPublishedPostsByServiceSlug failed:", error);
     return [];
   }
 }

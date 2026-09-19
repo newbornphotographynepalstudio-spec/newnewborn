@@ -18,7 +18,7 @@ const moreFaqs: FaqItem[] = [
     id: "session-length",
     question: "How long does a session take?",
     answer:
-      "Newborn sessions generally take longer than other sessions, to allow time for feeding and settling. Exact timing is discussed when you book.",
+      "Newborn sessions range from about 1 to 4 hours depending on the package: 1 hour for the Mini session, 2 hours for Premium, and 3 to 4 hours for the Luxury package.",
   },
   {
     id: "delivery",
@@ -30,12 +30,6 @@ const moreFaqs: FaqItem[] = [
     question: "Do you offer albums and prints?",
     answer:
       "Yes. Premium albums, frames and prints are available in addition to the digital gallery.",
-  },
-  {
-    id: "booking-notice",
-    question: "How far in advance should we book?",
-    answer:
-      "For newborn sessions, as early as possible during pregnancy. For other sessions, a few weeks' notice is usually enough.",
   },
   {
     id: "studio-location",
@@ -52,7 +46,8 @@ const moreFaqs: FaqItem[] = [
   {
     id: "who-photographs",
     question: "Who photographs the sessions?",
-    answer: "Newborn sessions are photographed by Navin, a newborn photographer based in Kathmandu.",
+    answer:
+      "Every session — newborn, maternity, baby, cake smash and family photography — is photographed by Navin, based in Kathmandu.",
   },
 ];
 

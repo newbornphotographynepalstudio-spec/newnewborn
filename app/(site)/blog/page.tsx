@@ -5,7 +5,7 @@ import { Section } from "@/components/primitives/Section";
 import { EditorialImage } from "@/components/ui/EditorialImage";
 import { PageHero } from "@/components/ui/PageHero";
 import { getPublishedPosts } from "@/lib/blog/data";
-import { findGalleryImage } from "@/lib/media/all-images";
+import { resolveFeaturedImage } from "@/lib/blog/resolve-image";
 import { routes } from "@/lib/navigation/routes";
 import { buildPageMetadata } from "@/lib/seo/build-metadata";
 import { formatDateLong } from "@/lib/utils/format-date";
@@ -19,6 +19,16 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function BlogPage() {
   const posts = await getPublishedPosts();
+  // Resolved up front (not inside the render map, which can't await) so
+  // a post's featured image can come from either the static galleries or
+  // a real, published Media Library photo — the same resolution the
+  // article's own page already used (SEO Phase 16; previously this page
+  // only checked the static galleries, so a Media-Library-sourced image
+  // like the maternity article's real photo rendered on its own page but
+  // never showed a thumbnail here).
+  const postsWithImages = await Promise.all(
+    posts.map(async (post) => ({ post, image: await resolveFeaturedImage(post.featuredImageId) }))
+  );
 
   return (
     <>
@@ -41,8 +51,7 @@ export default async function BlogPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post) => {
-              const image = findGalleryImage(post.featuredImageId);
+            {postsWithImages.map(({ post, image }) => {
               return (
                 <Link key={post.id} href={`${routes.blog}${post.slug}/`} className="group block">
                   {image ? (
